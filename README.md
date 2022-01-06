@@ -12,7 +12,7 @@ My development platform is macOS Catalina 10.15.7
 
 - [x] No errors during compilation of external
 - [x] Instanciate Chuck class without errors.
-- [ ] Create demo with audio.
+- [ ] Create demo with audio. May have to include RTAudio as well.
 
 
 ## Dev Notes

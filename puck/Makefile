@@ -20,7 +20,7 @@ ldflags += $(addprefix -framework ,$(FRAMEWORKS)) \
 lib.name = puck
 
 # input source file (class name == source file basename)
-puck.class.sources = puck.cpp
+class.sources = puck~.cpp
 
 # all extra files to be included in binary distribution of the library
 datafiles =
@@ -28,3 +28,25 @@ datafiles =
 # include Makefile.pdlibbuilder from submodule directory 'pd-lib-builder'
 include Makefile.pdlibbuilder
 
+
+demo:
+	clang++ -o demo \
+		$(FLAGS) \
+		-I./include/core \
+		-I./include/host \
+		../host/chuck-embed.cpp \
+		../libchuck.a \
+		-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk \
+		-framework CoreAudio \
+		-framework CoreMIDI \
+		-framework CoreFoundation \
+		-framework IOKit \
+		-framework Carbon \
+		-framework AppKit \
+		-framework Foundation \
+		-F/System/Library/PrivateFrameworks \
+		-weak_framework MultitouchSupport \
+		-lc++ \
+		-lm \
+		-framework GLUT \
+		-framework OpenGL

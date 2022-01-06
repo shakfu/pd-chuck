@@ -1,10 +1,6 @@
 #N canvas 382 300 450 300 12;
-#X obj 144 82 puck;
-#X obj 144 41 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
-#X obj 227 80 chuck;
-#X obj 227 40 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000;
-#X text 277 80 an alias;
-#X connect 1 0 0 0;
-#X connect 3 0 2 0;
+#X obj 144 82 puck~;
+#X obj 144 130 snapshot~;
+#X floatatom 144 180 5 0 0 0 - - - 0;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;

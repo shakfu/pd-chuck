@@ -178,7 +178,10 @@ libchuck.a:
 		$(addprefix $(COREDIR)/,$(CXXOBJS_CORE)) \
 		$(addprefix $(COREDIR)/,$(LO_COBJS_CORE)) \
 		$(addprefix $(COREDIR)/,$(SF_CSRCS:.c=.o)) \
-		core/util_sndfile.o
+		core/util_sndfile.o \
+		host/RtAudio/RtAudio.o
+
+lib: libchuck.a
 
 
 embed-alt:
