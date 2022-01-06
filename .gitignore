@@ -1,3 +1,19 @@
+
+.DS_Store
+
+chuck-embed
+
+#core/chuck.output
+#core/chuck.tab.c
+#core/chuck.tab.h
+#core/chuck.yy.c
+
+project.xcworkspace
+xcuserdata
+.vscode
+.vs
+chuck.vcxproj.user
+
 # Prerequisites
 *.d
 
