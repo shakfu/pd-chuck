@@ -1,9 +1,12 @@
 
 COREDIR = ../core
+HOSTDIR = ../host
 SDK=$(shell xcrun --show-sdk-path)
 
-INCLUDE = -I$(COREDIR) -I$(COREDIR)/lo
-LIBS=$(wildcard lib/*)
+INCLUDE = -I./include/core -I./include/core/lo -I./include/host
+
+# LIBS=$(wildcard lib/*)
+LIBCHUCK = ../libchuck.a
 MACOS_VER=10.9
 
 ISYSROOT = -isysroot $(SDK)
@@ -14,7 +17,7 @@ FLAGS = -DCPU_IS_LITTLE_ENDIAN -D__MACOSX_CORE__
 
 cflags += $(FLAGS) $(ISYSROOT) -stdlib=libc++ -mmacosx-version-min=$(MACOS_VER) $(INCLUDE)
 ldflags += $(addprefix -framework ,$(FRAMEWORKS)) \
-    	   $(LINK_EXTRAS) -lm ../libchuck.a
+    	   $(LINK_EXTRAS) -lm $(LIBCHUCK)
 
 # library name
 lib.name = puck
@@ -31,22 +34,8 @@ include Makefile.pdlibbuilder
 
 demo:
 	clang++ -o demo \
-		$(FLAGS) \
-		-I./include/core \
-		-I./include/host \
+		$(cflags) \
 		../host/chuck-embed.cpp \
-		../libchuck.a \
-		-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk \
-		-framework CoreAudio \
-		-framework CoreMIDI \
-		-framework CoreFoundation \
-		-framework IOKit \
-		-framework Carbon \
-		-framework AppKit \
-		-framework Foundation \
-		-F/System/Library/PrivateFrameworks \
-		-weak_framework MultitouchSupport \
-		-lc++ \
-		-lm \
-		-framework GLUT \
-		-framework OpenGL
+		$(ldflags) \
+ 		-weak_framework MultitouchSupport \
+ 		-F/System/Library/PrivateFrameworks

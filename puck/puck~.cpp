@@ -1,6 +1,7 @@
 
 #include "m_pd.h"
 
+// #include "RtAudio/RtAudio.h"
 #include "chuck.h"
 
 #define GAIN 0.5
@@ -14,6 +15,10 @@
 typedef struct _puck {
 	t_object obj;
 	t_float x_f;
+
+	// general
+	const char *currentdir;
+
 
 	// chuck
 	float srate;
@@ -76,7 +81,7 @@ t_int *puck_perform(t_int *w)
 	
 	/* Perform the DSP loop */
 	while (n--) {
-		// x->the_chuck->run(in, out, n);
+		// x->the_chuck->run(in, out, n); // <= FIXME: NO AUDIO + CRASHES PD!!
 		*out++ = GAIN * *in++;
 	}
 	
@@ -101,14 +106,18 @@ void *puck_new(void)
 	t_puck *x = (t_puck *) pd_new(puck_class);
 
 
+	// initial inits
+	x->currentdir = canvas_getcurrentdir()->s_name;
+
+	// chuck-related inits
     x->the_chuck = NULL;
 
     x->the_chuck = new ChucK();
     // set sample rate and number of in/out channels on our chuck
-    x->the_chuck->setParam( CHUCK_PARAM_SAMPLE_RATE, MY_SRATE );
-    x->the_chuck->setParam( CHUCK_PARAM_INPUT_CHANNELS, MY_CHANNELS );
-    x->the_chuck->setParam( CHUCK_PARAM_OUTPUT_CHANNELS, MY_CHANNELS );
-    x->the_chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, "." );
+    // x->the_chuck->setParam( CHUCK_PARAM_SAMPLE_RATE, MY_SRATE );
+    // x->the_chuck->setParam( CHUCK_PARAM_INPUT_CHANNELS, MY_CHANNELS );
+    // x->the_chuck->setParam( CHUCK_PARAM_OUTPUT_CHANNELS, MY_CHANNELS );
+    // x->the_chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, x->currentdir );
 
     // initialize our chuck
     x->the_chuck->init();
@@ -134,9 +143,8 @@ void *puck_new(void)
 
 void puck_free(t_puck *x)
 {
-	// Nothing to free
-	// global_cleanup();
-	/* Print message to Max window */
+	// x->the_chuck->globalCleanup();
+	delete x->the_chuck;
 	post("chuck~ • Memory was freed");
 }
 
@@ -156,7 +164,13 @@ void puck_tilde_setup(void)
 	
 	/* Bind the DSP method, which is called when the DACs are turned on */
 	class_addmethod(puck_class, (t_method)puck_dsp, gensym("dsp"), A_NULL);
-	
+
+	// set the alias to external
+    class_addcreator((t_newmethod)puck_new, gensym("chuck~"), A_NULL);
+
+    // set name of default help file
+    class_sethelpsymbol(puck_class, gensym("help-puck"));
+
 	/* Print message to Max window */
 	post("chuck~ • External was loaded");
 }

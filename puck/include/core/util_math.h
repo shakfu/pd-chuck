@@ -47,18 +47,18 @@ extern "C" {
 // 1.4.1.0 (ge) need this since __WINDOWS_MODERN__ can be defined but remainder still not found (VC++ 2010)
 double ck_remainder( double a, double b );
 
-// mtof
-double mtof( double f );
-// ftom
-double ftom( double f );
-// powtodb
-double powtodb( double f );
-// rmstodb
-double rmstodb( double f );
-// dbtopow
-double dbtopow( double f );
-// dbtorms
-double dbtorms( double f );
+// ck_mtof
+double ck_mtof( double f );
+// ck_ftom
+double ck_ftom( double f );
+// ck_powtodb
+double ck_powtodb( double f );
+// ck_rmstodb
+double ck_rmstodb( double f );
+// ck_dbtopow
+double ck_dbtopow( double f );
+// ck_dbtorms
+double ck_dbtorms( double f );
 // nextpow2
 unsigned long nextpow2( unsigned long i );
 // ensurepow2
