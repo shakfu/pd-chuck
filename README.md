@@ -38,6 +38,10 @@ The following section covers the above.
 
 ## Steps to Create the PD-Chuck External
 
+Oneliner: `make osx && make libchuck.a && cd puck && make`
+
+
+Steps Explained:
 
 1. Compile the `chuck-embed` executable
 
