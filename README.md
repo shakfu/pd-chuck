@@ -1,18 +1,34 @@
 # pd-chuck
 
+A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a pd external.
 
-This repo was created to capture my ongoing attempts to wrap chuck 1.4.1.0 (numchucks) in a pure-data external.
+This is an ongoing slow translation from my more mature [chuck-max](https://github.com/shakfu/chuck-max) project. 
 
-My development platform is macOS Catalina 10.15.7
-
+Note that it's a bit of pain to do this in pd because there are name collisions between the puredata and chuck codebases. (see `patch.diff`), which makes it a hassle to update. The current codebase is 1.4.1.0 (numchucks)
 
 ## Status
 
-- Current PD external is currently non-functional but promising proof-concept.
+Currently producing audio in a minimal proof-of-concept kind of way.
 
 - [x] No errors during compilation of external
 - [x] Instanciate Chuck class without errors.
-- [ ] Create demo with audio. May have to include RTAudio as well.
+- [x] Create demo with audio.
+
+
+## Compilation
+
+Only tested on macOS.
+
+```bash
+git clone https://github.com/shakfu/pd-chuck
+cd pd-chuck
+make osx
+make lib
+cd chuck~
+make
+```
+
+Then open `help-chuck.pd` for a basic demo.
 
 
 ## Dev Notes
@@ -25,42 +41,10 @@ My development platform is macOS Catalina 10.15.7
 
 - Another strategy was to convert the `core` chuck codebase into a static library: `libchuck.a`. This is included in the modified `makefile`.
 
-- The puredata external is tentatively called `puck` to avoid naming collisions during development (but has the alias 'chuck' in any case).
-
 - So in summary, the current method is to:
 
 1. Slightly patch the chuck codebase to avoid naming colllisions with PD.
 2. Create a static libary of core: `libchuck.a`
 3. Compile external using `libchuck.a`
 
-The following section covers the above.
-
-
-## Steps to Create the PD-Chuck External
-
-Oneliner: `make osx && make libchuck.a && cd puck && make`
-
-
-Steps Explained:
-
-1. Compile the `chuck-embed` executable
-
-```bash
-make osx
-```
-
-2. Create the static library from just created object files
-
-```bash
-make libchuck.a
-```
-
-3. Compile the puredata external
-
-```bash
-cd puck
-make
-```
-
-4. Run the `help-puck.pd` example.
 
