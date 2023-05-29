@@ -163,6 +163,7 @@ void *ck_new(void)
 	outlet_new(&x->obj, gensym("signal"));
 	
 	/* Print message to Max window */
+	post("ChucK %s", x->chuck->version());
 	post("chuck~ • Object was created");
 	
 	/* Return a pointer to the new object */
@@ -240,7 +241,7 @@ void chuck_tilde_setup(void)
     class_sethelpsymbol(ck_class, gensym("help-ck"));
 
 	/* Print message to Max window */
-	post("chuck~ • External was loaded");
+	// post("chuck~ • External was loaded");
 }
 
 }

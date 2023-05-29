@@ -2,9 +2,9 @@
 
 A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a pd external.
 
-This is an ongoing slow translation from my more mature [chuck-max](https://github.com/shakfu/chuck-max) project. 
+This is an ongoing translation from my more mature [chuck-max](https://github.com/shakfu/chuck-max) project. 
 
-Note that it's a bit of pain to do this in pd because there are name collisions between the puredata and chuck codebases. (see `patch.diff`), which makes it a hassle to update. The current codebase is 1.4.1.0 (numchucks)
+Note that it's a bit of pain to do this in pd because there are name collisions between the puredata and chuck codebases. (see 'Dev Notes' below), which makes it a hassle to update. The current chuck version used is `1.5.0.1-dev`
 
 ## Status
 
@@ -22,7 +22,7 @@ Only tested on macOS.
 ```bash
 git clone https://github.com/shakfu/pd-chuck
 cd pd-chuck
-make osx
+make mac
 make lib
 cd chuck~
 make
@@ -33,15 +33,31 @@ Then open `help-chuck.pd` for a basic demo.
 
 ## Dev Notes
 
-- Managed to get basic non-working integration example to compile without errors using (and update to 1.4.1.0) the [chuck-embed](https://chuck.stanford.edu/release/files/examples/) demo.
+- Managed to get basic proof-of-concept integration with audio output and basic example to compile without errors using chuck version `1.5.0.1-dev`.
 
-- Note that there were some naming collisions which had to be surmounted (e.g both pd and chuck use `t_class` and `t_array` in their codebases). I've includes a `patch.diff` which captures the minor changes applied to the **chuck v1.4.1.0 code base** to get it to work well with puredata.
+- Note that there were some naming collisions which had to be surmounted (e.g both pd and chuck use `t_class` and `t_array` in their codebases). The following changes were made to the chuck codebase:
 
-- After applying the patch to the 1.4.1.0 core code, it was integrated into the `check-embed` demo as is demonstrated in this repo.
+```c++
 
-- Another strategy was to convert the `core` chuck codebase into a static library: `libchuck.a`. This is included in the modified `makefile`.
+t_array -> t_carray
+t_class -> t_cclass
+mtof 	-> ck_mtof
+ftom 	-> ck_ftom
+rmstodb -> ck_rmstodb
+powtodb -> ck_powtodb
+dbtopow -> ck_dbtopow
+dbtorms	-> ck_dbtorms
+```
 
-- So in summary, the current method is to:
+- These changes are applied to the `core` and `host` folders by a script (`scripts/transform.sh`) for automation. The script requires the [rpl](https://pypi.org/project/rpl/) search and replace utility which can be installed via:
+
+```bash
+pip install rpl
+```
+
+- Another strategy to speed up recompilation of the external useing development was to convert the `core` chuck codebase into a static library: `libchuck.a`. This is included in the modified `makefile`.
+
+- So in summary, the current method for a new chuck codebase is to:
 
 1. Slightly patch the chuck codebase to avoid naming colllisions with PD.
 2. Create a static libary of core: `libchuck.a`
