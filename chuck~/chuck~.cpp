@@ -1,17 +1,23 @@
-
-
-
 #include "m_pd.h"
 
 #include "chuck.h"
 #include "chuck_globals.h"
 
-#define GAIN 0.5
-#define SAMPLE float
-#define MY_SRATE 44100
+#define N_IN_CHANNELS 2
+#define N_OUT_CHANNELS 2
 #define MAX_FILENAME 128
-#define N_IN_CHANNELS 1
-#define N_OUT_CHANNELS 1
+
+
+enum DSP {
+	PERFORM, 
+	OBJECT, 
+	INPUT_VECTOR_L,
+	INPUT_VECTOR_R,
+	OUTPUT_VECTOR_L,
+	OUTPUT_VECTOR_R,
+	VECTOR_SIZE, 
+	NEXT
+};
 
 
 typedef struct _ck {
@@ -21,11 +27,8 @@ typedef struct _ck {
 	// general
 	const char *currentdir;
 
-
 	// chuck
-	float srate;
-	int n_channels;
-	int buffer_size;  // chuck uses the same buffer for both input and output
+	int buffer_size;  			// buffer size for for both input and output
     float *in_chuck_buffer;     // intermediate chuck input buffer
     float *out_chuck_buffer;    // intermediate chuck output buffer
 	char *filepath[MAX_FILENAME];
@@ -37,71 +40,39 @@ static t_class *ck_class;
 
 
 
-enum DSP {
-	PERFORM, 
-	OBJECT, 
-	INPUT_VECTOR, 
-	OUTPUT_VECTOR, 
-	VECTOR_SIZE, 
-	NEXT
-};
-
-
-
-void ck_perform64(t_ck *x, t_object *dsp64, double **ins, long numins, double **outs, long numouts, 
-                           long sampleframes, long flags, void *userparam)
-{
-    float * in_ptr = x->in_chuck_buffer;
-    float * out_ptr = x->out_chuck_buffer;
-    int n = sampleframes; // n = 64
-
-    if (ins) {
-        for (int i = 0; i < n; i++) {
-            for (int chan = 0; chan < numins; chan++) {
-                *(in_ptr++) = ins[chan][i];
-            }
-        }
-    }
-
-    x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
-
-    for (int i = 0; i < n; i++) {
-        for (int chan = 0; chan < numouts; chan++) {
-            outs[chan][i] = *out_ptr++;
-        }
-    }
-}
-
-
-
 t_int *ck_perform(t_int *w)
 {
-	/* Copy the object pointer */
-	t_ck *x = (t_ck *)w[OBJECT];
-
-	/* Copy the signal vector size */
-	t_int n = w[VECTOR_SIZE];
+    int i;
+    t_ck        *x  = (t_ck *)(w[OBJECT]);
+    float  *in1  = (float *)(w[INPUT_VECTOR_L]);
+    float  *in2  = (float *)(w[INPUT_VECTOR_R]);
+    float  *out1 = (float *)(w[OUTPUT_VECTOR_L]);
+    float  *out2 = (float *)(w[OUTPUT_VECTOR_R]);
+    int           n = (int)(w[VECTOR_SIZE]);
 	
     float * in_ptr = x->in_chuck_buffer;
     float * out_ptr = x->out_chuck_buffer;
 
-	/* Copy signal pointers */
-	t_float *ins = (t_float *)w[INPUT_VECTOR];
-	t_float *outs = (t_float *)w[OUTPUT_VECTOR];
-	
-
-    // int n = sampleframes; // n = 64
-
-    if (ins) {
-        for (int i = 0; i < n; i++) {
-            *(in_ptr++) = ins[i];
+    if (in1) {
+        for (i = 0; i < n; i++) {
+            *(in_ptr++) = in1[i];
         }
     }
 
-    x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
+    if (in2) {
+        for (i = 0; i < n; i++) {
+            *(in_ptr++) = in2[i];
+        }
+    }
 
-    for (int i = 0; i < n; i++) {
-            outs[i] = *out_ptr++;
+	x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
+
+    for (i = 0; i < n; i++) {
+            out1[i] = *(out_ptr++);
+    }
+	
+    for (i = 0; i < n; i++) {
+            out2[i] = *(out_ptr++);
     }
 	
 	/* Return the next address in the DSP chain */
@@ -109,8 +80,12 @@ t_int *ck_perform(t_int *w)
 }
 
 
+
 void ck_dsp(t_ck *x, t_signal **sp, short *count)
 {
+    // post("ins : %lx %lx",  sp[0]->s_vec, sp[1]->s_vec);
+    // post("outs : %lx %lx", sp[2]->s_vec, sp[3]->s_vec);
+
     delete[] x->in_chuck_buffer;
     delete[] x->out_chuck_buffer;
 
@@ -123,7 +98,8 @@ void ck_dsp(t_ck *x, t_signal **sp, short *count)
     memset(x->out_chuck_buffer, 0.f, sizeof(float) * x->buffer_size * N_OUT_CHANNELS);
 
 	/* Attach the object to the DSP chain */
-	dsp_add(ck_perform, NEXT-1, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
+	dsp_add(ck_perform, NEXT-1, x, sp[0]->s_vec, sp[1]->s_vec, 
+								   sp[2]->s_vec, sp[3]->s_vec, sp[0]->s_n);
 	
 	/* Print message to Max window */
 	post("chuck~ • Executing perform routine");
@@ -136,37 +112,38 @@ void *ck_new(void)
 	/* Instantiate a new object */
 	t_ck *x = (t_ck *) pd_new(ck_class);
 
+	if (x) {
 
-	// initial inits
-	x->currentdir = canvas_getcurrentdir()->s_name;
-	// x->num_outputs = MY_CHANNELS;
+		/* Create signal inlets */		
+		// Pd creates one by default			// Input Left
+		signalinlet_new((t_object *)x, 0); 		// Input Right
+		
+		/* Create signal outlets */
+        outlet_new((t_object *)x, &s_signal); 	// Output Left
+        outlet_new((t_object *)x, &s_signal); 	// Output Right
 
-	// chuck-related inits
-    x->in_chuck_buffer = NULL;
-    x->out_chuck_buffer = NULL;
+		// initial inits
+		x->currentdir = canvas_getcurrentdir()->s_name;
 
-    x->chuck = new ChucK();
-    // set sample rate and number of in/out channels on our chuck
-    x->chuck->setParam( CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) sys_getsr() );
-    x->chuck->setParam( CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS );
-    x->chuck->setParam( CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS );
-    x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, x->currentdir );
+		// chuck-related inits
+	    x->in_chuck_buffer = NULL;
+	    x->out_chuck_buffer = NULL;
 
-    // initialize our chuck
-    x->chuck->init();
-    x->chuck->start();
+	    x->chuck = new ChucK();
+	    // set sample rate and number of in/out channels on our chuck
+	    x->chuck->setParam( CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) sys_getsr() );
+	    x->chuck->setParam( CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS );
+	    x->chuck->setParam( CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS );
+	    x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, x->currentdir );
 
-	/* Create signal inlets */
-	// Pd creates one by default
-	
-	/* Create signal outlets */
-	outlet_new(&x->obj, gensym("signal"));
-	
-	/* Print message to Max window */
-	post("ChucK %s", x->chuck->version());
-	post("chuck~ • Object was created");
-	
-	/* Return a pointer to the new object */
+	    // initialize our chuck
+	    x->chuck->init();
+	    x->chuck->start();
+
+		/* Print message to Max window */
+		post("ChucK %s", x->chuck->version());
+		post("chuck~ • Object was created");
+	}
 	return x;
 }
 
