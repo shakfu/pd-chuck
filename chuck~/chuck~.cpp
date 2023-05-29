@@ -53,16 +53,12 @@ t_int *ck_perform(t_int *w)
     float * in_ptr = x->in_chuck_buffer;
     float * out_ptr = x->out_chuck_buffer;
 
-    if (in1) {
-        for (i = 0; i < n; i++) {
-            *(in_ptr++) = in1[i];
-        }
+    for (i = 0; i < n; i++) {
+        *(in_ptr++) = in1[i];
     }
 
-    if (in2) {
-        for (i = 0; i < n; i++) {
-            *(in_ptr++) = in2[i];
-        }
+    for (i = 0; i < n; i++) {
+        *(in_ptr++) = in2[i];
     }
 
 	x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
