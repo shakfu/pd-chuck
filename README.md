@@ -1,14 +1,14 @@
 # pd-chuck
 
-A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a pd external.
+A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a puredata external.
 
-It include an external, `chuck~` with the following features and limitations:
+Includes an external, `chuck~` with the following features and limitations:
 
-- Generate and process audio via an embedded chuck engine by running chuck files with global parameters adjusted and controlled in realtime via Max messages.
+- Generate and process audio via an embedded chuck engine by running chuck files with global parameters adjusted and controlled in realtime via pd messages.
 
 - Layer sounds by running multiple chuck files concurrently.
 
-- Add and remove audio and audio processes on the fly via max messages.
+- Add and remove audio and audio processes on the fly via pd messages.
 
 - As of this version, there is no support for callbacks and events except via the `signal` and `broadcast` messages.
 
