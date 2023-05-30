@@ -138,12 +138,16 @@ void chuck_tilde_setup(void)
 	CLASS_MAINSIGNALIN(ck_class, t_ck, x_f);
 	
 	/* Bind the DSP method, which is called when the DACs are turned on */
-	class_addmethod(ck_class, (t_method)ck_dsp, gensym("dsp"), A_CANT, A_NULL);
+	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"), A_CANT, A_NULL);
 
-	class_addmethod(ck_class, (t_method)ck_reset, gensym("reset"), A_NULL);
-	class_addmethod(ck_class, (t_method)ck_run, gensym("run"), A_DEFSYMBOL, A_NULL);
+    class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),       A_DEFSYMBOL, A_NULL);
+    class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),               A_NULL);
+    class_addmethod(ck_class, (t_method)ck_signal,     gensym("signal"),    A_SYMBOL, A_NULL);
+    class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"), A_SYMBOL, A_NULL);
+    class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),    A_GIMME,  A_NULL);
 
-	class_addbang(ck_class, ck_bang);
+    class_addbang(ck_class,   (t_method)ck_bang);
+    class_addanything(ck_class, (t_method)ck_anything);
 
 	// set the alias to external
     class_addcreator((t_newmethod)ck_new, gensym("chuck~"), A_NULL);
