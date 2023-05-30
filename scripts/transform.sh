@@ -1,3 +1,7 @@
+# This file patches the chuck `core` and `host` folders to eliminate naming collisions
+# The script requires the [rpl](https://pypi.org/project/rpl/) 
+# search and replace utility which can be installed via: `pip install rpl`
+
 
 RPL="rpl --match-case \
 		 --whole-words \

@@ -36,11 +36,16 @@ typedef struct _ck {
     float *out_chuck_buffer;    // intermediate chuck output buffer
 	t_symbol *filename;
 	ChucK *chuck;
+
+	// inlets & outlets (default inlet is inL)
+	t_inlet *x_inR;
+	t_outlet*x_outL;
+	t_outlet*x_outR;
 } t_ck;
 
 
 // core
-void *ck_new(void);
+void *ck_new(t_symbol *s);
 void ck_free(t_ck *x);
 extern "C" void chuck_tilde_setup(void);
 
@@ -72,24 +77,26 @@ static t_class *ck_class;
 //-----------------------------------------------------------------------------------------------
 // initialization / destruction
 
-void *ck_new(void)
+void *ck_new(t_symbol *s)
 {
 	/* Instantiate a new object */
 	t_ck *x = (t_ck *) pd_new(ck_class);
 
+	
+
 	if (x) {
 
 		/* Create signal inlets */		
-		// Pd creates one by default			// Input Left
-		signalinlet_new((t_object *)x, 0); 		// Input Right
+		// Pd creates one by default				   		// Input Left
+		x->x_inR = signalinlet_new((t_object *)x, 0); 		// Input Right
 		
 		/* Create signal outlets */
-        outlet_new((t_object *)x, &s_signal); 	// Output Left
-        outlet_new((t_object *)x, &s_signal); 	// Output Right
+        x->x_outL = outlet_new((t_object *)x, &s_signal); 	// Output Left
+        x->x_outR = outlet_new((t_object *)x, &s_signal); 	// Output Right
 
 		// initial inits
 		x->currentdir = canvas_getcurrentdir()->s_name;
-		x->filename = gensym("");
+		x->filename = s;
 		x->x_f = 0.0;
 
 		// chuck-related inits
@@ -102,6 +109,14 @@ void *ck_new(void)
 	    x->chuck->setParam( CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS );
 	    x->chuck->setParam( CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS );
 	    x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, x->currentdir );
+        x->chuck->setParam( CHUCK_PARAM_VM_HALT, (t_CKINT) 0 );
+        x->chuck->setParam( CHUCK_PARAM_DUMP_INSTRUCTIONS, (t_CKINT) 0 );
+        // directory for compiled code
+        std::string global_dir = std::string(x->currentdir);
+        x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, global_dir );
+        std::list< std::string > chugin_search;
+        chugin_search.push_back(global_dir + "/chugins" );
+        x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search );
 
 	    // initialize our chuck
 	    x->chuck->init();
@@ -111,7 +126,7 @@ void *ck_new(void)
 		post("ChucK %s", x->chuck->version());
 		post("chuck~ • Object was created");
 	}
-	return x;
+	return (void *)x;
 }
 
 
@@ -120,46 +135,47 @@ void ck_free(t_ck *x)
     delete[] x->in_chuck_buffer;
     delete[] x->out_chuck_buffer;
 	delete x->chuck;
+	/* free inlet resources */
+	inlet_free(x->x_inR);
+
+	/* free any ressources associated with the given outlet */
+ 	outlet_free(x->x_outL);
+ 	outlet_free(x->x_outR);
+
 	post("chuck~ • Memory was freed");
 }
 
 
-extern "C" {
-
-void chuck_tilde_setup(void)
+extern "C" void chuck_tilde_setup(void)
 {
 	/* Initialize the class */
 	ck_class = class_new(gensym("chuck~"),
-							 (t_newmethod)ck_new,
-							 (t_method)ck_free,
-							 sizeof(t_ck), 0, A_NULL);
-	
+		(t_newmethod)ck_new,
+		(t_method)ck_free,
+		sizeof(t_ck),
+		CLASS_DEFAULT,
+		A_DEFSYMBOL,
+		A_NULL);
+
 	/* Specify signal input, with automatic float to signal conversion */
 	CLASS_MAINSIGNALIN(ck_class, t_ck, x_f);
 	
 	/* Bind the DSP method, which is called when the DACs are turned on */
 	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"), A_CANT, A_NULL);
 
-    class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),       A_DEFSYMBOL, A_NULL);
-    class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),               A_NULL);
-    class_addmethod(ck_class, (t_method)ck_signal,     gensym("signal"),    A_SYMBOL, A_NULL);
-    class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"), A_SYMBOL, A_NULL);
-    class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),    A_GIMME,  A_NULL);
+    class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),       A_DEFSYM, 	 A_NULL);
+    class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),                  A_NULL);
+    class_addmethod(ck_class, (t_method)ck_signal,     gensym("signal"),    A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"), A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),    A_GIMME,     A_NULL);
 
     class_addbang(ck_class,   (t_method)ck_bang);
     class_addanything(ck_class, (t_method)ck_anything);
 
-	// set the alias to external
-    class_addcreator((t_newmethod)ck_new, gensym("chuck~"), A_NULL);
-
     // set name of default help file
-    class_sethelpsymbol(ck_class, gensym("help-ck"));
-
-	/* Print message to Max window */
-	// post("chuck~ • External was loaded");
+    class_sethelpsymbol(ck_class, gensym("help-chuck"));
 }
 
-}
 
 //-----------------------------------------------------------------------------------------------
 // helpers
@@ -191,7 +207,6 @@ void ck_run_file(t_ck *x)
         if (access(x->filename->s_name, F_OK) == 0) { // file exists in path
             ck_compile_file(x, x->filename->s_name);
         } else { // try in the example folder
-
 			std::string filename (x->filename->s_name);
 			std::string filepath = std::string(x->currentdir) + "/" + filename;
 
@@ -204,23 +219,11 @@ void ck_run_file(t_ck *x)
 //-----------------------------------------------------------------------------------------------
 // general message handlers
 
+
 void ck_bang(t_ck *x)
 {
-	std::string filename ("sine.ck");
-	std::string filepath = std::string(x->currentdir) + "/" + filename;
-
-	post("filename: %s", filename.c_str());
-
-    if (!x->chuck->compileFile(filepath, "", 1)) {
-        pd_error(x, "compilation error! : %s", filepath.c_str());
-    }
+    ck_run_file(x);
 }
-
-
-// void ck_bang(t_ck *x)
-// {
-//     ck_run_file(x);
-// }
 
 
 void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv)
@@ -364,9 +367,6 @@ void ck_broadcast(t_ck* x, t_symbol* s)
 
 void ck_dsp(t_ck *x, t_signal **sp)
 {
-    // post("ins : %lx %lx",  sp[0]->s_vec, sp[1]->s_vec);
-    // post("outs : %lx %lx", sp[2]->s_vec, sp[3]->s_vec);
-
     delete[] x->in_chuck_buffer;
     delete[] x->out_chuck_buffer;
 
@@ -387,15 +387,16 @@ void ck_dsp(t_ck *x, t_signal **sp)
 	post("buffer_size: %i", x->buffer_size);
 }
 
+
 t_int *ck_perform(t_int *w)
 {
     int i;
-    t_ck        *x  = (t_ck *)(w[OBJECT]);
-    float  *in1  = (float *)(w[INPUT_VECTOR_L]);
-    float  *in2  = (float *)(w[INPUT_VECTOR_R]);
+    t_ck      *x = (t_ck *)(w[OBJECT]);
+    float   *in1 = (float *)(w[INPUT_VECTOR_L]);
+    float   *in2 = (float *)(w[INPUT_VECTOR_R]);
     float  *out1 = (float *)(w[OUTPUT_VECTOR_L]);
     float  *out2 = (float *)(w[OUTPUT_VECTOR_R]);
-    int           n = (int)(w[VECTOR_SIZE]);
+    int        n = (int)(w[VECTOR_SIZE]);
 	
     float * in_ptr = x->in_chuck_buffer;
     float * out_ptr = x->out_chuck_buffer;

@@ -31,11 +31,3 @@ datafiles =
 # include Makefile.pdlibbuilder from submodule directory 'pd-lib-builder'
 include Makefile.pdlibbuilder
 
-
-demo:
-	clang++ -o demo \
-		$(cflags) \
-		../host/chuck-embed.cpp \
-		$(ldflags) \
- 		-weak_framework MultitouchSupport \
- 		-F/System/Library/PrivateFrameworks

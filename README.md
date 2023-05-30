@@ -2,9 +2,22 @@
 
 A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a pd external.
 
-This is an ongoing translation from my more mature [chuck-max](https://github.com/shakfu/chuck-max) project. 
+It include an external, `chuck~` with the following features and limitations:
 
-Note that it's a bit of pain to do this in pd because there are name collisions between the puredata and chuck codebases. (see 'Dev Notes' below), which makes it a hassle to update. The current chuck version used is `1.5.0.1-dev`
+- Generate and process audio via an embedded chuck engine by running chuck files with global parameters adjusted and controlled in realtime via Max messages.
+
+- Layer sounds by running multiple chuck files concurrently.
+
+- Add and remove audio and audio processes on the fly via max messages.
+
+- As of this version, there is no support for callbacks and events except via the `signal` and `broadcast` messages.
+
+see chuck~/help-chuck.pd for a basic demo of current features.
+
+
+Note that this is project is the sibling to [chuck-max](https://github.com/shakfu/chuck-max), a Max-MSP external with similar features.
+
+The current chuck version used is `1.5.0.1-dev`
 
 ## Status
 
@@ -15,7 +28,7 @@ Currently producing audio in a minimal proof-of-concept kind of way.
 - [x] Create demo with audio.
 
 
-## Compilation
+## Building
 
 Only tested on macOS.
 
@@ -32,8 +45,6 @@ Then open `help-chuck.pd` for a basic demo.
 
 
 ## Dev Notes
-
-- Managed to get basic proof-of-concept integration with audio output and basic example to compile without errors using chuck version `1.5.0.1-dev`.
 
 - Note that there were some naming collisions which had to be surmounted (e.g both pd and chuck use `t_class` and `t_array` in their codebases). The following changes were made to the chuck codebase:
 
