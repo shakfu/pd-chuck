@@ -11,6 +11,7 @@
 #X obj 53 69 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 326 59 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 176 81 chuck~ sine.ck;
+#X msg 53 15 run sine.ck;
 #X connect 1 0 0 0;
 #X connect 2 0 11 0;
 #X connect 3 0 11 0;
@@ -23,3 +24,4 @@
 #X connect 11 0 5 0;
 #X connect 11 1 4 0;
 #X connect 11 1 7 0;
+#X connect 12 0 11 0;

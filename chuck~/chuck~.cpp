@@ -141,6 +141,7 @@ void chuck_tilde_setup(void)
 	class_addmethod(ck_class, (t_method)ck_dsp, gensym("dsp"), A_CANT, A_NULL);
 
 	class_addmethod(ck_class, (t_method)ck_reset, gensym("reset"), A_NULL);
+	class_addmethod(ck_class, (t_method)ck_run, gensym("run"), A_DEFSYMBOL, A_NULL);
 
 	class_addbang(ck_class, ck_bang);
 
@@ -180,20 +181,20 @@ void ck_compile_file(t_ck *x, const char *filename)
 
 }
 
-// void ck_run_file(t_ck *x)
-// {
-//     if (x->filename != gensym("")) {
-//         if (access(x->filename->s_name, F_OK) == 0) { // file exists in path
-//             ck_compile_file(x, x->filename->s_name);
-//         } else { // try in the example folder
+void ck_run_file(t_ck *x)
+{
+    if (x->filename != gensym("")) {
+        if (access(x->filename->s_name, F_OK) == 0) { // file exists in path
+            ck_compile_file(x, x->filename->s_name);
+        } else { // try in the example folder
 
-// 			std::string filename (x->filename->s_name);
-// 			std::string filepath = std::string(x->currentdir) + "/" + filename;
+			std::string filename (x->filename->s_name);
+			std::string filepath = std::string(x->currentdir) + "/" + filename;
 
-//             ck_compile_file(x, filename.c_str());
-//         }
-//     }
-// }
+            ck_compile_file(x, filepath.c_str());
+        }
+    }
+}
 
 
 //-----------------------------------------------------------------------------------------------
@@ -293,14 +294,15 @@ void ck_reset(t_ck *x)
 }
 
 
-// void ck_run(t_ck* x, t_symbol* s)
-// {
-//     if (s != gensym("")) {
-//         post("filename: %s", s->s_name);
-//         x->filename = s;
-//         ck_run_file(x);
-//     }
-// }
+void ck_run(t_ck* x, t_symbol* s)
+{
+    if (s != gensym("")) {
+        post("filename: %s", s->s_name);
+        x->filename = s;
+        // x->filename = gensym(s->s_name);
+        ck_run_file(x);
+    }
+}
 
 
 void ck_remove(t_ck *x, t_symbol *s, int argc, t_atom *argv) {
