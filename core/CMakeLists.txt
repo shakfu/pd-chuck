@@ -1,4 +1,6 @@
 
+set(CMAKE_CXX_STANDARD 14)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 execute_process(
@@ -90,6 +92,7 @@ add_library(chuck_lib
 
 target_compile_options(chuck_lib
 	PUBLIC
+	-stdlib=libc++
 	-O3
 )
 

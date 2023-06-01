@@ -30,18 +30,17 @@ Currently producing audio in a minimal proof-of-concept kind of way.
 
 ## Building
 
-Only tested on macOS.
+Only tested on macOS and needs `cmake` to build.
 
 ```bash
 git clone https://github.com/shakfu/pd-chuck
 cd pd-chuck
-make mac
-make lib
-cd chuck~
+mkdir build && cd build
+cmake ..
 make
 ```
 
-Then open `help-chuck.pd` for a basic demo.
+Then open `chuck~/help-chuck.pd` for a basic demo.
 
 
 ## Dev Notes
