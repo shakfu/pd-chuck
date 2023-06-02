@@ -5,8 +5,8 @@ project(pd_chuck)
 set(CMAKE_CXX_STANDARD 14)
 
 
-add_subdirectory(core)
-add_subdirectory(host)
-add_subdirectory(chugins)
+add_subdirectory(thirdparty/chuck/core)
+add_subdirectory(thirdparty/chuck/host)
+add_subdirectory(thirdparty/chugins)
 add_subdirectory(chuck~)
 

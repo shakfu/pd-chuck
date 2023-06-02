@@ -1,5 +1,6 @@
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CHUCK_DIR ${CMAKE_SOURCE_DIR}/thirdparty/chuck)
 
 set(CXX_HOST
 	chuck_main.cpp
@@ -24,12 +25,14 @@ target_compile_definitions(chuck
 
 )
 
+
+
 target_include_directories(chuck
 	PUBLIC
-	${CMAKE_SOURCE_DIR}/core
-	${CMAKE_SOURCE_DIR}/host
-	${CMAKE_SOURCE_DIR}/host/RtAudio
-	${CMAKE_SOURCE_DIR}/host/RtAudio/include
+	${CHUCK_DIR}/core
+	${CHUCK_DIR}/host
+	${CHUCK_DIR}/host/RtAudio
+	${CHUCK_DIR}/host/RtAudio/include
 )
 
 target_link_libraries(chuck
