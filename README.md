@@ -1,6 +1,6 @@
 # pd-chuck
 
-A project to minimally embed the [chuck](https://chuck.stanford.edu) engine in a puredata external.
+A project which minimally embeds the [chuck](https://chuck.stanford.edu) engine in a puredata external.
 
 Includes an external, `chuck~` with the following features and limitations:
 
@@ -9,6 +9,8 @@ Includes an external, `chuck~` with the following features and limitations:
 - Layer sounds by running multiple chuck files concurrently.
 
 - Add and remove audio and audio processes on the fly via pd messages.
+
+- Includes chugins (embedded)
 
 - As of this version, there is no support for callbacks and events except via the `signal` and `broadcast` messages.
 
@@ -31,6 +33,16 @@ Currently producing audio in a minimal proof-of-concept kind of way.
 ## Building
 
 Only tested on macOS and needs `cmake` to build.
+
+Easy way:
+
+```bash
+git clone https://github.com/shakfu/pd-chuck
+cd pd-chuck
+make
+```
+
+Or, long way:
 
 ```bash
 git clone https://github.com/shakfu/pd-chuck

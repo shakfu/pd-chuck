@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 
 
 add_subdirectory(thirdparty/chuck/core)
-add_subdirectory(thirdparty/chuck/host)
-add_subdirectory(thirdparty/chugins)
-add_subdirectory(chuck~)
 
+add_subdirectory(thirdparty/chuck/host)
+
+add_subdirectory(thirdparty/chugins)
+
+add_subdirectory(chuck~)

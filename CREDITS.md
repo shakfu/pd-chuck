@@ -9,4 +9,3 @@ This project thanks the following:
 - Professor [Brad Garton](http://sites.music.columbia.edu/brad) for creating the original [chuck~](http://sites.music.columbia.edu/brad/chuck~) external for Max 5. My failure to build and run on Max 8 his external on Max 8 motivated me to start this project.
 
 - [David Braun] (the author of the very cool [DawDreamer](https://github.com/DBraun/DawDreamer) project which I am already a great fan of) for creating the excellent[ChucKDesigner](https://github.com/DBraun/ChucKDesigner) project which embeds chuck in a Touch Designer plugin. His project provided a super-clear blueprint on how to embed `libchuck` in another host or plugin system and was essential to this project.
-
