@@ -2,6 +2,7 @@
 # The script requires the [rpl](https://pypi.org/project/rpl/) 
 # search and replace utility which can be installed via: `pip install rpl`
 
+TARGET=thirdparty/chuck
 
 RPL="rpl --match-case \
 		 --whole-words \
@@ -14,11 +15,11 @@ RPL="rpl --match-case \
 		 --glob *.hpp"
 
 
-${RPL} t_array t_carray .
-${RPL} t_class t_cclass .
-${RPL} mtof    ck_mtof .
-${RPL} ftom    ck_ftom .
-${RPL} rmstodb ck_rmstodb .
-${RPL} powtodb ck_powtodb .
-${RPL} dbtopow ck_dbtopow .
-${RPL} dbtorms ck_dbtorms .
+${RPL} t_array t_carray   ${TARGET}
+${RPL} t_class t_cclass   ${TARGET}
+${RPL} mtof    ck_mtof    ${TARGET}
+${RPL} ftom    ck_ftom    ${TARGET}
+${RPL} rmstodb ck_rmstodb ${TARGET}
+${RPL} powtodb ck_powtodb ${TARGET}
+${RPL} dbtopow ck_dbtopow ${TARGET}
+${RPL} dbtorms ck_dbtorms ${TARGET}
