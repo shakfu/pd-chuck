@@ -79,8 +79,9 @@ function update_chugins() {
 	update_new_chugin NHHall && \
 	update_new_chugin Overdrive && \
 	update_new_chugin PanN && \
-	# Patch not working
+	# Patch not working use current version
 	# update_new_chugin Patch && \
+	cp -rf thirdparty/chugins/Patch thirdparty/chugins-new/ && \
 	update_new_chugin Perlin && \
 	update_new_chugin PitchTrack && \
 	update_new_chugin PowerADSR && \

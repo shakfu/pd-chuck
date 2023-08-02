@@ -1,12 +1,10 @@
 
-
-.PHONEY: build clean
+.PHONY: build clean
 
 all: build
 
-
 build:
-	@mkdir build && cd build && cmake .. && make
+	@mkdir -p build && cd build && cmake .. && make
 
 clean:
 	@rm -rf build
