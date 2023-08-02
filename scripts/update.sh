@@ -96,18 +96,27 @@ function update_chugins() {
 	update_new_chugin Wavetable && \
 	update_new_chugin WinFuncEnv && \
 	mv thirdparty/chugins thirdparty/chugins-old && \
-	mv thirdparty/chugins-new thirdparty/chugins
+	mv thirdparty/chugins-new thirdparty/chugins && \
+	rm -rf chugins-src
 }
 
 
 function fix_chuck_tilde() {
-	replace "msg->reply" "msg->reply_cb" ${CHUCK_TILDE}
+	# replace "msg->reply" "msg->reply_cb" ${CHUCK_TILDE}
+	patch chuck~/chuck~.cpp < scripts/patch/chuck_tilde.patch
 }
+
+function fix_chuck_core_cmakelists() {
+	patch thirdparty/chuck/core/CMakeLists.txt < scripts/patch/chuck_core_cmakelists.patch
+}
+
+
 
 function update() {
 	update_chuck
 	update_chugins
 	fix_chuck_tilde
+	fix_chuck_core_cmakelists
 }
 
 update

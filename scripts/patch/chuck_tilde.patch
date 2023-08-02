@@ -1,0 +1,8 @@
+191c191
+<     msg->reply = (ck_msg_func)NULL;
+---
+>     msg->reply_cb = (ck_msg_func)NULL;
+346c346
+<     msg->reply = (ck_msg_func)0;
+---
+>     msg->reply_cb = (ck_msg_func)0;
