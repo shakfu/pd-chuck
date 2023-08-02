@@ -94,7 +94,9 @@ function update_chugins() {
 	update_new_chugin WPDiodeLadder && \
 	update_new_chugin WPKorg35 && \
 	update_new_chugin Wavetable && \
-	update_new_chugin WinFuncEnv
+	update_new_chugin WinFuncEnv && \
+	mv thirdparty/chugins thirdparty/chugins-old && \
+	mv thirdparty/chugins-new thirdparty/chugins
 }
 
 
