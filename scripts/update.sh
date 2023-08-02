@@ -90,7 +90,7 @@ function update_chugins() {
 	update_new_chugin RegEx && \
 	update_new_chugin Sigmund && \
 	# duplicaate symbols between sigmund.c and sigmund-dsp.c
-	mv thirdparty/chugins-new/Sigmund/sigmund.c thirdparty/chugins-new/Sigmund/sigmund.orig.c && \
+	mv thirdparty/chugins-new/Sigmund/sigmund.c thirdparty/chugins-new/Sigmund/sigmund.c.orig && \
 	update_new_chugin Spectacle && \
 	update_new_chugin WPDiodeLadder && \
 	update_new_chugin WPKorg35 && \
