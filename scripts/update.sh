@@ -1,25 +1,15 @@
+#!/usr/bin/env bash
+
 # update.sh
 #
-# This script git clones latest version of chuck and chugins
+# This script updates to latest clones of chuck and chugins
+# optionally apply some patches or remove old code
 
-CHUCK_TILDE=chuck~/chuck~.cpp
 CHUCK_REPO=https://github.com/ccrma/chuck.git
 CHUGINS_REPO=https://github.com/ccrma/chugins.git
-RPL="rpl --match-case \
-		 --whole-words \
-		 --verbose \
-		 --fixed-strings"
+APPLY_PATCHES=true
+REMOVE_OLD=true
 
-
-function replace() {
-	src=$1
-	dst=$2
-	target_file=$3
-	rpl --match-case \
-		--whole-words \
-		--verbose \
-		--fixed-strings $src $dst $target_file
-}
 
 function update_chuck() {
 	git clone ${CHUCK_REPO} chuck-src && \
@@ -36,17 +26,17 @@ function update_chuck() {
 
 
 function move_to_new() {
-	mv chugins-src/$1 thirdparty/chugins-new/$1
+	mv chugins-src/"$1" thirdparty/chugins-new/"$1"
 }
 
 function update_new_chugin() {
-	move_to_new $1 && \
-	cp thirdparty/chugins/$1/CMakeLists.txt thirdparty/chugins-new/$1 && \
-	rm -rf thirdparty/chugins-new/$1/makefile* && \
-	rm -rf thirdparty/chugins-new/$1/*.dsw && \
-	rm -rf thirdparty/chugins-new/$1/*.dsp && \
-	rm -rf thirdparty/chugins-new/$1/*.xcodeproj && \
-	rm -rf thirdparty/chugins-new/$1/*.vcxproj
+	move_to_new "$1" && \
+	cp thirdparty/chugins/"$1"/CMakeLists.txt thirdparty/chugins-new/"$1" && \
+	rm -rf thirdparty/chugins-new/"$1"/makefile* && \
+	rm -rf thirdparty/chugins-new/"$1"/*.dsw && \
+	rm -rf thirdparty/chugins-new/"$1"/*.dsp && \
+	rm -rf thirdparty/chugins-new/"$1"/*.xcodeproj && \
+	rm -rf thirdparty/chugins-new/"$1"/*.vcxproj
 }
 
 
@@ -79,9 +69,8 @@ function update_chugins() {
 	update_new_chugin NHHall && \
 	update_new_chugin Overdrive && \
 	update_new_chugin PanN && \
-	# Patch not working
-	# update_new_chugin Patch && \
-	# cp -rf thirdparty/chugins/Patch thirdparty/chugins-new/ && \
+	# Patch not working, (will be disable at CMakeLists.txt level)
+	update_new_chugin Patch && \
 	update_new_chugin Perlin && \
 	update_new_chugin PitchTrack && \
 	update_new_chugin PowerADSR && \
@@ -89,7 +78,7 @@ function update_chugins() {
 	update_new_chugin Range && \
 	update_new_chugin RegEx && \
 	update_new_chugin Sigmund && \
-	# duplicaate symbols between sigmund.c and sigmund-dsp.c
+	# duplicate symbols between sigmund.c and sigmund-dsp.c
 	mv thirdparty/chugins-new/Sigmund/sigmund.c thirdparty/chugins-new/Sigmund/sigmund.c.orig && \
 	update_new_chugin Spectacle && \
 	update_new_chugin WPDiodeLadder && \
@@ -116,13 +105,22 @@ function fix_chugins_cmakelists() {
 	patch thirdparty/chugins/CMakeLists.txt < scripts/patch/chugins_cmakelists.patch
 }
 
+function apply_all_patches() {
+	fix_chuck_tilde
+	fix_chuck_core_cmakelists
+	fix_chugins_cmakelists
+}
+
 
 function update() {
 	update_chuck
 	update_chugins
-	fix_chuck_tilde
-	fix_chuck_core_cmakelists
-	fix_chugins_cmakelists
+	if [ "${APPLY_PATCHES}" = true ] ; then
+    apply_all_patches
+	fi
+	if [ "${REMOVE_OLD}" = true ] ; then
+    rm -rf thirdpary/*-old
+	fi
 }
 
 update
