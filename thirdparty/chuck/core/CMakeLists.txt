@@ -12,7 +12,6 @@ execute_process(
 set(C_CORE
 	chuck.tab.c
 	chuck.yy.c
-	util_math.c
 	util_network.c
 	util_raw.c
 	util_xforms.c
@@ -61,6 +60,8 @@ set(CXX_CORE
 	util_buffers.cpp
 	util_console.cpp
 	util_hid.cpp
+	util_math.cpp
+	util_platforms.cpp
 	util_opsc.cpp
 	util_serial.cpp
 	util_string.cpp
