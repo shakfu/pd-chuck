@@ -2,6 +2,28 @@
 <     msg->reply = (ck_msg_func)NULL;
 ---
 >     msg->reply_cb = (ck_msg_func)NULL;
+300,301c300,301
+<     ck_send_chuck_vm_msg(x, MSG_CLEARGLOBALS);
+<     ck_send_chuck_vm_msg(x, MSG_CLEARVM);
+---
+>     ck_send_chuck_vm_msg(x, CK_MSG_CLEARGLOBALS);
+>     ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
+324c324
+<             msg->type = MSG_REMOVE;
+---
+>             msg->type = CK_MSG_REMOVE;
+332c332
+<                 msg->type = MSG_REMOVEALL;
+---
+>                 msg->type = CK_MSG_REMOVEALL;
+335c335
+<                 msg->type = MSG_REMOVE;
+---
+>                 msg->type = CK_MSG_REMOVE;
+342c342
+<         msg->type = MSG_REMOVE;
+---
+>         msg->type = CK_MSG_REMOVE;
 346c346
 <     msg->reply = (ck_msg_func)0;
 ---
