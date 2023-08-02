@@ -122,6 +122,7 @@ function update() {
 	update_chugins
 	fix_chuck_tilde
 	fix_chuck_core_cmakelists
+	fix_chugins_cmakelists
 }
 
 update
