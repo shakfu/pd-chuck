@@ -79,9 +79,9 @@ function update_chugins() {
 	update_new_chugin NHHall && \
 	update_new_chugin Overdrive && \
 	update_new_chugin PanN && \
-	# Patch not working use current version
+	# Patch not working
 	# update_new_chugin Patch && \
-	cp -rf thirdparty/chugins/Patch thirdparty/chugins-new/ && \
+	# cp -rf thirdparty/chugins/Patch thirdparty/chugins-new/ && \
 	update_new_chugin Perlin && \
 	update_new_chugin PitchTrack && \
 	update_new_chugin PowerADSR && \
@@ -111,6 +111,10 @@ function fix_chuck_core_cmakelists() {
 	patch thirdparty/chuck/core/CMakeLists.txt < scripts/patch/chuck_core_cmakelists.patch
 }
 
+
+function fix_chugins_cmakelists() {
+	patch thirdparty/chugins/CMakeLists.txt < scripts/patch/chugins_cmakelists.patch
+}
 
 
 function update() {
