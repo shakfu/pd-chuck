@@ -1,7 +1,7 @@
 #N canvas 538 158 569 467 12;
 #X obj 265 352 dac~;
 #X obj 214 152 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
-#X msg 134 153 reset;
+#X msg 137 154 reset;
 #X obj 214 288 *~ 0.2;
 #X obj 324 289 *~ 0.2;
 #X msg 339 113 remove;
@@ -18,7 +18,8 @@
 #X obj 259 41 hsl 30 19 0 20 0 0 empty empty empty -2 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 215 234 chuck~ pdtest.ck;
 #X text 210 132 run;
-#X msg 33 114 run phasor.ck;
+#X msg 10 177 run phasor.ck;
+#X msg 26 111 run Sine-test.ck;
 #X connect 1 0 17 0;
 #X connect 2 0 17 0;
 #X connect 3 0 0 0;
@@ -36,3 +37,4 @@
 #X connect 17 0 3 0;
 #X connect 17 1 4 0;
 #X connect 19 0 17 0;
+#X connect 20 0 17 0;
