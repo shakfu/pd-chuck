@@ -3,7 +3,7 @@ global float freq_m; // default 12
 global float wet;
 
 SinOsc s => JCRev r => dac;
-.3 => s.gain;
+.5 => s.gain;
 .1 => r.mix;
 
 // an array

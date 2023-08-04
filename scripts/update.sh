@@ -7,8 +7,8 @@
 
 CHUCK_REPO=https://github.com/ccrma/chuck.git
 CHUGINS_REPO=https://github.com/ccrma/chugins.git
-APPLY_PATCHES=true
-REMOVE_OLD=true
+APPLY_PATCHES=false
+REMOVE_OLD=false
 
 
 function update_chuck() {
@@ -69,7 +69,6 @@ function update_chugins() {
 	update_new_chugin NHHall && \
 	update_new_chugin Overdrive && \
 	update_new_chugin PanN && \
-	# Patch not working, (will be disable at CMakeLists.txt level)
 	update_new_chugin Patch && \
 	update_new_chugin Perlin && \
 	update_new_chugin PitchTrack && \
@@ -93,22 +92,11 @@ function update_chugins() {
 
 function fix_chuck_tilde() {
 	# replace "msg->reply" "msg->reply_cb" ${CHUCK_TILDE}
-	patch chuck~/chuck~.cpp < scripts/patch/chuck_tilde.patch
-}
+	# patch chuck~/chuck~.cpp < scripts/patch/chuck_xxxx.patch
 
-function fix_chuck_core_cmakelists() {
-	patch thirdparty/chuck/core/CMakeLists.txt < scripts/patch/chuck_core_cmakelists.patch
-}
-
-
-function fix_chugins_cmakelists() {
-	patch thirdparty/chugins/CMakeLists.txt < scripts/patch/chugins_cmakelists.patch
-}
 
 function apply_all_patches() {
-	fix_chuck_tilde
-	fix_chuck_core_cmakelists
-	fix_chugins_cmakelists
+	# empty for now
 }
 
 

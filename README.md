@@ -6,11 +6,11 @@ Includes an external, `chuck~` with the following features and limitations:
 
 - Generate and process audio via an embedded chuck engine by running chuck files with global parameters adjusted and controlled in realtime via pd messages.
 
-- Layer sounds by running multiple chuck files concurrently.
+- Layer sounds by running multiple chuck files (or `shreds`) concurrently.
 
 - Add and remove audio and audio processes on the fly via pd messages.
 
-- Includes chugins (embedded)
+- Includes [standard chugins](https://github.com/ccrma/chugins) except [`Faust`, `FluidSynth`, `Ladspa`, `MIAP`]
 
 - As of this version, there is no support for callbacks and events except via the `signal` and `broadcast` messages.
 
@@ -21,15 +21,19 @@ Note that this is project is the sibling to [chuck-max](https://github.com/shakf
 
 The current chuck version used is `1.5.0.8`
 
-Note: `thirdparty/chugins/Patch` is disabled during builds pending fixes.
 
 ## Status
 
 Currently producing audio in a minimal proof-of-concept kind of way.
 
-- [ ] Audio quality needs improvement.
+- [ ] No Windows support yet
+- [ ] No Linux support yet
+- [ ] Add multichannel support
+- [ ] Add rest of the standard chugins
+- [ ] Add support for callbacks and events
+- [x] Audio quality needs improvement (fix thanks to Professor GE Wang!)
 - [x] No errors during compilation of external
-- [x] Instanciate Chuck class without errors.
+- [x] Instantiate Chuck class without errors.
 - [x] Create demo with audio.
 
 
