@@ -27,6 +27,7 @@ Note: `thirdparty/chugins/Patch` is disabled during builds pending fixes.
 
 Currently producing audio in a minimal proof-of-concept kind of way.
 
+- [ ] Audio quality needs improvement.
 - [x] No errors during compilation of external
 - [x] Instanciate Chuck class without errors.
 - [x] Create demo with audio.

@@ -107,8 +107,8 @@ void *ck_new(t_symbol *s)
 	    // set sample rate and number of in/out channels on our chuck
         x->srate = sys_getsr();
         
-        x->chuck->setParam(CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) x->srate);
-	    x->chuck->setParam(CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS);
+	    x->chuck->setParam(CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) x->srate);
+        x->chuck->setParam(CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS);
 	    x->chuck->setParam(CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS);
 	    x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir);
         x->chuck->setParam(CHUCK_PARAM_VM_HALT, (t_CKINT) 0);
@@ -140,7 +140,7 @@ void ck_free(t_ck *x)
 	/* free inlet resources */
 	inlet_free(x->x_inR);
 
-	/* free any ressources associated with the given outlet */
+	/* free any resources associated with the given outlet */
  	outlet_free(x->x_outL);
  	outlet_free(x->x_outR);
 

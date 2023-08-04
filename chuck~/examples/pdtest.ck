@@ -3,7 +3,7 @@ global float freq_m; // default 12
 global float wet;
 
 SinOsc s => JCRev r => dac;
-.2 => s.gain;
+.3 => s.gain;
 .1 => r.mix;
 
 // an array
@@ -11,8 +11,7 @@ SinOsc s => JCRev r => dac;
 
 while( true )
 {
-    //Std.mtof( 45 + Math.random2(0,3) * freq_m +
-    Std.ck_mtof( 45 + Math.random2(0,3) * freq_m +
+    Std.mtof( 45 + Math.random2(0,3) * freq_m +
         hi[Math.random2(0,hi.size()-1)] ) => s.freq;
     wet => r.mix;
 
