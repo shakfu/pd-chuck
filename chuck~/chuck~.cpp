@@ -390,6 +390,7 @@ void ck_dsp(t_ck *x, t_signal **sp)
 
 t_int *ck_perform(t_int *w)
 {
+    // Thanks to professor GE Wang for the fix!
     int i;
     t_ck *x = (t_ck *)(w[OBJECT]);
     float *in1 = (float *)(w[INPUT_VECTOR_L]);
@@ -401,22 +402,28 @@ t_int *ck_perform(t_int *w)
     float *in_ptr = x->in_chuck_buffer;
     float *out_ptr = x->out_chuck_buffer;
 
+    // interleave
     for (i = 0; i < n; i++) {
-        *(in_ptr++) = in1[i];
+        *in_ptr = in1[i]; in_ptr += N_IN_CHANNELS;
+    }
+    // set in_ptr to input with offset
+    in_ptr = x->in_chuck_buffer+1;
+    for (i = 0; i < n; i++) {
+        *in_ptr = in2[i]; in_ptr += N_IN_CHANNELS;
     }
 
-    for (i = 0; i < n; i++) {
-        *(in_ptr++) = in2[i];
-    }
-
+    // NB pd non-interleaved; chuck interleaved by default
     x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
 
+    // de-interleave
+    out_ptr = x->out_chuck_buffer;
     for (i = 0; i < n; i++) {
-        out1[i] = *(out_ptr++);
+        out1[i] = *out_ptr; out_ptr += N_OUT_CHANNELS;
     }
-
+    // set out_ptr to output with offset
+    out_ptr = x->out_chuck_buffer+1;
     for (i = 0; i < n; i++) {
-        out2[i] = *(out_ptr++);
+        out2[i] = *out_ptr; out_ptr += N_OUT_CHANNELS;
     }
 
     /* Return the next address in the DSP chain */
