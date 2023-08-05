@@ -16,7 +16,6 @@ Includes an external, `chuck~` with the following features and limitations:
 
 see `chuck~/help-chuck.pd` for a basic demo of current features.
 
-
 Note that this is project is the sibling to [chuck-max](https://github.com/shakfu/chuck-max), a Max-MSP external with similar features.
 
 The current chuck version used is `1.5.0.8`

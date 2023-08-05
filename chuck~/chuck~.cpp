@@ -390,7 +390,7 @@ void ck_dsp(t_ck *x, t_signal **sp)
 
 t_int *ck_perform(t_int *w)
 {
-    // Thanks to professor GE Wang for the fix!
+    // Thanks to Professor GE Wang for the fix!
     int i;
     t_ck *x = (t_ck *)(w[OBJECT]);
     float *in1 = (float *)(w[INPUT_VECTOR_L]);

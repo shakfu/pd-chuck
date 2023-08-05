@@ -23,9 +23,17 @@ target_include_directories(${PROJECT_NAME}
     ${CHUCK_INCLUDE}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_darwin")
+elseif(MAKE_SYSTEM_NAME STREQUAL "Windows")
+set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_windows")
+elseif(MAKE_SYSTEM_NAME STREQUAL "Linux")
+set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_linux")
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "chuck~")
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -33,17 +41,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAK
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    "-framework CoreAudio"
-    "-framework CoreMIDI"
-    "-framework CoreFoundation"
-    "-framework IOKit"
-    "-framework Carbon"
-    "-framework AppKit"
-    "-framework Foundation"
-    "-F/System/Library/PrivateFrameworks"
-    "-weak_framework MultitouchSupport"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"    
+    "$<$<PLATFORM_ID:Darwin>:-framework IOKit>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Carbon>"
+    "$<$<PLATFORM_ID:Darwin>:-framework AppKit>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Foundation>"
+    "$<$<PLATFORM_ID:Darwin>:-F/System/Library/PrivateFrameworks>"
+    "$<$<PLATFORM_ID:Darwin>:-weak_framework MultitouchSupport>"
     -lc++
     -lm
     chuck_lib
 )
+
+
 
