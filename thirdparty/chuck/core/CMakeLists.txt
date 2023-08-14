@@ -93,22 +93,33 @@ add_library(chuck_lib
 
 target_compile_options(chuck_lib
 	PUBLIC
-	-stdlib=libc++
+	$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>
+	$<$<PLATFORM_ID:Linux>:-fno-strict-aliasing>
 	-O3
 )
 
 target_compile_definitions(chuck_lib
 	PUBLIC
-	__MACOSX_CORE__
+	$<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
+	$<$<PLATFORM_ID:Linux>:__LINUX_ALSA__>	
+	$<$<PLATFORM_ID:Linux>:__CK_SNDFILE_NATIVE__>	
 	HAVE_CONFIG_H
-
 )
-
 
 target_include_directories(chuck_lib
 	PUBLIC
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/lo
+)
+
+target_link_libraries(chuck_lib
+	PUBLIC
+	$<$<PLATFORM_ID:Linux>:-lasound>
+	$<$<PLATFORM_ID:Linux>:-lstdc++>
+	$<$<PLATFORM_ID:Linux>:-ldl>
+	$<$<PLATFORM_ID:Linux>:-lm>
+	$<$<PLATFORM_ID:Linux>:-lsndfile>
+	$<$<PLATFORM_ID:Linux>:-lpthread>
 )
 
 set_property(TARGET chuck_lib PROPERTY OUTPUT_NAME chuck)

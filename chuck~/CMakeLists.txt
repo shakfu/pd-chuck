@@ -17,6 +17,10 @@ add_library(
     ${PROJECT_SRC}
 )
 
+# target_compile_options(${PROJECT_NAME}
+#     PUBLIC
+#     -fPIC
+#  )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -50,7 +54,8 @@ target_link_libraries(${PROJECT_NAME}
     "$<$<PLATFORM_ID:Darwin>:-framework Foundation>"
     "$<$<PLATFORM_ID:Darwin>:-F/System/Library/PrivateFrameworks>"
     "$<$<PLATFORM_ID:Darwin>:-weak_framework MultitouchSupport>"
-    -lc++
+    $<$<PLATFORM_ID:Darwin>:-lc++>
+    $<$<PLATFORM_ID:Linux>:-lstdc++>
     -lm
     chuck_lib
 )

@@ -39,7 +39,9 @@ target_compile_options(${CHUGIN_NAME}
 
 target_compile_definitions(${CHUGIN_NAME}
 	PUBLIC
-	__MACOSX_CORE__
+	$<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
+	$<$<PLATFORM_ID:Linux>:__LINUX_ALSA__>	
+	$<$<PLATFORM_ID:Linux>:__CK_SNDFILE_NATIVE__>
 	HAVE_CONFIG_H
 	$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
 )
@@ -53,7 +55,8 @@ target_include_directories(${CHUGIN_NAME}
 target_link_options(${CHUGIN_NAME}
 	PUBLIC
 	-shared
-	-lc++
+	$<$<PLATFORM_ID:Darwin>:-lc++>
+	$<$<PLATFORM_ID:Linux>:-lstdc++>
 )
 
 # target_link_libraries(${CHUGIN_NAME}
