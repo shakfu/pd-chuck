@@ -2,11 +2,14 @@
 .DS_Store
 
 *.chug
+*.pd_linux
+*.pd_darwin
+*.pd_windows
 
-#core/chuck.output
-#core/chuck.tab.c
-#core/chuck.tab.h
-#core/chuck.yy.c
+core/chuck.output
+core/chuck.tab.c
+core/chuck.tab.h
+core/chuck.yy.c
 
 project.xcworkspace
 xcuserdata

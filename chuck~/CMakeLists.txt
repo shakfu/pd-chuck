@@ -24,19 +24,21 @@ target_include_directories(${PROJECT_NAME}
     ${CHUCK_INCLUDE}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES 
+    PREFIX ""
+    OUTPUT_NAME "chuck~"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_darwin")
-elseif(MAKE_SYSTEM_NAME STREQUAL "Windows")
-set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_windows")
-elseif(MAKE_SYSTEM_NAME STREQUAL "Linux")
-set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_linux")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_darwin")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_linux")
 endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "chuck~")
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
@@ -45,6 +47,7 @@ target_compile_definitions(${PROJECT_NAME}
 
 target_compile_options(${PROJECT_NAME}
     PUBLIC
+    $<$<PLATFORM_ID:Darwin>:-undefined dynamic_lookup>
     $<$<PLATFORM_ID:Linux>:-fPIC>
     $<$<PLATFORM_ID:Linux>:-fcheck-new>    
 )
