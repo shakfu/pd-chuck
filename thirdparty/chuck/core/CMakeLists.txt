@@ -91,10 +91,14 @@ add_library(chuck_lib
 )
 
 
+
+
+
 target_compile_options(chuck_lib
 	PUBLIC
 	$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>
 	$<$<PLATFORM_ID:Linux>:-fno-strict-aliasing>
+	$<$<PLATFORM_ID:Linux>:-fPIC>
 	-O3
 )
 
@@ -121,6 +125,12 @@ target_link_libraries(chuck_lib
 	$<$<PLATFORM_ID:Linux>:-lsndfile>
 	$<$<PLATFORM_ID:Linux>:-lpthread>
 )
+
+# target_link_options(chuck_lib
+#     PUBLIC
+#     $<$<PLATFORM_ID:Linux>:-fPIC>
+# )
+
 
 set_property(TARGET chuck_lib PROPERTY OUTPUT_NAME chuck)
 

@@ -17,10 +17,7 @@ add_library(
     ${PROJECT_SRC}
 )
 
-# target_compile_options(${PROJECT_NAME}
-#     PUBLIC
-#     -fPIC
-#  )
+
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -41,7 +38,23 @@ endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "chuck~")
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+    $<$<PLATFORM_ID:Linux>:UNIX>
+)
 
+target_compile_options(${PROJECT_NAME}
+    PUBLIC
+    $<$<PLATFORM_ID:Linux>:-fPIC>
+    $<$<PLATFORM_ID:Linux>:-fcheck-new>    
+)
+
+target_link_options(${PROJECT_NAME}
+    PUBLIC
+    $<$<PLATFORM_ID:Linux>:-rdynamic>
+    $<$<PLATFORM_ID:Linux>:-shared>
+    $<$<PLATFORM_ID:Linux>:-fPIC>
+)
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
@@ -56,7 +69,8 @@ target_link_libraries(${PROJECT_NAME}
     "$<$<PLATFORM_ID:Darwin>:-weak_framework MultitouchSupport>"
     $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
-    -lm
+    $<$<PLATFORM_ID:Linux>:-lm>
+    $<$<PLATFORM_ID:Linux>:-lc>
     chuck_lib
 )
 
