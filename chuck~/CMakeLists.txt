@@ -4,7 +4,6 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 12.6)
 set(CHUCK_DIR ${CMAKE_SOURCE_DIR}/thirdparty/chuck)
 set(CHUCK_INCLUDE ${CHUCK_DIR}/core)
 
-
 file(GLOB PROJECT_SRC
     "*.h"
     "*.c"
@@ -16,8 +15,6 @@ add_library(
     MODULE
     ${PROJECT_SRC}
 )
-
-
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -39,7 +36,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pd_linux")
 endif()
 
-
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
     $<$<PLATFORM_ID:Linux>:UNIX>
@@ -47,13 +43,13 @@ target_compile_definitions(${PROJECT_NAME}
 
 target_compile_options(${PROJECT_NAME}
     PUBLIC
-    $<$<PLATFORM_ID:Darwin>:-undefined dynamic_lookup>
     $<$<PLATFORM_ID:Linux>:-fPIC>
     $<$<PLATFORM_ID:Linux>:-fcheck-new>    
 )
 
 target_link_options(${PROJECT_NAME}
     PUBLIC
+    $<$<PLATFORM_ID:Darwin>:-undefined dynamic_lookup>
     $<$<PLATFORM_ID:Linux>:-rdynamic>
     $<$<PLATFORM_ID:Linux>:-shared>
     $<$<PLATFORM_ID:Linux>:-fPIC>
@@ -72,10 +68,8 @@ target_link_libraries(${PROJECT_NAME}
     "$<$<PLATFORM_ID:Darwin>:-weak_framework MultitouchSupport>"
     $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
-    $<$<PLATFORM_ID:Linux>:-lm>
     $<$<PLATFORM_ID:Linux>:-lc>
+    $<$<PLATFORM_ID:Linux,Darwin>:-lm>
     chuck_lib
 )
-
-
 

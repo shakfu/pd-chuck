@@ -4,6 +4,7 @@
 # puredata specific
 *.pd_darwin
 *.pd_linux
+*.pd_windows
 *.l_i386
 *.l_amd64
 *.l_arm

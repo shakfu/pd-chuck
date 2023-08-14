@@ -25,11 +25,11 @@ The current chuck version used is `1.5.1.0`
 
 Currently producing audio in a minimal proof-of-concept kind of way.
 
+- [ ] Add support for callbacks and events
+- [X] Preliminary Linux support
 - [ ] No Windows support yet
-- [ ] No Linux support yet
 - [ ] Add multichannel support
 - [ ] Add rest of the standard chugins
-- [ ] Add support for callbacks and events
 - [x] Audio quality needs improvement (fix thanks to Professor GE Wang!)
 - [x] No errors during compilation of external
 - [x] Instantiate Chuck class without errors.

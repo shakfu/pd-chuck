@@ -2,9 +2,6 @@
 .DS_Store
 
 *.chug
-*.pd_linux
-*.pd_darwin
-*.pd_windows
 
 core/chuck.output
 core/chuck.tab.c
