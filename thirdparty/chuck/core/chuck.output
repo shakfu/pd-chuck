@@ -1,25 +1,25 @@
-Terminals which are not used
+Terminals unused in grammar
 
-   POUND
-   ASSIGN
-   THEN
-   NULL_TOK
-   SIMULT
-   PATTERN
-   CODE
-   TRANSPORT
-   HOST
-   TIME
-   WHENEVER
-   NEXT
-   EVERY
-   BEFORE
-   AFTER
-   AT
-   ATAT_SYM
-   S_CHUCK
-   LEFT_S_CHUCK
-   CONST
+    POUND
+    ASSIGN
+    THEN
+    NULL_TOK
+    SIMULT
+    PATTERN
+    CODE
+    TRANSPORT
+    HOST
+    TIME
+    WHENEVER
+    NEXT
+    EVERY
+    BEFORE
+    AFTER
+    AT
+    ATAT_SYM
+    S_CHUCK
+    LEFT_S_CHUCK
+    CONST
 
 
 State 52 conflicts: 38 shift/reduce
@@ -51,7 +51,7 @@ Grammar
    13          | EXTENDS id_dot IMPLEMENTS id_list
 
    14 class_body: class_body2
-   15           | /* empty */
+   15           | ε
 
    16 class_body2: class_section
    17            | class_section class_body2
@@ -75,7 +75,7 @@ Grammar
 
    30 class_decl: PUBLIC
    31           | PRIVATE
-   32           | /* empty */
+   32           | ε
 
    33 function_decl: FUNCTION
    34              | PUBLIC
@@ -84,7 +84,7 @@ Grammar
 
    37 static_decl: STATIC
    38            | ABSTRACT
-   39            | /* empty */
+   39            | ε
 
    40 type_decl_a: ID
    41            | ID AT_SYM
@@ -277,251 +277,299 @@ Grammar
 
 Terminals, with rules where they appear
 
-$end (0) 0
-error (256)
-ID (258) 22 23 24 25 26 27 28 29 40 41 94 95 96 170 173
-STRING_LIT (259) 176
-CHAR_LIT (260) 177
-INT_VAL (261) 174
-FLOAT_VAL (262) 175
-POUND (263)
-COMMA (264) 23 49 76 93
-COLON (265) 67 117
-SEMICOLON (266) 28 29 57 58 59 60 64 69 73 74
-LPAREN (267) 26 27 28 29 61 62 63 64 65 66 67 68 69 70 168 169 183
-    184
-RPAREN (268) 26 27 28 29 61 62 63 64 65 66 67 68 69 70 97 98 99 168
-    169 183 184
-LBRACK (269) 81 82 83 84
-RBRACK (270) 81 82 83 84
-LBRACE (271) 6 7 8 9 71 72
-RBRACE (272) 6 7 8 9 71 72
-DOT (273) 25 170
-PLUS (274) 140 158
-MINUS (275) 141 159
-TIMES (276) 143 162
-DIVIDE (277) 144
-PERCENT (278) 145
-EQ (279) 129
-NEQ (280) 130
-LT (281) 42 43 132
-LE (282) 134
-GT (283) 42 43 133
-GE (284) 135
-AND (285) 121
-OR (286) 119
-ASSIGN (287)
-IF (288) 61 62
-THEN (289)
-ELSE (290) 62
-WHILE (291) 63 64
-FOR (292) 65 66 67
-DO (293) 64 69
-LOOP (294) 70
-BREAK (295) 59
-CONTINUE (296) 60
-NULL_TOK (297)
-FUNCTION (298) 33
-RETURN (299) 57 58
-QUESTION (300) 117
-EXCLAMATION (301) 161
-S_OR (302) 123
-S_AND (303) 127
-S_XOR (304) 125
-PLUSPLUS (305) 151 171
-MINUSMINUS (306) 152 172
-DOLLAR (307) 149
-POUNDPAREN (308) 97
-PERCENTPAREN (309) 98
-ATPAREN (310) 99
-SIMULT (311)
-PATTERN (312)
-CODE (313)
-TRANSPORT (314)
-HOST (315)
-TIME (316)
-WHENEVER (317)
-NEXT (318)
-UNTIL (319) 68 69
-EXTERNAL (320) 87
-GLOBAL (321) 88
-EVERY (322)
-BEFORE (323)
-AFTER (324)
-AT (325)
-AT_SYM (326) 41 43
-ATAT_SYM (327)
-NEW (328) 156 157
-SIZEOF (329) 155
-TYPEOF (330) 154
-SAME (331) 90 91
-PLUS_CHUCK (332) 102
-MINUS_CHUCK (333) 103
-TIMES_CHUCK (334) 104
-DIVIDE_CHUCK (335) 105
-S_AND_CHUCK (336) 111
-S_OR_CHUCK (337) 112
-S_XOR_CHUCK (338) 113
-SHIFT_RIGHT_CHUCK (339) 106
-SHIFT_LEFT_CHUCK (340) 107
-PERCENT_CHUCK (341) 108
-SHIFT_RIGHT (342) 138
-SHIFT_LEFT (343) 137
-TILDA (344) 147 160 163
-CHUCK (345) 100
-COLONCOLON (346) 165
-S_CHUCK (347)
-AT_CHUCK (348) 101
-LEFT_S_CHUCK (349)
-UNCHUCK (350) 109
-UPCHUCK (351) 110
-CLASS (352) 6 7
-INTERFACE (353) 8 9
-EXTENDS (354) 11 12 13 21
-IMPLEMENTS (355) 10 11 13
-PUBLIC (356) 30 34
-PROTECTED (357) 35
-PRIVATE (358) 31 36
-STATIC (359) 37 89 91
-ABSTRACT (360) 38
-CONST (361)
-SPORK (362) 163
-ARROW_RIGHT (363) 115
-ARROW_LEFT (364) 114
-L_HACK (365) 182
-R_HACK (366) 182
+    $end (0) 0
+    error (256)
+    ID <sval> (258) 22 23 24 25 26 27 28 29 40 41 94 95 96 170 173
+    STRING_LIT <sval> (259) 176
+    CHAR_LIT <sval> (260) 177
+    INT_VAL <ival> (261) 174
+    FLOAT_VAL <fval> (262) 175
+    POUND (263)
+    COMMA (264) 23 49 76 93
+    COLON (265) 67 117
+    SEMICOLON (266) 28 29 57 58 59 60 64 69 73 74
+    LPAREN (267) 26 27 28 29 61 62 63 64 65 66 67 68 69 70 168 169 183 184
+    RPAREN (268) 26 27 28 29 61 62 63 64 65 66 67 68 69 70 97 98 99 168 169 183 184
+    LBRACK (269) 81 82 83 84
+    RBRACK (270) 81 82 83 84
+    LBRACE (271) 6 7 8 9 71 72
+    RBRACE (272) 6 7 8 9 71 72
+    DOT (273) 25 170
+    PLUS (274) 140 158
+    MINUS (275) 141 159
+    TIMES (276) 143 162
+    DIVIDE (277) 144
+    PERCENT (278) 145
+    EQ (279) 129
+    NEQ (280) 130
+    LT (281) 42 43 132
+    LE (282) 134
+    GT (283) 42 43 133
+    GE (284) 135
+    AND (285) 121
+    OR (286) 119
+    ASSIGN (287)
+    IF (288) 61 62
+    THEN (289)
+    ELSE (290) 62
+    WHILE (291) 63 64
+    FOR (292) 65 66 67
+    DO (293) 64 69
+    LOOP (294) 70
+    BREAK (295) 59
+    CONTINUE (296) 60
+    NULL_TOK (297)
+    FUNCTION (298) 33
+    RETURN (299) 57 58
+    QUESTION (300) 117
+    EXCLAMATION (301) 161
+    S_OR (302) 123
+    S_AND (303) 127
+    S_XOR (304) 125
+    PLUSPLUS (305) 151 171
+    MINUSMINUS (306) 152 172
+    DOLLAR (307) 149
+    POUNDPAREN (308) 97
+    PERCENTPAREN (309) 98
+    ATPAREN (310) 99
+    SIMULT (311)
+    PATTERN (312)
+    CODE (313)
+    TRANSPORT (314)
+    HOST (315)
+    TIME (316)
+    WHENEVER (317)
+    NEXT (318)
+    UNTIL (319) 68 69
+    EXTERNAL (320) 87
+    GLOBAL (321) 88
+    EVERY (322)
+    BEFORE (323)
+    AFTER (324)
+    AT (325)
+    AT_SYM (326) 41 43
+    ATAT_SYM (327)
+    NEW (328) 156 157
+    SIZEOF (329) 155
+    TYPEOF (330) 154
+    SAME (331) 90 91
+    PLUS_CHUCK (332) 102
+    MINUS_CHUCK (333) 103
+    TIMES_CHUCK (334) 104
+    DIVIDE_CHUCK (335) 105
+    S_AND_CHUCK (336) 111
+    S_OR_CHUCK (337) 112
+    S_XOR_CHUCK (338) 113
+    SHIFT_RIGHT_CHUCK (339) 106
+    SHIFT_LEFT_CHUCK (340) 107
+    PERCENT_CHUCK (341) 108
+    SHIFT_RIGHT (342) 138
+    SHIFT_LEFT (343) 137
+    TILDA (344) 147 160 163
+    CHUCK (345) 100
+    COLONCOLON (346) 165
+    S_CHUCK (347)
+    AT_CHUCK (348) 101
+    LEFT_S_CHUCK (349)
+    UNCHUCK (350) 109
+    UPCHUCK (351) 110
+    CLASS (352) 6 7
+    INTERFACE (353) 8 9
+    EXTENDS (354) 11 12 13 21
+    IMPLEMENTS (355) 10 11 13
+    PUBLIC (356) 30 34
+    PROTECTED (357) 35
+    PRIVATE (358) 31 36
+    STATIC (359) 37 89 91
+    ABSTRACT (360) 38
+    CONST (361)
+    SPORK (362) 163
+    ARROW_RIGHT (363) 115
+    ARROW_LEFT (364) 114
+    L_HACK (365) 182
+    R_HACK (366) 182
 
 
 Nonterminals, with rules where they appear
 
-$accept (112)
-    on left: 0
-program (113)
-    on left: 1 2, on right: 0 2
-program_section (114)
-    on left: 3 4 5, on right: 1 2
-class_definition (115)
-    on left: 6 7 8 9, on right: 5 20
-class_ext (116)
-    on left: 10 11 12 13, on right: 7
-class_body (117)
-    on left: 14 15, on right: 6 7 8 9
-class_body2 (118)
-    on left: 16 17, on right: 14 17
-class_section (119)
-    on left: 18 19 20, on right: 16 17
-iface_ext (120)
-    on left: 21, on right: 9
-id_list (121)
-    on left: 22 23, on right: 6 7 8 9 10 11 13 21 23
-id_dot (122)
-    on left: 24 25, on right: 11 12 13 25 42 43
-function_definition (123)
-    on left: 26 27 28 29, on right: 4 19
-class_decl (124)
-    on left: 30 31 32, on right: 6 7 8 9
-function_decl (125)
-    on left: 33 34 35 36, on right: 26 27 28 29
-static_decl (126)
-    on left: 37 38 39, on right: 26 27 28 29
-type_decl_a (127)
-    on left: 40 41, on right: 44
-type_decl_b (128)
-    on left: 42 43, on right: 45
-type_decl (129)
-    on left: 44 45, on right: 46 47 48 49 86 87 88 89 149 156 157
-type_decl2 (130)
-    on left: 46 47, on right: 26 27 28 29
-arg_list (131)
-    on left: 48 49, on right: 26 28 49
-statement_list (132)
-    on left: 50 51, on right: 3 18 51 72
-statement (133)
-    on left: 52 53 54 55 56, on right: 50 51 61 62 63 64 65 66 67 68
-    69 70
-jump_statement (134)
-    on left: 57 58 59 60, on right: 55
-selection_statement (135)
-    on left: 61 62, on right: 54
-loop_statement (136)
-    on left: 63 64 65 66 67 68 69 70, on right: 53
-code_segment (137)
-    on left: 71 72, on right: 26 27 56
-expression_statement (138)
-    on left: 73 74, on right: 52 65 66
-expression (139)
-    on left: 75 76, on right: 58 61 62 63 64 66 67 68 69 70 74 76 81
-    82 97 98 99 117 169 182 183
-chuck_expression (140)
-    on left: 77 78, on right: 75 76 78
-arrow_expression (141)
-    on left: 79 80, on right: 77 78 80
-array_exp (142)
-    on left: 81 82, on right: 82 95 157 167 178
-array_empty (143)
-    on left: 83 84, on right: 47 84 96
-decl_expression (144)
-    on left: 85 86 87 88 89 90 91, on right: 79 80
-var_decl_list (145)
-    on left: 92 93, on right: 86 87 88 89 90 91 93
-var_decl (146)
-    on left: 94 95 96, on right: 48 49 92 93
-complex_exp (147)
-    on left: 97, on right: 179
-polar_exp (148)
-    on left: 98, on right: 180
-vec_exp (149)
-    on left: 99, on right: 181
-chuck_operator (150)
-    on left: 100 101 102 103 104 105 106 107 108 109 110 111 112 113
-   , on right: 78
-arrow_operator (151)
-    on left: 114 115, on right: 80
-conditional_expression (152)
-    on left: 116 117, on right: 85 117
-logical_or_expression (153)
-    on left: 118 119, on right: 116 117 119
-logical_and_expression (154)
-    on left: 120 121, on right: 118 119 121
-inclusive_or_expression (155)
-    on left: 122 123, on right: 120 121 123
-exclusive_or_expression (156)
-    on left: 124 125, on right: 122 123 125
-and_expression (157)
-    on left: 126 127, on right: 124 125 127
-equality_expression (158)
-    on left: 128 129 130, on right: 126 127 129 130
-relational_expression (159)
-    on left: 131 132 133 134 135, on right: 128 129 130 132 133 134
-    135
-shift_expression (160)
-    on left: 136 137 138, on right: 131 132 133 134 135 137 138
-additive_expression (161)
-    on left: 139 140 141, on right: 136 137 138 140 141
-multiplicative_expression (162)
-    on left: 142 143 144 145, on right: 139 140 141 143 144 145
-tilda_expression (163)
-    on left: 146 147, on right: 142 143 144 145 147
-cast_expression (164)
-    on left: 148 149, on right: 146 147 149
-unary_expression (165)
-    on left: 150 151 152 153 154 155 156 157, on right: 148 151 152
-    153 154 155
-unary_operator (166)
-    on left: 158 159 160 161 162 163, on right: 153
-dur_expression (167)
-    on left: 164 165, on right: 150 165
-postfix_expression (168)
-    on left: 166 167 168 169 170 171 172, on right: 164 165 167 168
-    169 170 171 172
-primary_expression (169)
-    on left: 173 174 175 176 177 178 179 180 181 182 183 184,
-    on right: 166
+    $accept (112)
+        on left: 0
+    program <program> (113)
+        on left: 1 2
+        on right: 0 2
+    program_section <program_section> (114)
+        on left: 3 4 5
+        on right: 1 2
+    class_definition <class_def> (115)
+        on left: 6 7 8 9
+        on right: 5 20
+    class_ext <class_ext> (116)
+        on left: 10 11 12 13
+        on right: 7
+    class_body <class_body> (117)
+        on left: 14 15
+        on right: 6 7 8 9
+    class_body2 <class_body> (118)
+        on left: 16 17
+        on right: 14 17
+    class_section <program_section> (119)
+        on left: 18 19 20
+        on right: 16 17
+    iface_ext <class_ext> (120)
+        on left: 21
+        on right: 9
+    id_list <id_list> (121)
+        on left: 22 23
+        on right: 6 7 8 9 10 11 13 21 23
+    id_dot <id_list> (122)
+        on left: 24 25
+        on right: 11 12 13 25 42 43
+    function_definition <func_def> (123)
+        on left: 26 27 28 29
+        on right: 4 19
+    class_decl <ival> (124)
+        on left: 30 31 32
+        on right: 6 7 8 9
+    function_decl <ival> (125)
+        on left: 33 34 35 36
+        on right: 26 27 28 29
+    static_decl <ival> (126)
+        on left: 37 38 39
+        on right: 26 27 28 29
+    type_decl_a <type_decl> (127)
+        on left: 40 41
+        on right: 44
+    type_decl_b <type_decl> (128)
+        on left: 42 43
+        on right: 45
+    type_decl <type_decl> (129)
+        on left: 44 45
+        on right: 46 47 48 49 86 87 88 89 149 156 157
+    type_decl2 <type_decl> (130)
+        on left: 46 47
+        on right: 26 27 28 29
+    arg_list <arg_list> (131)
+        on left: 48 49
+        on right: 26 28 49
+    statement_list <stmt_list> (132)
+        on left: 50 51
+        on right: 3 18 51 72
+    statement <stmt> (133)
+        on left: 52 53 54 55 56
+        on right: 50 51 61 62 63 64 65 66 67 68 69 70
+    jump_statement <stmt> (134)
+        on left: 57 58 59 60
+        on right: 55
+    selection_statement <stmt> (135)
+        on left: 61 62
+        on right: 54
+    loop_statement <stmt> (136)
+        on left: 63 64 65 66 67 68 69 70
+        on right: 53
+    code_segment <stmt> (137)
+        on left: 71 72
+        on right: 26 27 56
+    expression_statement <stmt> (138)
+        on left: 73 74
+        on right: 52 65 66
+    expression <exp> (139)
+        on left: 75 76
+        on right: 58 61 62 63 64 66 67 68 69 70 74 76 81 82 97 98 99 117 169 182 183
+    chuck_expression <exp> (140)
+        on left: 77 78
+        on right: 75 76 78
+    arrow_expression <exp> (141)
+        on left: 79 80
+        on right: 77 78 80
+    array_exp <array_sub> (142)
+        on left: 81 82
+        on right: 82 95 157 167 178
+    array_empty <array_sub> (143)
+        on left: 83 84
+        on right: 47 84 96
+    decl_expression <exp> (144)
+        on left: 85 86 87 88 89 90 91
+        on right: 79 80
+    var_decl_list <var_decl_list> (145)
+        on left: 92 93
+        on right: 86 87 88 89 90 91 93
+    var_decl <var_decl> (146)
+        on left: 94 95 96
+        on right: 48 49 92 93
+    complex_exp <complex_exp> (147)
+        on left: 97
+        on right: 179
+    polar_exp <polar_exp> (148)
+        on left: 98
+        on right: 180
+    vec_exp <vec_exp> (149)
+        on left: 99
+        on right: 181
+    chuck_operator <ival> (150)
+        on left: 100 101 102 103 104 105 106 107 108 109 110 111 112 113
+        on right: 78
+    arrow_operator <ival> (151)
+        on left: 114 115
+        on right: 80
+    conditional_expression <exp> (152)
+        on left: 116 117
+        on right: 85 117
+    logical_or_expression <exp> (153)
+        on left: 118 119
+        on right: 116 117 119
+    logical_and_expression <exp> (154)
+        on left: 120 121
+        on right: 118 119 121
+    inclusive_or_expression <exp> (155)
+        on left: 122 123
+        on right: 120 121 123
+    exclusive_or_expression <exp> (156)
+        on left: 124 125
+        on right: 122 123 125
+    and_expression <exp> (157)
+        on left: 126 127
+        on right: 124 125 127
+    equality_expression <exp> (158)
+        on left: 128 129 130
+        on right: 126 127 129 130
+    relational_expression <exp> (159)
+        on left: 131 132 133 134 135
+        on right: 128 129 130 132 133 134 135
+    shift_expression <exp> (160)
+        on left: 136 137 138
+        on right: 131 132 133 134 135 137 138
+    additive_expression <exp> (161)
+        on left: 139 140 141
+        on right: 136 137 138 140 141
+    multiplicative_expression <exp> (162)
+        on left: 142 143 144 145
+        on right: 139 140 141 143 144 145
+    tilda_expression <exp> (163)
+        on left: 146 147
+        on right: 142 143 144 145 147
+    cast_expression <exp> (164)
+        on left: 148 149
+        on right: 146 147 149
+    unary_expression <exp> (165)
+        on left: 150 151 152 153 154 155 156 157
+        on right: 148 151 152 153 154 155
+    unary_operator <ival> (166)
+        on left: 158 159 160 161 162 163
+        on right: 153
+    dur_expression <exp> (167)
+        on left: 164 165
+        on right: 150 165
+    postfix_expression <exp> (168)
+        on left: 166 167 168 169 170 171 172
+        on right: 164 165 167 168 169 170 171 172
+    primary_expression <exp> (169)
+        on left: 173 174 175 176 177 178 179 180 181 182 183 184
+        on right: 166
 
 
-state 0
+State 0
 
-    0 $accept: . program $end
+    0 $accept: • program $end
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -612,11 +660,11 @@ state 0
     primary_expression         go to state 84
 
 
-state 1
+State 1
 
-   40 type_decl_a: ID .
-   41            | ID . AT_SYM
-  173 primary_expression: ID .
+   40 type_decl_a: ID •
+   41            | ID • AT_SYM
+  173 primary_expression: ID •
 
     AT_SYM  shift, and go to state 85
 
@@ -624,45 +672,45 @@ state 1
     $default  reduce using rule 173 (primary_expression)
 
 
-state 2
+State 2
 
-  176 primary_expression: STRING_LIT .
+  176 primary_expression: STRING_LIT •
 
     $default  reduce using rule 176 (primary_expression)
 
 
-state 3
+State 3
 
-  177 primary_expression: CHAR_LIT .
+  177 primary_expression: CHAR_LIT •
 
     $default  reduce using rule 177 (primary_expression)
 
 
-state 4
+State 4
 
-  174 primary_expression: INT_VAL .
+  174 primary_expression: INT_VAL •
 
     $default  reduce using rule 174 (primary_expression)
 
 
-state 5
+State 5
 
-  175 primary_expression: FLOAT_VAL .
+  175 primary_expression: FLOAT_VAL •
 
     $default  reduce using rule 175 (primary_expression)
 
 
-state 6
+State 6
 
-   73 expression_statement: SEMICOLON .
+   73 expression_statement: SEMICOLON •
 
     $default  reduce using rule 73 (expression_statement)
 
 
-state 7
+State 7
 
-  183 primary_expression: LPAREN . expression RPAREN
-  184                   | LPAREN . RPAREN
+  183 primary_expression: LPAREN • expression RPAREN
+  184                   | LPAREN • RPAREN
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -724,10 +772,10 @@ state 7
     primary_expression         go to state 84
 
 
-state 8
+State 8
 
-   81 array_exp: LBRACK . expression RBRACK
-   82          | LBRACK . expression RBRACK array_exp
+   81 array_exp: LBRACK • expression RBRACK
+   82          | LBRACK • expression RBRACK array_exp
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -788,10 +836,10 @@ state 8
     primary_expression         go to state 84
 
 
-state 9
+State 9
 
-   71 code_segment: LBRACE . RBRACE
-   72             | LBRACE . statement_list RBRACE
+   71 code_segment: LBRACE • RBRACE
+   72             | LBRACE • statement_list RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -871,65 +919,65 @@ state 9
     primary_expression         go to state 84
 
 
-state 10
+State 10
 
-  158 unary_operator: PLUS .
+  158 unary_operator: PLUS •
 
     $default  reduce using rule 158 (unary_operator)
 
 
-state 11
+State 11
 
-  159 unary_operator: MINUS .
+  159 unary_operator: MINUS •
 
     $default  reduce using rule 159 (unary_operator)
 
 
-state 12
+State 12
 
-  162 unary_operator: TIMES .
+  162 unary_operator: TIMES •
 
     $default  reduce using rule 162 (unary_operator)
 
 
-state 13
+State 13
 
-   42 type_decl_b: LT . id_dot GT
-   43            | LT . id_dot GT AT_SYM
+   42 type_decl_b: LT • id_dot GT
+   43            | LT • id_dot GT AT_SYM
 
     ID  shift, and go to state 91
 
     id_dot  go to state 92
 
 
-state 14
+State 14
 
-   61 selection_statement: IF . LPAREN expression RPAREN statement
-   62                    | IF . LPAREN expression RPAREN statement ELSE statement
+   61 selection_statement: IF • LPAREN expression RPAREN statement
+   62                    | IF • LPAREN expression RPAREN statement ELSE statement
 
     LPAREN  shift, and go to state 93
 
 
-state 15
+State 15
 
-   63 loop_statement: WHILE . LPAREN expression RPAREN statement
+   63 loop_statement: WHILE • LPAREN expression RPAREN statement
 
     LPAREN  shift, and go to state 94
 
 
-state 16
+State 16
 
-   65 loop_statement: FOR . LPAREN expression_statement expression_statement RPAREN statement
-   66               | FOR . LPAREN expression_statement expression_statement expression RPAREN statement
-   67               | FOR . LPAREN expression COLON expression RPAREN statement
+   65 loop_statement: FOR • LPAREN expression_statement expression_statement RPAREN statement
+   66               | FOR • LPAREN expression_statement expression_statement expression RPAREN statement
+   67               | FOR • LPAREN expression COLON expression RPAREN statement
 
     LPAREN  shift, and go to state 95
 
 
-state 17
+State 17
 
-   64 loop_statement: DO . statement WHILE LPAREN expression RPAREN SEMICOLON
-   69               | DO . statement UNTIL LPAREN expression RPAREN SEMICOLON
+   64 loop_statement: DO • statement WHILE LPAREN expression RPAREN SEMICOLON
+   69               | DO • statement UNTIL LPAREN expression RPAREN SEMICOLON
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1007,38 +1055,38 @@ state 17
     primary_expression         go to state 84
 
 
-state 18
+State 18
 
-   70 loop_statement: LOOP . LPAREN expression RPAREN statement
+   70 loop_statement: LOOP • LPAREN expression RPAREN statement
 
     LPAREN  shift, and go to state 97
 
 
-state 19
+State 19
 
-   59 jump_statement: BREAK . SEMICOLON
+   59 jump_statement: BREAK • SEMICOLON
 
     SEMICOLON  shift, and go to state 98
 
 
-state 20
+State 20
 
-   60 jump_statement: CONTINUE . SEMICOLON
+   60 jump_statement: CONTINUE • SEMICOLON
 
     SEMICOLON  shift, and go to state 99
 
 
-state 21
+State 21
 
-   33 function_decl: FUNCTION .
+   33 function_decl: FUNCTION •
 
     $default  reduce using rule 33 (function_decl)
 
 
-state 22
+State 22
 
-   57 jump_statement: RETURN . SEMICOLON
-   58               | RETURN . expression SEMICOLON
+   57 jump_statement: RETURN • SEMICOLON
+   58               | RETURN • expression SEMICOLON
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1100,16 +1148,16 @@ state 22
     primary_expression         go to state 84
 
 
-state 23
+State 23
 
-  161 unary_operator: EXCLAMATION .
+  161 unary_operator: EXCLAMATION •
 
     $default  reduce using rule 161 (unary_operator)
 
 
-state 24
+State 24
 
-  151 unary_expression: PLUSPLUS . unary_expression
+  151 unary_expression: PLUSPLUS • unary_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -1145,9 +1193,9 @@ state 24
     primary_expression  go to state 84
 
 
-state 25
+State 25
 
-  152 unary_expression: MINUSMINUS . unary_expression
+  152 unary_expression: MINUSMINUS • unary_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -1183,9 +1231,9 @@ state 25
     primary_expression  go to state 84
 
 
-state 26
+State 26
 
-   97 complex_exp: POUNDPAREN . expression RPAREN
+   97 complex_exp: POUNDPAREN • expression RPAREN
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1246,9 +1294,9 @@ state 26
     primary_expression         go to state 84
 
 
-state 27
+State 27
 
-   98 polar_exp: PERCENTPAREN . expression RPAREN
+   98 polar_exp: PERCENTPAREN • expression RPAREN
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1309,9 +1357,9 @@ state 27
     primary_expression         go to state 84
 
 
-state 28
+State 28
 
-   99 vec_exp: ATPAREN . expression RPAREN
+   99 vec_exp: ATPAREN • expression RPAREN
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1372,16 +1420,16 @@ state 28
     primary_expression         go to state 84
 
 
-state 29
+State 29
 
-   68 loop_statement: UNTIL . LPAREN expression RPAREN statement
+   68 loop_statement: UNTIL • LPAREN expression RPAREN statement
 
     LPAREN  shift, and go to state 108
 
 
-state 30
+State 30
 
-   87 decl_expression: EXTERNAL . type_decl var_decl_list
+   87 decl_expression: EXTERNAL • type_decl var_decl_list
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -1391,9 +1439,9 @@ state 30
     type_decl    go to state 110
 
 
-state 31
+State 31
 
-   88 decl_expression: GLOBAL . type_decl var_decl_list
+   88 decl_expression: GLOBAL • type_decl var_decl_list
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -1403,10 +1451,10 @@ state 31
     type_decl    go to state 111
 
 
-state 32
+State 32
 
-  156 unary_expression: NEW . type_decl
-  157                 | NEW . type_decl array_exp
+  156 unary_expression: NEW • type_decl
+  157                 | NEW • type_decl array_exp
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -1416,9 +1464,9 @@ state 32
     type_decl    go to state 112
 
 
-state 33
+State 33
 
-  155 unary_expression: SIZEOF . unary_expression
+  155 unary_expression: SIZEOF • unary_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -1454,9 +1502,9 @@ state 33
     primary_expression  go to state 84
 
 
-state 34
+State 34
 
-  154 unary_expression: TYPEOF . unary_expression
+  154 unary_expression: TYPEOF • unary_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -1492,9 +1540,9 @@ state 34
     primary_expression  go to state 84
 
 
-state 35
+State 35
 
-   90 decl_expression: SAME . var_decl_list
+   90 decl_expression: SAME • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -1502,44 +1550,44 @@ state 35
     var_decl       go to state 117
 
 
-state 36
+State 36
 
-  160 unary_operator: TILDA .
+  160 unary_operator: TILDA •
 
     $default  reduce using rule 160 (unary_operator)
 
 
-state 37
+State 37
 
-   30 class_decl: PUBLIC .
-   34 function_decl: PUBLIC .
+   30 class_decl: PUBLIC •
+   34 function_decl: PUBLIC •
 
     CLASS      reduce using rule 30 (class_decl)
     INTERFACE  reduce using rule 30 (class_decl)
     $default   reduce using rule 34 (function_decl)
 
 
-state 38
+State 38
 
-   35 function_decl: PROTECTED .
+   35 function_decl: PROTECTED •
 
     $default  reduce using rule 35 (function_decl)
 
 
-state 39
+State 39
 
-   31 class_decl: PRIVATE .
-   36 function_decl: PRIVATE .
+   31 class_decl: PRIVATE •
+   36 function_decl: PRIVATE •
 
     CLASS      reduce using rule 31 (class_decl)
     INTERFACE  reduce using rule 31 (class_decl)
     $default   reduce using rule 36 (function_decl)
 
 
-state 40
+State 40
 
-   89 decl_expression: STATIC . type_decl var_decl_list
-   91                | STATIC . SAME var_decl_list
+   89 decl_expression: STATIC • type_decl var_decl_list
+   91                | STATIC • SAME var_decl_list
 
     ID    shift, and go to state 109
     LT    shift, and go to state 13
@@ -1550,16 +1598,16 @@ state 40
     type_decl    go to state 119
 
 
-state 41
+State 41
 
-  163 unary_operator: SPORK . TILDA
+  163 unary_operator: SPORK • TILDA
 
     TILDA  shift, and go to state 120
 
 
-state 42
+State 42
 
-  182 primary_expression: L_HACK . expression R_HACK
+  182 primary_expression: L_HACK • expression R_HACK
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1620,10 +1668,10 @@ state 42
     primary_expression         go to state 84
 
 
-state 43
+State 43
 
-    0 $accept: program . $end
-    2 program: program . program_section
+    0 $accept: program • $end
+    2 program: program • program_section
 
     $end          shift, and go to state 122
     ID            shift, and go to state 1
@@ -1714,44 +1762,44 @@ state 43
     primary_expression         go to state 84
 
 
-state 44
+State 44
 
-    1 program: program_section .
+    1 program: program_section •
 
     $default  reduce using rule 1 (program)
 
 
-state 45
+State 45
 
-    5 program_section: class_definition .
+    5 program_section: class_definition •
 
     $default  reduce using rule 5 (program_section)
 
 
-state 46
+State 46
 
-    4 program_section: function_definition .
+    4 program_section: function_definition •
 
     $default  reduce using rule 4 (program_section)
 
 
-state 47
+State 47
 
-    6 class_definition: class_decl . CLASS id_list LBRACE class_body RBRACE
-    7                 | class_decl . CLASS id_list class_ext LBRACE class_body RBRACE
-    8                 | class_decl . INTERFACE id_list LBRACE class_body RBRACE
-    9                 | class_decl . INTERFACE id_list iface_ext LBRACE class_body RBRACE
+    6 class_definition: class_decl • CLASS id_list LBRACE class_body RBRACE
+    7                 | class_decl • CLASS id_list class_ext LBRACE class_body RBRACE
+    8                 | class_decl • INTERFACE id_list LBRACE class_body RBRACE
+    9                 | class_decl • INTERFACE id_list iface_ext LBRACE class_body RBRACE
 
     CLASS      shift, and go to state 124
     INTERFACE  shift, and go to state 125
 
 
-state 48
+State 48
 
-   26 function_definition: function_decl . static_decl type_decl2 ID LPAREN arg_list RPAREN code_segment
-   27                    | function_decl . static_decl type_decl2 ID LPAREN RPAREN code_segment
-   28                    | function_decl . static_decl type_decl2 ID LPAREN arg_list RPAREN SEMICOLON
-   29                    | function_decl . static_decl type_decl2 ID LPAREN RPAREN SEMICOLON
+   26 function_definition: function_decl • static_decl type_decl2 ID LPAREN arg_list RPAREN code_segment
+   27                    | function_decl • static_decl type_decl2 ID LPAREN RPAREN code_segment
+   28                    | function_decl • static_decl type_decl2 ID LPAREN arg_list RPAREN SEMICOLON
+   29                    | function_decl • static_decl type_decl2 ID LPAREN RPAREN SEMICOLON
 
     STATIC    shift, and go to state 126
     ABSTRACT  shift, and go to state 127
@@ -1761,23 +1809,23 @@ state 48
     static_decl  go to state 128
 
 
-state 49
+State 49
 
-   44 type_decl: type_decl_a .
+   44 type_decl: type_decl_a •
 
     $default  reduce using rule 44 (type_decl)
 
 
-state 50
+State 50
 
-   45 type_decl: type_decl_b .
+   45 type_decl: type_decl_b •
 
     $default  reduce using rule 45 (type_decl)
 
 
-state 51
+State 51
 
-   86 decl_expression: type_decl . var_decl_list
+   86 decl_expression: type_decl • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -1785,10 +1833,10 @@ state 51
     var_decl       go to state 117
 
 
-state 52
+State 52
 
-    3 program_section: statement_list .
-   51 statement_list: statement_list . statement
+    3 program_section: statement_list •
+   51 statement_list: statement_list • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -1906,61 +1954,61 @@ state 52
     primary_expression         go to state 84
 
 
-state 53
+State 53
 
-   50 statement_list: statement .
+   50 statement_list: statement •
 
     $default  reduce using rule 50 (statement_list)
 
 
-state 54
+State 54
 
-   55 statement: jump_statement .
+   55 statement: jump_statement •
 
     $default  reduce using rule 55 (statement)
 
 
-state 55
+State 55
 
-   54 statement: selection_statement .
+   54 statement: selection_statement •
 
     $default  reduce using rule 54 (statement)
 
 
-state 56
+State 56
 
-   53 statement: loop_statement .
+   53 statement: loop_statement •
 
     $default  reduce using rule 53 (statement)
 
 
-state 57
+State 57
 
-   56 statement: code_segment .
+   56 statement: code_segment •
 
     $default  reduce using rule 56 (statement)
 
 
-state 58
+State 58
 
-   52 statement: expression_statement .
+   52 statement: expression_statement •
 
     $default  reduce using rule 52 (statement)
 
 
-state 59
+State 59
 
-   74 expression_statement: expression . SEMICOLON
-   76 expression: expression . COMMA chuck_expression
+   74 expression_statement: expression • SEMICOLON
+   76 expression: expression • COMMA chuck_expression
 
     COMMA      shift, and go to state 131
     SEMICOLON  shift, and go to state 132
 
 
-state 60
+State 60
 
-   75 expression: chuck_expression .
-   78 chuck_expression: chuck_expression . chuck_operator arrow_expression
+   75 expression: chuck_expression •
+   78 chuck_expression: chuck_expression • chuck_operator arrow_expression
 
     PLUS_CHUCK         shift, and go to state 133
     MINUS_CHUCK        shift, and go to state 134
@@ -1982,10 +2030,10 @@ state 60
     chuck_operator  go to state 147
 
 
-state 61
+State 61
 
-   77 chuck_expression: arrow_expression .
-   80 arrow_expression: arrow_expression . arrow_operator decl_expression
+   77 chuck_expression: arrow_expression •
+   80 arrow_expression: arrow_expression • arrow_operator decl_expression
 
     ARROW_RIGHT  shift, and go to state 148
     ARROW_LEFT   shift, and go to state 149
@@ -1995,53 +2043,53 @@ state 61
     arrow_operator  go to state 150
 
 
-state 62
+State 62
 
-  178 primary_expression: array_exp .
+  178 primary_expression: array_exp •
 
     $default  reduce using rule 178 (primary_expression)
 
 
-state 63
+State 63
 
-   79 arrow_expression: decl_expression .
+   79 arrow_expression: decl_expression •
 
     $default  reduce using rule 79 (arrow_expression)
 
 
-state 64
+State 64
 
-  179 primary_expression: complex_exp .
+  179 primary_expression: complex_exp •
 
     $default  reduce using rule 179 (primary_expression)
 
 
-state 65
+State 65
 
-  180 primary_expression: polar_exp .
+  180 primary_expression: polar_exp •
 
     $default  reduce using rule 180 (primary_expression)
 
 
-state 66
+State 66
 
-  181 primary_expression: vec_exp .
+  181 primary_expression: vec_exp •
 
     $default  reduce using rule 181 (primary_expression)
 
 
-state 67
+State 67
 
-   85 decl_expression: conditional_expression .
+   85 decl_expression: conditional_expression •
 
     $default  reduce using rule 85 (decl_expression)
 
 
-state 68
+State 68
 
-  116 conditional_expression: logical_or_expression .
-  117                       | logical_or_expression . QUESTION expression COLON conditional_expression
-  119 logical_or_expression: logical_or_expression . OR logical_and_expression
+  116 conditional_expression: logical_or_expression •
+  117                       | logical_or_expression • QUESTION expression COLON conditional_expression
+  119 logical_or_expression: logical_or_expression • OR logical_and_expression
 
     OR        shift, and go to state 151
     QUESTION  shift, and go to state 152
@@ -2049,51 +2097,51 @@ state 68
     $default  reduce using rule 116 (conditional_expression)
 
 
-state 69
+State 69
 
-  118 logical_or_expression: logical_and_expression .
-  121 logical_and_expression: logical_and_expression . AND inclusive_or_expression
+  118 logical_or_expression: logical_and_expression •
+  121 logical_and_expression: logical_and_expression • AND inclusive_or_expression
 
     AND  shift, and go to state 153
 
     $default  reduce using rule 118 (logical_or_expression)
 
 
-state 70
+State 70
 
-  120 logical_and_expression: inclusive_or_expression .
-  123 inclusive_or_expression: inclusive_or_expression . S_OR exclusive_or_expression
+  120 logical_and_expression: inclusive_or_expression •
+  123 inclusive_or_expression: inclusive_or_expression • S_OR exclusive_or_expression
 
     S_OR  shift, and go to state 154
 
     $default  reduce using rule 120 (logical_and_expression)
 
 
-state 71
+State 71
 
-  122 inclusive_or_expression: exclusive_or_expression .
-  125 exclusive_or_expression: exclusive_or_expression . S_XOR and_expression
+  122 inclusive_or_expression: exclusive_or_expression •
+  125 exclusive_or_expression: exclusive_or_expression • S_XOR and_expression
 
     S_XOR  shift, and go to state 155
 
     $default  reduce using rule 122 (inclusive_or_expression)
 
 
-state 72
+State 72
 
-  124 exclusive_or_expression: and_expression .
-  127 and_expression: and_expression . S_AND equality_expression
+  124 exclusive_or_expression: and_expression •
+  127 and_expression: and_expression • S_AND equality_expression
 
     S_AND  shift, and go to state 156
 
     $default  reduce using rule 124 (exclusive_or_expression)
 
 
-state 73
+State 73
 
-  126 and_expression: equality_expression .
-  129 equality_expression: equality_expression . EQ relational_expression
-  130                    | equality_expression . NEQ relational_expression
+  126 and_expression: equality_expression •
+  129 equality_expression: equality_expression • EQ relational_expression
+  130                    | equality_expression • NEQ relational_expression
 
     EQ   shift, and go to state 157
     NEQ  shift, and go to state 158
@@ -2101,13 +2149,13 @@ state 73
     $default  reduce using rule 126 (and_expression)
 
 
-state 74
+State 74
 
-  128 equality_expression: relational_expression .
-  132 relational_expression: relational_expression . LT shift_expression
-  133                      | relational_expression . GT shift_expression
-  134                      | relational_expression . LE shift_expression
-  135                      | relational_expression . GE shift_expression
+  128 equality_expression: relational_expression •
+  132 relational_expression: relational_expression • LT shift_expression
+  133                      | relational_expression • GT shift_expression
+  134                      | relational_expression • LE shift_expression
+  135                      | relational_expression • GE shift_expression
 
     LT  shift, and go to state 159
     LE  shift, and go to state 160
@@ -2117,11 +2165,11 @@ state 74
     $default  reduce using rule 128 (equality_expression)
 
 
-state 75
+State 75
 
-  131 relational_expression: shift_expression .
-  137 shift_expression: shift_expression . SHIFT_LEFT additive_expression
-  138                 | shift_expression . SHIFT_RIGHT additive_expression
+  131 relational_expression: shift_expression •
+  137 shift_expression: shift_expression • SHIFT_LEFT additive_expression
+  138                 | shift_expression • SHIFT_RIGHT additive_expression
 
     SHIFT_RIGHT  shift, and go to state 163
     SHIFT_LEFT   shift, and go to state 164
@@ -2129,11 +2177,11 @@ state 75
     $default  reduce using rule 131 (relational_expression)
 
 
-state 76
+State 76
 
-  136 shift_expression: additive_expression .
-  140 additive_expression: additive_expression . PLUS multiplicative_expression
-  141                    | additive_expression . MINUS multiplicative_expression
+  136 shift_expression: additive_expression •
+  140 additive_expression: additive_expression • PLUS multiplicative_expression
+  141                    | additive_expression • MINUS multiplicative_expression
 
     PLUS   shift, and go to state 165
     MINUS  shift, and go to state 166
@@ -2141,12 +2189,12 @@ state 76
     $default  reduce using rule 136 (shift_expression)
 
 
-state 77
+State 77
 
-  139 additive_expression: multiplicative_expression .
-  143 multiplicative_expression: multiplicative_expression . TIMES tilda_expression
-  144                          | multiplicative_expression . DIVIDE tilda_expression
-  145                          | multiplicative_expression . PERCENT tilda_expression
+  139 additive_expression: multiplicative_expression •
+  143 multiplicative_expression: multiplicative_expression • TIMES tilda_expression
+  144                          | multiplicative_expression • DIVIDE tilda_expression
+  145                          | multiplicative_expression • PERCENT tilda_expression
 
     TIMES    shift, and go to state 167
     DIVIDE   shift, and go to state 168
@@ -2155,36 +2203,36 @@ state 77
     $default  reduce using rule 139 (additive_expression)
 
 
-state 78
+State 78
 
-  142 multiplicative_expression: tilda_expression .
-  147 tilda_expression: tilda_expression . TILDA cast_expression
+  142 multiplicative_expression: tilda_expression •
+  147 tilda_expression: tilda_expression • TILDA cast_expression
 
     TILDA  shift, and go to state 170
 
     $default  reduce using rule 142 (multiplicative_expression)
 
 
-state 79
+State 79
 
-  146 tilda_expression: cast_expression .
-  149 cast_expression: cast_expression . DOLLAR type_decl
+  146 tilda_expression: cast_expression •
+  149 cast_expression: cast_expression • DOLLAR type_decl
 
     DOLLAR  shift, and go to state 171
 
     $default  reduce using rule 146 (tilda_expression)
 
 
-state 80
+State 80
 
-  148 cast_expression: unary_expression .
+  148 cast_expression: unary_expression •
 
     $default  reduce using rule 148 (cast_expression)
 
 
-state 81
+State 81
 
-  153 unary_expression: unary_operator . unary_expression
+  153 unary_expression: unary_operator • unary_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -2220,25 +2268,25 @@ state 81
     primary_expression  go to state 84
 
 
-state 82
+State 82
 
-  150 unary_expression: dur_expression .
-  165 dur_expression: dur_expression . COLONCOLON postfix_expression
+  150 unary_expression: dur_expression •
+  165 dur_expression: dur_expression • COLONCOLON postfix_expression
 
     COLONCOLON  shift, and go to state 173
 
     $default  reduce using rule 150 (unary_expression)
 
 
-state 83
+State 83
 
-  164 dur_expression: postfix_expression .
-  167 postfix_expression: postfix_expression . array_exp
-  168                   | postfix_expression . LPAREN RPAREN
-  169                   | postfix_expression . LPAREN expression RPAREN
-  170                   | postfix_expression . DOT ID
-  171                   | postfix_expression . PLUSPLUS
-  172                   | postfix_expression . MINUSMINUS
+  164 dur_expression: postfix_expression •
+  167 postfix_expression: postfix_expression • array_exp
+  168                   | postfix_expression • LPAREN RPAREN
+  169                   | postfix_expression • LPAREN expression RPAREN
+  170                   | postfix_expression • DOT ID
+  171                   | postfix_expression • PLUSPLUS
+  172                   | postfix_expression • MINUSMINUS
 
     LPAREN      shift, and go to state 174
     LBRACK      shift, and go to state 8
@@ -2251,57 +2299,57 @@ state 83
     array_exp  go to state 178
 
 
-state 84
+State 84
 
-  166 postfix_expression: primary_expression .
+  166 postfix_expression: primary_expression •
 
     $default  reduce using rule 166 (postfix_expression)
 
 
-state 85
+State 85
 
-   41 type_decl_a: ID AT_SYM .
+   41 type_decl_a: ID AT_SYM •
 
     $default  reduce using rule 41 (type_decl_a)
 
 
-state 86
+State 86
 
-  184 primary_expression: LPAREN RPAREN .
+  184 primary_expression: LPAREN RPAREN •
 
     $default  reduce using rule 184 (primary_expression)
 
 
-state 87
+State 87
 
-   76 expression: expression . COMMA chuck_expression
-  183 primary_expression: LPAREN expression . RPAREN
+   76 expression: expression • COMMA chuck_expression
+  183 primary_expression: LPAREN expression • RPAREN
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 179
 
 
-state 88
+State 88
 
-   76 expression: expression . COMMA chuck_expression
-   81 array_exp: LBRACK expression . RBRACK
-   82          | LBRACK expression . RBRACK array_exp
+   76 expression: expression • COMMA chuck_expression
+   81 array_exp: LBRACK expression • RBRACK
+   82          | LBRACK expression • RBRACK array_exp
 
     COMMA   shift, and go to state 131
     RBRACK  shift, and go to state 180
 
 
-state 89
+State 89
 
-   71 code_segment: LBRACE RBRACE .
+   71 code_segment: LBRACE RBRACE •
 
     $default  reduce using rule 71 (code_segment)
 
 
-state 90
+State 90
 
-   51 statement_list: statement_list . statement
-   72 code_segment: LBRACE statement_list . RBRACE
+   51 statement_list: statement_list • statement
+   72 code_segment: LBRACE statement_list • RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2380,28 +2428,28 @@ state 90
     primary_expression         go to state 84
 
 
-state 91
+State 91
 
-   24 id_dot: ID .
-   25       | ID . DOT id_dot
+   24 id_dot: ID •
+   25       | ID • DOT id_dot
 
     DOT  shift, and go to state 182
 
     $default  reduce using rule 24 (id_dot)
 
 
-state 92
+State 92
 
-   42 type_decl_b: LT id_dot . GT
-   43            | LT id_dot . GT AT_SYM
+   42 type_decl_b: LT id_dot • GT
+   43            | LT id_dot • GT AT_SYM
 
     GT  shift, and go to state 183
 
 
-state 93
+State 93
 
-   61 selection_statement: IF LPAREN . expression RPAREN statement
-   62                    | IF LPAREN . expression RPAREN statement ELSE statement
+   61 selection_statement: IF LPAREN • expression RPAREN statement
+   62                    | IF LPAREN • expression RPAREN statement ELSE statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2462,9 +2510,9 @@ state 93
     primary_expression         go to state 84
 
 
-state 94
+State 94
 
-   63 loop_statement: WHILE LPAREN . expression RPAREN statement
+   63 loop_statement: WHILE LPAREN • expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2525,11 +2573,11 @@ state 94
     primary_expression         go to state 84
 
 
-state 95
+State 95
 
-   65 loop_statement: FOR LPAREN . expression_statement expression_statement RPAREN statement
-   66               | FOR LPAREN . expression_statement expression_statement expression RPAREN statement
-   67               | FOR LPAREN . expression COLON expression RPAREN statement
+   65 loop_statement: FOR LPAREN • expression_statement expression_statement RPAREN statement
+   66               | FOR LPAREN • expression_statement expression_statement expression RPAREN statement
+   67               | FOR LPAREN • expression COLON expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2592,18 +2640,18 @@ state 95
     primary_expression         go to state 84
 
 
-state 96
+State 96
 
-   64 loop_statement: DO statement . WHILE LPAREN expression RPAREN SEMICOLON
-   69               | DO statement . UNTIL LPAREN expression RPAREN SEMICOLON
+   64 loop_statement: DO statement • WHILE LPAREN expression RPAREN SEMICOLON
+   69               | DO statement • UNTIL LPAREN expression RPAREN SEMICOLON
 
     WHILE  shift, and go to state 188
     UNTIL  shift, and go to state 189
 
 
-state 97
+State 97
 
-   70 loop_statement: LOOP LPAREN . expression RPAREN statement
+   70 loop_statement: LOOP LPAREN • expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2664,87 +2712,87 @@ state 97
     primary_expression         go to state 84
 
 
-state 98
+State 98
 
-   59 jump_statement: BREAK SEMICOLON .
+   59 jump_statement: BREAK SEMICOLON •
 
     $default  reduce using rule 59 (jump_statement)
 
 
-state 99
+State 99
 
-   60 jump_statement: CONTINUE SEMICOLON .
+   60 jump_statement: CONTINUE SEMICOLON •
 
     $default  reduce using rule 60 (jump_statement)
 
 
-state 100
+State 100
 
-   57 jump_statement: RETURN SEMICOLON .
+   57 jump_statement: RETURN SEMICOLON •
 
     $default  reduce using rule 57 (jump_statement)
 
 
-state 101
+State 101
 
-   58 jump_statement: RETURN expression . SEMICOLON
-   76 expression: expression . COMMA chuck_expression
+   58 jump_statement: RETURN expression • SEMICOLON
+   76 expression: expression • COMMA chuck_expression
 
     COMMA      shift, and go to state 131
     SEMICOLON  shift, and go to state 191
 
 
-state 102
+State 102
 
-  173 primary_expression: ID .
+  173 primary_expression: ID •
 
     $default  reduce using rule 173 (primary_expression)
 
 
-state 103
+State 103
 
-  151 unary_expression: PLUSPLUS unary_expression .
+  151 unary_expression: PLUSPLUS unary_expression •
 
     $default  reduce using rule 151 (unary_expression)
 
 
-state 104
+State 104
 
-  152 unary_expression: MINUSMINUS unary_expression .
+  152 unary_expression: MINUSMINUS unary_expression •
 
     $default  reduce using rule 152 (unary_expression)
 
 
-state 105
+State 105
 
-   76 expression: expression . COMMA chuck_expression
-   97 complex_exp: POUNDPAREN expression . RPAREN
+   76 expression: expression • COMMA chuck_expression
+   97 complex_exp: POUNDPAREN expression • RPAREN
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 192
 
 
-state 106
+State 106
 
-   76 expression: expression . COMMA chuck_expression
-   98 polar_exp: PERCENTPAREN expression . RPAREN
+   76 expression: expression • COMMA chuck_expression
+   98 polar_exp: PERCENTPAREN expression • RPAREN
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 193
 
 
-state 107
+State 107
 
-   76 expression: expression . COMMA chuck_expression
-   99 vec_exp: ATPAREN expression . RPAREN
+   76 expression: expression • COMMA chuck_expression
+   99 vec_exp: ATPAREN expression • RPAREN
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 194
 
 
-state 108
+State 108
 
-   68 loop_statement: UNTIL LPAREN . expression RPAREN statement
+   68 loop_statement: UNTIL LPAREN • expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -2805,19 +2853,19 @@ state 108
     primary_expression         go to state 84
 
 
-state 109
+State 109
 
-   40 type_decl_a: ID .
-   41            | ID . AT_SYM
+   40 type_decl_a: ID •
+   41            | ID • AT_SYM
 
     AT_SYM  shift, and go to state 85
 
     $default  reduce using rule 40 (type_decl_a)
 
 
-state 110
+State 110
 
-   87 decl_expression: EXTERNAL type_decl . var_decl_list
+   87 decl_expression: EXTERNAL type_decl • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -2825,9 +2873,9 @@ state 110
     var_decl       go to state 117
 
 
-state 111
+State 111
 
-   88 decl_expression: GLOBAL type_decl . var_decl_list
+   88 decl_expression: GLOBAL type_decl • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -2835,10 +2883,10 @@ state 111
     var_decl       go to state 117
 
 
-state 112
+State 112
 
-  156 unary_expression: NEW type_decl .
-  157                 | NEW type_decl . array_exp
+  156 unary_expression: NEW type_decl •
+  157                 | NEW type_decl • array_exp
 
     LBRACK  shift, and go to state 8
 
@@ -2847,25 +2895,25 @@ state 112
     array_exp  go to state 198
 
 
-state 113
+State 113
 
-  155 unary_expression: SIZEOF unary_expression .
+  155 unary_expression: SIZEOF unary_expression •
 
     $default  reduce using rule 155 (unary_expression)
 
 
-state 114
+State 114
 
-  154 unary_expression: TYPEOF unary_expression .
+  154 unary_expression: TYPEOF unary_expression •
 
     $default  reduce using rule 154 (unary_expression)
 
 
-state 115
+State 115
 
-   94 var_decl: ID .
-   95         | ID . array_exp
-   96         | ID . array_empty
+   94 var_decl: ID •
+   95         | ID • array_exp
+   96         | ID • array_empty
 
     LBRACK  shift, and go to state 199
 
@@ -2875,17 +2923,17 @@ state 115
     array_empty  go to state 201
 
 
-state 116
+State 116
 
-   90 decl_expression: SAME var_decl_list .
+   90 decl_expression: SAME var_decl_list •
 
     $default  reduce using rule 90 (decl_expression)
 
 
-state 117
+State 117
 
-   92 var_decl_list: var_decl .
-   93              | var_decl . COMMA var_decl_list
+   92 var_decl_list: var_decl •
+   93              | var_decl • COMMA var_decl_list
 
     COMMA  shift, and go to state 202
 
@@ -2893,9 +2941,9 @@ state 117
     $default  reduce using rule 92 (var_decl_list)
 
 
-state 118
+State 118
 
-   91 decl_expression: STATIC SAME . var_decl_list
+   91 decl_expression: STATIC SAME • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -2903,9 +2951,9 @@ state 118
     var_decl       go to state 117
 
 
-state 119
+State 119
 
-   89 decl_expression: STATIC type_decl . var_decl_list
+   89 decl_expression: STATIC type_decl • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -2913,76 +2961,76 @@ state 119
     var_decl       go to state 117
 
 
-state 120
+State 120
 
-  163 unary_operator: SPORK TILDA .
+  163 unary_operator: SPORK TILDA •
 
     $default  reduce using rule 163 (unary_operator)
 
 
-state 121
+State 121
 
-   76 expression: expression . COMMA chuck_expression
-  182 primary_expression: L_HACK expression . R_HACK
+   76 expression: expression • COMMA chuck_expression
+  182 primary_expression: L_HACK expression • R_HACK
 
     COMMA   shift, and go to state 131
     R_HACK  shift, and go to state 205
 
 
-state 122
+State 122
 
-    0 $accept: program $end .
+    0 $accept: program $end •
 
     $default  accept
 
 
-state 123
+State 123
 
-    2 program: program program_section .
+    2 program: program program_section •
 
     $default  reduce using rule 2 (program)
 
 
-state 124
+State 124
 
-    6 class_definition: class_decl CLASS . id_list LBRACE class_body RBRACE
-    7                 | class_decl CLASS . id_list class_ext LBRACE class_body RBRACE
+    6 class_definition: class_decl CLASS • id_list LBRACE class_body RBRACE
+    7                 | class_decl CLASS • id_list class_ext LBRACE class_body RBRACE
 
     ID  shift, and go to state 206
 
     id_list  go to state 207
 
 
-state 125
+State 125
 
-    8 class_definition: class_decl INTERFACE . id_list LBRACE class_body RBRACE
-    9                 | class_decl INTERFACE . id_list iface_ext LBRACE class_body RBRACE
+    8 class_definition: class_decl INTERFACE • id_list LBRACE class_body RBRACE
+    9                 | class_decl INTERFACE • id_list iface_ext LBRACE class_body RBRACE
 
     ID  shift, and go to state 206
 
     id_list  go to state 208
 
 
-state 126
+State 126
 
-   37 static_decl: STATIC .
+   37 static_decl: STATIC •
 
     $default  reduce using rule 37 (static_decl)
 
 
-state 127
+State 127
 
-   38 static_decl: ABSTRACT .
+   38 static_decl: ABSTRACT •
 
     $default  reduce using rule 38 (static_decl)
 
 
-state 128
+State 128
 
-   26 function_definition: function_decl static_decl . type_decl2 ID LPAREN arg_list RPAREN code_segment
-   27                    | function_decl static_decl . type_decl2 ID LPAREN RPAREN code_segment
-   28                    | function_decl static_decl . type_decl2 ID LPAREN arg_list RPAREN SEMICOLON
-   29                    | function_decl static_decl . type_decl2 ID LPAREN RPAREN SEMICOLON
+   26 function_definition: function_decl static_decl • type_decl2 ID LPAREN arg_list RPAREN code_segment
+   27                    | function_decl static_decl • type_decl2 ID LPAREN RPAREN code_segment
+   28                    | function_decl static_decl • type_decl2 ID LPAREN arg_list RPAREN SEMICOLON
+   29                    | function_decl static_decl • type_decl2 ID LPAREN RPAREN SEMICOLON
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -2993,23 +3041,23 @@ state 128
     type_decl2   go to state 210
 
 
-state 129
+State 129
 
-   86 decl_expression: type_decl var_decl_list .
+   86 decl_expression: type_decl var_decl_list •
 
     $default  reduce using rule 86 (decl_expression)
 
 
-state 130
+State 130
 
-   51 statement_list: statement_list statement .
+   51 statement_list: statement_list statement •
 
     $default  reduce using rule 51 (statement_list)
 
 
-state 131
+State 131
 
-   76 expression: expression COMMA . chuck_expression
+   76 expression: expression COMMA • chuck_expression
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -3069,114 +3117,114 @@ state 131
     primary_expression         go to state 84
 
 
-state 132
+State 132
 
-   74 expression_statement: expression SEMICOLON .
+   74 expression_statement: expression SEMICOLON •
 
     $default  reduce using rule 74 (expression_statement)
 
 
-state 133
+State 133
 
-  102 chuck_operator: PLUS_CHUCK .
+  102 chuck_operator: PLUS_CHUCK •
 
     $default  reduce using rule 102 (chuck_operator)
 
 
-state 134
+State 134
 
-  103 chuck_operator: MINUS_CHUCK .
+  103 chuck_operator: MINUS_CHUCK •
 
     $default  reduce using rule 103 (chuck_operator)
 
 
-state 135
+State 135
 
-  104 chuck_operator: TIMES_CHUCK .
+  104 chuck_operator: TIMES_CHUCK •
 
     $default  reduce using rule 104 (chuck_operator)
 
 
-state 136
+State 136
 
-  105 chuck_operator: DIVIDE_CHUCK .
+  105 chuck_operator: DIVIDE_CHUCK •
 
     $default  reduce using rule 105 (chuck_operator)
 
 
-state 137
+State 137
 
-  111 chuck_operator: S_AND_CHUCK .
+  111 chuck_operator: S_AND_CHUCK •
 
     $default  reduce using rule 111 (chuck_operator)
 
 
-state 138
+State 138
 
-  112 chuck_operator: S_OR_CHUCK .
+  112 chuck_operator: S_OR_CHUCK •
 
     $default  reduce using rule 112 (chuck_operator)
 
 
-state 139
+State 139
 
-  113 chuck_operator: S_XOR_CHUCK .
+  113 chuck_operator: S_XOR_CHUCK •
 
     $default  reduce using rule 113 (chuck_operator)
 
 
-state 140
+State 140
 
-  106 chuck_operator: SHIFT_RIGHT_CHUCK .
+  106 chuck_operator: SHIFT_RIGHT_CHUCK •
 
     $default  reduce using rule 106 (chuck_operator)
 
 
-state 141
+State 141
 
-  107 chuck_operator: SHIFT_LEFT_CHUCK .
+  107 chuck_operator: SHIFT_LEFT_CHUCK •
 
     $default  reduce using rule 107 (chuck_operator)
 
 
-state 142
+State 142
 
-  108 chuck_operator: PERCENT_CHUCK .
+  108 chuck_operator: PERCENT_CHUCK •
 
     $default  reduce using rule 108 (chuck_operator)
 
 
-state 143
+State 143
 
-  100 chuck_operator: CHUCK .
+  100 chuck_operator: CHUCK •
 
     $default  reduce using rule 100 (chuck_operator)
 
 
-state 144
+State 144
 
-  101 chuck_operator: AT_CHUCK .
+  101 chuck_operator: AT_CHUCK •
 
     $default  reduce using rule 101 (chuck_operator)
 
 
-state 145
+State 145
 
-  109 chuck_operator: UNCHUCK .
+  109 chuck_operator: UNCHUCK •
 
     $default  reduce using rule 109 (chuck_operator)
 
 
-state 146
+State 146
 
-  110 chuck_operator: UPCHUCK .
+  110 chuck_operator: UPCHUCK •
 
     $default  reduce using rule 110 (chuck_operator)
 
 
-state 147
+State 147
 
-   78 chuck_expression: chuck_expression chuck_operator . arrow_expression
+   78 chuck_expression: chuck_expression chuck_operator • arrow_expression
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -3235,23 +3283,23 @@ state 147
     primary_expression         go to state 84
 
 
-state 148
+State 148
 
-  115 arrow_operator: ARROW_RIGHT .
+  115 arrow_operator: ARROW_RIGHT •
 
     $default  reduce using rule 115 (arrow_operator)
 
 
-state 149
+State 149
 
-  114 arrow_operator: ARROW_LEFT .
+  114 arrow_operator: ARROW_LEFT •
 
     $default  reduce using rule 114 (arrow_operator)
 
 
-state 150
+State 150
 
-   80 arrow_expression: arrow_expression arrow_operator . decl_expression
+   80 arrow_expression: arrow_expression arrow_operator • decl_expression
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -3309,9 +3357,9 @@ state 150
     primary_expression         go to state 84
 
 
-state 151
+State 151
 
-  119 logical_or_expression: logical_or_expression OR . logical_and_expression
+  119 logical_or_expression: logical_or_expression OR • logical_and_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3358,9 +3406,9 @@ state 151
     primary_expression         go to state 84
 
 
-state 152
+State 152
 
-  117 conditional_expression: logical_or_expression QUESTION . expression COLON conditional_expression
+  117 conditional_expression: logical_or_expression QUESTION • expression COLON conditional_expression
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -3421,9 +3469,9 @@ state 152
     primary_expression         go to state 84
 
 
-state 153
+State 153
 
-  121 logical_and_expression: logical_and_expression AND . inclusive_or_expression
+  121 logical_and_expression: logical_and_expression AND • inclusive_or_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3469,9 +3517,9 @@ state 153
     primary_expression         go to state 84
 
 
-state 154
+State 154
 
-  123 inclusive_or_expression: inclusive_or_expression S_OR . exclusive_or_expression
+  123 inclusive_or_expression: inclusive_or_expression S_OR • exclusive_or_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3516,9 +3564,9 @@ state 154
     primary_expression         go to state 84
 
 
-state 155
+State 155
 
-  125 exclusive_or_expression: exclusive_or_expression S_XOR . and_expression
+  125 exclusive_or_expression: exclusive_or_expression S_XOR • and_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3562,9 +3610,9 @@ state 155
     primary_expression         go to state 84
 
 
-state 156
+State 156
 
-  127 and_expression: and_expression S_AND . equality_expression
+  127 and_expression: and_expression S_AND • equality_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3607,9 +3655,9 @@ state 156
     primary_expression         go to state 84
 
 
-state 157
+State 157
 
-  129 equality_expression: equality_expression EQ . relational_expression
+  129 equality_expression: equality_expression EQ • relational_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3651,9 +3699,9 @@ state 157
     primary_expression         go to state 84
 
 
-state 158
+State 158
 
-  130 equality_expression: equality_expression NEQ . relational_expression
+  130 equality_expression: equality_expression NEQ • relational_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3695,9 +3743,9 @@ state 158
     primary_expression         go to state 84
 
 
-state 159
+State 159
 
-  132 relational_expression: relational_expression LT . shift_expression
+  132 relational_expression: relational_expression LT • shift_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3738,9 +3786,9 @@ state 159
     primary_expression         go to state 84
 
 
-state 160
+State 160
 
-  134 relational_expression: relational_expression LE . shift_expression
+  134 relational_expression: relational_expression LE • shift_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3781,9 +3829,9 @@ state 160
     primary_expression         go to state 84
 
 
-state 161
+State 161
 
-  133 relational_expression: relational_expression GT . shift_expression
+  133 relational_expression: relational_expression GT • shift_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3824,9 +3872,9 @@ state 161
     primary_expression         go to state 84
 
 
-state 162
+State 162
 
-  135 relational_expression: relational_expression GE . shift_expression
+  135 relational_expression: relational_expression GE • shift_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3867,9 +3915,9 @@ state 162
     primary_expression         go to state 84
 
 
-state 163
+State 163
 
-  138 shift_expression: shift_expression SHIFT_RIGHT . additive_expression
+  138 shift_expression: shift_expression SHIFT_RIGHT • additive_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3909,9 +3957,9 @@ state 163
     primary_expression         go to state 84
 
 
-state 164
+State 164
 
-  137 shift_expression: shift_expression SHIFT_LEFT . additive_expression
+  137 shift_expression: shift_expression SHIFT_LEFT • additive_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3951,9 +3999,9 @@ state 164
     primary_expression         go to state 84
 
 
-state 165
+State 165
 
-  140 additive_expression: additive_expression PLUS . multiplicative_expression
+  140 additive_expression: additive_expression PLUS • multiplicative_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -3992,9 +4040,9 @@ state 165
     primary_expression         go to state 84
 
 
-state 166
+State 166
 
-  141 additive_expression: additive_expression MINUS . multiplicative_expression
+  141 additive_expression: additive_expression MINUS • multiplicative_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4033,9 +4081,9 @@ state 166
     primary_expression         go to state 84
 
 
-state 167
+State 167
 
-  143 multiplicative_expression: multiplicative_expression TIMES . tilda_expression
+  143 multiplicative_expression: multiplicative_expression TIMES • tilda_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4073,9 +4121,9 @@ state 167
     primary_expression  go to state 84
 
 
-state 168
+State 168
 
-  144 multiplicative_expression: multiplicative_expression DIVIDE . tilda_expression
+  144 multiplicative_expression: multiplicative_expression DIVIDE • tilda_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4113,9 +4161,9 @@ state 168
     primary_expression  go to state 84
 
 
-state 169
+State 169
 
-  145 multiplicative_expression: multiplicative_expression PERCENT . tilda_expression
+  145 multiplicative_expression: multiplicative_expression PERCENT • tilda_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4153,9 +4201,9 @@ state 169
     primary_expression  go to state 84
 
 
-state 170
+State 170
 
-  147 tilda_expression: tilda_expression TILDA . cast_expression
+  147 tilda_expression: tilda_expression TILDA • cast_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4192,9 +4240,9 @@ state 170
     primary_expression  go to state 84
 
 
-state 171
+State 171
 
-  149 cast_expression: cast_expression DOLLAR . type_decl
+  149 cast_expression: cast_expression DOLLAR • type_decl
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -4204,16 +4252,16 @@ state 171
     type_decl    go to state 234
 
 
-state 172
+State 172
 
-  153 unary_expression: unary_operator unary_expression .
+  153 unary_expression: unary_operator unary_expression •
 
     $default  reduce using rule 153 (unary_expression)
 
 
-state 173
+State 173
 
-  165 dur_expression: dur_expression COLONCOLON . postfix_expression
+  165 dur_expression: dur_expression COLONCOLON • postfix_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -4235,10 +4283,10 @@ state 173
     primary_expression  go to state 84
 
 
-state 174
+State 174
 
-  168 postfix_expression: postfix_expression LPAREN . RPAREN
-  169                   | postfix_expression LPAREN . expression RPAREN
+  168 postfix_expression: postfix_expression LPAREN • RPAREN
+  169                   | postfix_expression LPAREN • expression RPAREN
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -4300,45 +4348,45 @@ state 174
     primary_expression         go to state 84
 
 
-state 175
+State 175
 
-  170 postfix_expression: postfix_expression DOT . ID
+  170 postfix_expression: postfix_expression DOT • ID
 
     ID  shift, and go to state 238
 
 
-state 176
+State 176
 
-  171 postfix_expression: postfix_expression PLUSPLUS .
+  171 postfix_expression: postfix_expression PLUSPLUS •
 
     $default  reduce using rule 171 (postfix_expression)
 
 
-state 177
+State 177
 
-  172 postfix_expression: postfix_expression MINUSMINUS .
+  172 postfix_expression: postfix_expression MINUSMINUS •
 
     $default  reduce using rule 172 (postfix_expression)
 
 
-state 178
+State 178
 
-  167 postfix_expression: postfix_expression array_exp .
+  167 postfix_expression: postfix_expression array_exp •
 
     $default  reduce using rule 167 (postfix_expression)
 
 
-state 179
+State 179
 
-  183 primary_expression: LPAREN expression RPAREN .
+  183 primary_expression: LPAREN expression RPAREN •
 
     $default  reduce using rule 183 (primary_expression)
 
 
-state 180
+State 180
 
-   81 array_exp: LBRACK expression RBRACK .
-   82          | LBRACK expression RBRACK . array_exp
+   81 array_exp: LBRACK expression RBRACK •
+   82          | LBRACK expression RBRACK • array_exp
 
     LBRACK  shift, and go to state 8
 
@@ -4348,55 +4396,55 @@ state 180
     array_exp  go to state 239
 
 
-state 181
+State 181
 
-   72 code_segment: LBRACE statement_list RBRACE .
+   72 code_segment: LBRACE statement_list RBRACE •
 
     $default  reduce using rule 72 (code_segment)
 
 
-state 182
+State 182
 
-   25 id_dot: ID DOT . id_dot
+   25 id_dot: ID DOT • id_dot
 
     ID  shift, and go to state 91
 
     id_dot  go to state 240
 
 
-state 183
+State 183
 
-   42 type_decl_b: LT id_dot GT .
-   43            | LT id_dot GT . AT_SYM
+   42 type_decl_b: LT id_dot GT •
+   43            | LT id_dot GT • AT_SYM
 
     AT_SYM  shift, and go to state 241
 
     $default  reduce using rule 42 (type_decl_b)
 
 
-state 184
+State 184
 
-   61 selection_statement: IF LPAREN expression . RPAREN statement
-   62                    | IF LPAREN expression . RPAREN statement ELSE statement
-   76 expression: expression . COMMA chuck_expression
+   61 selection_statement: IF LPAREN expression • RPAREN statement
+   62                    | IF LPAREN expression • RPAREN statement ELSE statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 242
 
 
-state 185
+State 185
 
-   63 loop_statement: WHILE LPAREN expression . RPAREN statement
-   76 expression: expression . COMMA chuck_expression
+   63 loop_statement: WHILE LPAREN expression • RPAREN statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 243
 
 
-state 186
+State 186
 
-   65 loop_statement: FOR LPAREN expression_statement . expression_statement RPAREN statement
-   66               | FOR LPAREN expression_statement . expression_statement expression RPAREN statement
+   65 loop_statement: FOR LPAREN expression_statement • expression_statement RPAREN statement
+   66               | FOR LPAREN expression_statement • expression_statement expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -4459,103 +4507,103 @@ state 186
     primary_expression         go to state 84
 
 
-state 187
+State 187
 
-   67 loop_statement: FOR LPAREN expression . COLON expression RPAREN statement
-   74 expression_statement: expression . SEMICOLON
-   76 expression: expression . COMMA chuck_expression
+   67 loop_statement: FOR LPAREN expression • COLON expression RPAREN statement
+   74 expression_statement: expression • SEMICOLON
+   76 expression: expression • COMMA chuck_expression
 
     COMMA      shift, and go to state 131
     COLON      shift, and go to state 245
     SEMICOLON  shift, and go to state 132
 
 
-state 188
+State 188
 
-   64 loop_statement: DO statement WHILE . LPAREN expression RPAREN SEMICOLON
+   64 loop_statement: DO statement WHILE • LPAREN expression RPAREN SEMICOLON
 
     LPAREN  shift, and go to state 246
 
 
-state 189
+State 189
 
-   69 loop_statement: DO statement UNTIL . LPAREN expression RPAREN SEMICOLON
+   69 loop_statement: DO statement UNTIL • LPAREN expression RPAREN SEMICOLON
 
     LPAREN  shift, and go to state 247
 
 
-state 190
+State 190
 
-   70 loop_statement: LOOP LPAREN expression . RPAREN statement
-   76 expression: expression . COMMA chuck_expression
+   70 loop_statement: LOOP LPAREN expression • RPAREN statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 248
 
 
-state 191
+State 191
 
-   58 jump_statement: RETURN expression SEMICOLON .
+   58 jump_statement: RETURN expression SEMICOLON •
 
     $default  reduce using rule 58 (jump_statement)
 
 
-state 192
+State 192
 
-   97 complex_exp: POUNDPAREN expression RPAREN .
+   97 complex_exp: POUNDPAREN expression RPAREN •
 
     $default  reduce using rule 97 (complex_exp)
 
 
-state 193
+State 193
 
-   98 polar_exp: PERCENTPAREN expression RPAREN .
+   98 polar_exp: PERCENTPAREN expression RPAREN •
 
     $default  reduce using rule 98 (polar_exp)
 
 
-state 194
+State 194
 
-   99 vec_exp: ATPAREN expression RPAREN .
+   99 vec_exp: ATPAREN expression RPAREN •
 
     $default  reduce using rule 99 (vec_exp)
 
 
-state 195
+State 195
 
-   68 loop_statement: UNTIL LPAREN expression . RPAREN statement
-   76 expression: expression . COMMA chuck_expression
+   68 loop_statement: UNTIL LPAREN expression • RPAREN statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 249
 
 
-state 196
+State 196
 
-   87 decl_expression: EXTERNAL type_decl var_decl_list .
+   87 decl_expression: EXTERNAL type_decl var_decl_list •
 
     $default  reduce using rule 87 (decl_expression)
 
 
-state 197
+State 197
 
-   88 decl_expression: GLOBAL type_decl var_decl_list .
+   88 decl_expression: GLOBAL type_decl var_decl_list •
 
     $default  reduce using rule 88 (decl_expression)
 
 
-state 198
+State 198
 
-  157 unary_expression: NEW type_decl array_exp .
+  157 unary_expression: NEW type_decl array_exp •
 
     $default  reduce using rule 157 (unary_expression)
 
 
-state 199
+State 199
 
-   81 array_exp: LBRACK . expression RBRACK
-   82          | LBRACK . expression RBRACK array_exp
-   83 array_empty: LBRACK . RBRACK
+   81 array_exp: LBRACK • expression RBRACK
+   82          | LBRACK • expression RBRACK array_exp
+   83 array_empty: LBRACK • RBRACK
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -4617,26 +4665,26 @@ state 199
     primary_expression         go to state 84
 
 
-state 200
+State 200
 
-   95 var_decl: ID array_exp .
+   95 var_decl: ID array_exp •
 
     $default  reduce using rule 95 (var_decl)
 
 
-state 201
+State 201
 
-   84 array_empty: array_empty . LBRACK RBRACK
-   96 var_decl: ID array_empty .
+   84 array_empty: array_empty • LBRACK RBRACK
+   96 var_decl: ID array_empty •
 
     LBRACK  shift, and go to state 251
 
     $default  reduce using rule 96 (var_decl)
 
 
-state 202
+State 202
 
-   93 var_decl_list: var_decl COMMA . var_decl_list
+   93 var_decl_list: var_decl COMMA • var_decl_list
 
     ID  shift, and go to state 115
 
@@ -4644,41 +4692,41 @@ state 202
     var_decl       go to state 117
 
 
-state 203
+State 203
 
-   91 decl_expression: STATIC SAME var_decl_list .
+   91 decl_expression: STATIC SAME var_decl_list •
 
     $default  reduce using rule 91 (decl_expression)
 
 
-state 204
+State 204
 
-   89 decl_expression: STATIC type_decl var_decl_list .
+   89 decl_expression: STATIC type_decl var_decl_list •
 
     $default  reduce using rule 89 (decl_expression)
 
 
-state 205
+State 205
 
-  182 primary_expression: L_HACK expression R_HACK .
+  182 primary_expression: L_HACK expression R_HACK •
 
     $default  reduce using rule 182 (primary_expression)
 
 
-state 206
+State 206
 
-   22 id_list: ID .
-   23        | ID . COMMA id_list
+   22 id_list: ID •
+   23        | ID • COMMA id_list
 
     COMMA  shift, and go to state 253
 
     $default  reduce using rule 22 (id_list)
 
 
-state 207
+State 207
 
-    6 class_definition: class_decl CLASS id_list . LBRACE class_body RBRACE
-    7                 | class_decl CLASS id_list . class_ext LBRACE class_body RBRACE
+    6 class_definition: class_decl CLASS id_list • LBRACE class_body RBRACE
+    7                 | class_decl CLASS id_list • class_ext LBRACE class_body RBRACE
 
     LBRACE      shift, and go to state 254
     EXTENDS     shift, and go to state 255
@@ -4687,10 +4735,10 @@ state 207
     class_ext  go to state 257
 
 
-state 208
+State 208
 
-    8 class_definition: class_decl INTERFACE id_list . LBRACE class_body RBRACE
-    9                 | class_decl INTERFACE id_list . iface_ext LBRACE class_body RBRACE
+    8 class_definition: class_decl INTERFACE id_list • LBRACE class_body RBRACE
+    9                 | class_decl INTERFACE id_list • iface_ext LBRACE class_body RBRACE
 
     LBRACE   shift, and go to state 258
     EXTENDS  shift, and go to state 259
@@ -4698,10 +4746,10 @@ state 208
     iface_ext  go to state 260
 
 
-state 209
+State 209
 
-   46 type_decl2: type_decl .
-   47           | type_decl . array_empty
+   46 type_decl2: type_decl •
+   47           | type_decl • array_empty
 
     LBRACK  shift, and go to state 261
 
@@ -4710,20 +4758,20 @@ state 209
     array_empty  go to state 262
 
 
-state 210
+State 210
 
-   26 function_definition: function_decl static_decl type_decl2 . ID LPAREN arg_list RPAREN code_segment
-   27                    | function_decl static_decl type_decl2 . ID LPAREN RPAREN code_segment
-   28                    | function_decl static_decl type_decl2 . ID LPAREN arg_list RPAREN SEMICOLON
-   29                    | function_decl static_decl type_decl2 . ID LPAREN RPAREN SEMICOLON
+   26 function_definition: function_decl static_decl type_decl2 • ID LPAREN arg_list RPAREN code_segment
+   27                    | function_decl static_decl type_decl2 • ID LPAREN RPAREN code_segment
+   28                    | function_decl static_decl type_decl2 • ID LPAREN arg_list RPAREN SEMICOLON
+   29                    | function_decl static_decl type_decl2 • ID LPAREN RPAREN SEMICOLON
 
     ID  shift, and go to state 263
 
 
-state 211
+State 211
 
-   76 expression: expression COMMA chuck_expression .
-   78 chuck_expression: chuck_expression . chuck_operator arrow_expression
+   76 expression: expression COMMA chuck_expression •
+   78 chuck_expression: chuck_expression • chuck_operator arrow_expression
 
     PLUS_CHUCK         shift, and go to state 133
     MINUS_CHUCK        shift, and go to state 134
@@ -4745,10 +4793,10 @@ state 211
     chuck_operator  go to state 147
 
 
-state 212
+State 212
 
-   78 chuck_expression: chuck_expression chuck_operator arrow_expression .
-   80 arrow_expression: arrow_expression . arrow_operator decl_expression
+   78 chuck_expression: chuck_expression chuck_operator arrow_expression •
+   80 arrow_expression: arrow_expression • arrow_operator decl_expression
 
     ARROW_RIGHT  shift, and go to state 148
     ARROW_LEFT   shift, and go to state 149
@@ -4758,67 +4806,67 @@ state 212
     arrow_operator  go to state 150
 
 
-state 213
+State 213
 
-   80 arrow_expression: arrow_expression arrow_operator decl_expression .
+   80 arrow_expression: arrow_expression arrow_operator decl_expression •
 
     $default  reduce using rule 80 (arrow_expression)
 
 
-state 214
+State 214
 
-  119 logical_or_expression: logical_or_expression OR logical_and_expression .
-  121 logical_and_expression: logical_and_expression . AND inclusive_or_expression
+  119 logical_or_expression: logical_or_expression OR logical_and_expression •
+  121 logical_and_expression: logical_and_expression • AND inclusive_or_expression
 
     AND  shift, and go to state 153
 
     $default  reduce using rule 119 (logical_or_expression)
 
 
-state 215
+State 215
 
-   76 expression: expression . COMMA chuck_expression
-  117 conditional_expression: logical_or_expression QUESTION expression . COLON conditional_expression
+   76 expression: expression • COMMA chuck_expression
+  117 conditional_expression: logical_or_expression QUESTION expression • COLON conditional_expression
 
     COMMA  shift, and go to state 131
     COLON  shift, and go to state 264
 
 
-state 216
+State 216
 
-  121 logical_and_expression: logical_and_expression AND inclusive_or_expression .
-  123 inclusive_or_expression: inclusive_or_expression . S_OR exclusive_or_expression
+  121 logical_and_expression: logical_and_expression AND inclusive_or_expression •
+  123 inclusive_or_expression: inclusive_or_expression • S_OR exclusive_or_expression
 
     S_OR  shift, and go to state 154
 
     $default  reduce using rule 121 (logical_and_expression)
 
 
-state 217
+State 217
 
-  123 inclusive_or_expression: inclusive_or_expression S_OR exclusive_or_expression .
-  125 exclusive_or_expression: exclusive_or_expression . S_XOR and_expression
+  123 inclusive_or_expression: inclusive_or_expression S_OR exclusive_or_expression •
+  125 exclusive_or_expression: exclusive_or_expression • S_XOR and_expression
 
     S_XOR  shift, and go to state 155
 
     $default  reduce using rule 123 (inclusive_or_expression)
 
 
-state 218
+State 218
 
-  125 exclusive_or_expression: exclusive_or_expression S_XOR and_expression .
-  127 and_expression: and_expression . S_AND equality_expression
+  125 exclusive_or_expression: exclusive_or_expression S_XOR and_expression •
+  127 and_expression: and_expression • S_AND equality_expression
 
     S_AND  shift, and go to state 156
 
     $default  reduce using rule 125 (exclusive_or_expression)
 
 
-state 219
+State 219
 
-  127 and_expression: and_expression S_AND equality_expression .
-  129 equality_expression: equality_expression . EQ relational_expression
-  130                    | equality_expression . NEQ relational_expression
+  127 and_expression: and_expression S_AND equality_expression •
+  129 equality_expression: equality_expression • EQ relational_expression
+  130                    | equality_expression • NEQ relational_expression
 
     EQ   shift, and go to state 157
     NEQ  shift, and go to state 158
@@ -4826,13 +4874,13 @@ state 219
     $default  reduce using rule 127 (and_expression)
 
 
-state 220
+State 220
 
-  129 equality_expression: equality_expression EQ relational_expression .
-  132 relational_expression: relational_expression . LT shift_expression
-  133                      | relational_expression . GT shift_expression
-  134                      | relational_expression . LE shift_expression
-  135                      | relational_expression . GE shift_expression
+  129 equality_expression: equality_expression EQ relational_expression •
+  132 relational_expression: relational_expression • LT shift_expression
+  133                      | relational_expression • GT shift_expression
+  134                      | relational_expression • LE shift_expression
+  135                      | relational_expression • GE shift_expression
 
     LT  shift, and go to state 159
     LE  shift, and go to state 160
@@ -4842,13 +4890,13 @@ state 220
     $default  reduce using rule 129 (equality_expression)
 
 
-state 221
+State 221
 
-  130 equality_expression: equality_expression NEQ relational_expression .
-  132 relational_expression: relational_expression . LT shift_expression
-  133                      | relational_expression . GT shift_expression
-  134                      | relational_expression . LE shift_expression
-  135                      | relational_expression . GE shift_expression
+  130 equality_expression: equality_expression NEQ relational_expression •
+  132 relational_expression: relational_expression • LT shift_expression
+  133                      | relational_expression • GT shift_expression
+  134                      | relational_expression • LE shift_expression
+  135                      | relational_expression • GE shift_expression
 
     LT  shift, and go to state 159
     LE  shift, and go to state 160
@@ -4858,11 +4906,11 @@ state 221
     $default  reduce using rule 130 (equality_expression)
 
 
-state 222
+State 222
 
-  132 relational_expression: relational_expression LT shift_expression .
-  137 shift_expression: shift_expression . SHIFT_LEFT additive_expression
-  138                 | shift_expression . SHIFT_RIGHT additive_expression
+  132 relational_expression: relational_expression LT shift_expression •
+  137 shift_expression: shift_expression • SHIFT_LEFT additive_expression
+  138                 | shift_expression • SHIFT_RIGHT additive_expression
 
     SHIFT_RIGHT  shift, and go to state 163
     SHIFT_LEFT   shift, and go to state 164
@@ -4870,11 +4918,11 @@ state 222
     $default  reduce using rule 132 (relational_expression)
 
 
-state 223
+State 223
 
-  134 relational_expression: relational_expression LE shift_expression .
-  137 shift_expression: shift_expression . SHIFT_LEFT additive_expression
-  138                 | shift_expression . SHIFT_RIGHT additive_expression
+  134 relational_expression: relational_expression LE shift_expression •
+  137 shift_expression: shift_expression • SHIFT_LEFT additive_expression
+  138                 | shift_expression • SHIFT_RIGHT additive_expression
 
     SHIFT_RIGHT  shift, and go to state 163
     SHIFT_LEFT   shift, and go to state 164
@@ -4882,11 +4930,11 @@ state 223
     $default  reduce using rule 134 (relational_expression)
 
 
-state 224
+State 224
 
-  133 relational_expression: relational_expression GT shift_expression .
-  137 shift_expression: shift_expression . SHIFT_LEFT additive_expression
-  138                 | shift_expression . SHIFT_RIGHT additive_expression
+  133 relational_expression: relational_expression GT shift_expression •
+  137 shift_expression: shift_expression • SHIFT_LEFT additive_expression
+  138                 | shift_expression • SHIFT_RIGHT additive_expression
 
     SHIFT_RIGHT  shift, and go to state 163
     SHIFT_LEFT   shift, and go to state 164
@@ -4894,11 +4942,11 @@ state 224
     $default  reduce using rule 133 (relational_expression)
 
 
-state 225
+State 225
 
-  135 relational_expression: relational_expression GE shift_expression .
-  137 shift_expression: shift_expression . SHIFT_LEFT additive_expression
-  138                 | shift_expression . SHIFT_RIGHT additive_expression
+  135 relational_expression: relational_expression GE shift_expression •
+  137 shift_expression: shift_expression • SHIFT_LEFT additive_expression
+  138                 | shift_expression • SHIFT_RIGHT additive_expression
 
     SHIFT_RIGHT  shift, and go to state 163
     SHIFT_LEFT   shift, and go to state 164
@@ -4906,11 +4954,11 @@ state 225
     $default  reduce using rule 135 (relational_expression)
 
 
-state 226
+State 226
 
-  138 shift_expression: shift_expression SHIFT_RIGHT additive_expression .
-  140 additive_expression: additive_expression . PLUS multiplicative_expression
-  141                    | additive_expression . MINUS multiplicative_expression
+  138 shift_expression: shift_expression SHIFT_RIGHT additive_expression •
+  140 additive_expression: additive_expression • PLUS multiplicative_expression
+  141                    | additive_expression • MINUS multiplicative_expression
 
     PLUS   shift, and go to state 165
     MINUS  shift, and go to state 166
@@ -4918,11 +4966,11 @@ state 226
     $default  reduce using rule 138 (shift_expression)
 
 
-state 227
+State 227
 
-  137 shift_expression: shift_expression SHIFT_LEFT additive_expression .
-  140 additive_expression: additive_expression . PLUS multiplicative_expression
-  141                    | additive_expression . MINUS multiplicative_expression
+  137 shift_expression: shift_expression SHIFT_LEFT additive_expression •
+  140 additive_expression: additive_expression • PLUS multiplicative_expression
+  141                    | additive_expression • MINUS multiplicative_expression
 
     PLUS   shift, and go to state 165
     MINUS  shift, and go to state 166
@@ -4930,12 +4978,12 @@ state 227
     $default  reduce using rule 137 (shift_expression)
 
 
-state 228
+State 228
 
-  140 additive_expression: additive_expression PLUS multiplicative_expression .
-  143 multiplicative_expression: multiplicative_expression . TIMES tilda_expression
-  144                          | multiplicative_expression . DIVIDE tilda_expression
-  145                          | multiplicative_expression . PERCENT tilda_expression
+  140 additive_expression: additive_expression PLUS multiplicative_expression •
+  143 multiplicative_expression: multiplicative_expression • TIMES tilda_expression
+  144                          | multiplicative_expression • DIVIDE tilda_expression
+  145                          | multiplicative_expression • PERCENT tilda_expression
 
     TIMES    shift, and go to state 167
     DIVIDE   shift, and go to state 168
@@ -4944,12 +4992,12 @@ state 228
     $default  reduce using rule 140 (additive_expression)
 
 
-state 229
+State 229
 
-  141 additive_expression: additive_expression MINUS multiplicative_expression .
-  143 multiplicative_expression: multiplicative_expression . TIMES tilda_expression
-  144                          | multiplicative_expression . DIVIDE tilda_expression
-  145                          | multiplicative_expression . PERCENT tilda_expression
+  141 additive_expression: additive_expression MINUS multiplicative_expression •
+  143 multiplicative_expression: multiplicative_expression • TIMES tilda_expression
+  144                          | multiplicative_expression • DIVIDE tilda_expression
+  145                          | multiplicative_expression • PERCENT tilda_expression
 
     TIMES    shift, and go to state 167
     DIVIDE   shift, and go to state 168
@@ -4958,62 +5006,62 @@ state 229
     $default  reduce using rule 141 (additive_expression)
 
 
-state 230
+State 230
 
-  143 multiplicative_expression: multiplicative_expression TIMES tilda_expression .
-  147 tilda_expression: tilda_expression . TILDA cast_expression
+  143 multiplicative_expression: multiplicative_expression TIMES tilda_expression •
+  147 tilda_expression: tilda_expression • TILDA cast_expression
 
     TILDA  shift, and go to state 170
 
     $default  reduce using rule 143 (multiplicative_expression)
 
 
-state 231
+State 231
 
-  144 multiplicative_expression: multiplicative_expression DIVIDE tilda_expression .
-  147 tilda_expression: tilda_expression . TILDA cast_expression
+  144 multiplicative_expression: multiplicative_expression DIVIDE tilda_expression •
+  147 tilda_expression: tilda_expression • TILDA cast_expression
 
     TILDA  shift, and go to state 170
 
     $default  reduce using rule 144 (multiplicative_expression)
 
 
-state 232
+State 232
 
-  145 multiplicative_expression: multiplicative_expression PERCENT tilda_expression .
-  147 tilda_expression: tilda_expression . TILDA cast_expression
+  145 multiplicative_expression: multiplicative_expression PERCENT tilda_expression •
+  147 tilda_expression: tilda_expression • TILDA cast_expression
 
     TILDA  shift, and go to state 170
 
     $default  reduce using rule 145 (multiplicative_expression)
 
 
-state 233
+State 233
 
-  147 tilda_expression: tilda_expression TILDA cast_expression .
-  149 cast_expression: cast_expression . DOLLAR type_decl
+  147 tilda_expression: tilda_expression TILDA cast_expression •
+  149 cast_expression: cast_expression • DOLLAR type_decl
 
     DOLLAR  shift, and go to state 171
 
     $default  reduce using rule 147 (tilda_expression)
 
 
-state 234
+State 234
 
-  149 cast_expression: cast_expression DOLLAR type_decl .
+  149 cast_expression: cast_expression DOLLAR type_decl •
 
     $default  reduce using rule 149 (cast_expression)
 
 
-state 235
+State 235
 
-  165 dur_expression: dur_expression COLONCOLON postfix_expression .
-  167 postfix_expression: postfix_expression . array_exp
-  168                   | postfix_expression . LPAREN RPAREN
-  169                   | postfix_expression . LPAREN expression RPAREN
-  170                   | postfix_expression . DOT ID
-  171                   | postfix_expression . PLUSPLUS
-  172                   | postfix_expression . MINUSMINUS
+  165 dur_expression: dur_expression COLONCOLON postfix_expression •
+  167 postfix_expression: postfix_expression • array_exp
+  168                   | postfix_expression • LPAREN RPAREN
+  169                   | postfix_expression • LPAREN expression RPAREN
+  170                   | postfix_expression • DOT ID
+  171                   | postfix_expression • PLUSPLUS
+  172                   | postfix_expression • MINUSMINUS
 
     LPAREN      shift, and go to state 174
     LBRACK      shift, and go to state 8
@@ -5026,54 +5074,54 @@ state 235
     array_exp  go to state 178
 
 
-state 236
+State 236
 
-  168 postfix_expression: postfix_expression LPAREN RPAREN .
+  168 postfix_expression: postfix_expression LPAREN RPAREN •
 
     $default  reduce using rule 168 (postfix_expression)
 
 
-state 237
+State 237
 
-   76 expression: expression . COMMA chuck_expression
-  169 postfix_expression: postfix_expression LPAREN expression . RPAREN
+   76 expression: expression • COMMA chuck_expression
+  169 postfix_expression: postfix_expression LPAREN expression • RPAREN
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 265
 
 
-state 238
+State 238
 
-  170 postfix_expression: postfix_expression DOT ID .
+  170 postfix_expression: postfix_expression DOT ID •
 
     $default  reduce using rule 170 (postfix_expression)
 
 
-state 239
+State 239
 
-   82 array_exp: LBRACK expression RBRACK array_exp .
+   82 array_exp: LBRACK expression RBRACK array_exp •
 
     $default  reduce using rule 82 (array_exp)
 
 
-state 240
+State 240
 
-   25 id_dot: ID DOT id_dot .
+   25 id_dot: ID DOT id_dot •
 
     $default  reduce using rule 25 (id_dot)
 
 
-state 241
+State 241
 
-   43 type_decl_b: LT id_dot GT AT_SYM .
+   43 type_decl_b: LT id_dot GT AT_SYM •
 
     $default  reduce using rule 43 (type_decl_b)
 
 
-state 242
+State 242
 
-   61 selection_statement: IF LPAREN expression RPAREN . statement
-   62                    | IF LPAREN expression RPAREN . statement ELSE statement
+   61 selection_statement: IF LPAREN expression RPAREN • statement
+   62                    | IF LPAREN expression RPAREN • statement ELSE statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5151,9 +5199,9 @@ state 242
     primary_expression         go to state 84
 
 
-state 243
+State 243
 
-   63 loop_statement: WHILE LPAREN expression RPAREN . statement
+   63 loop_statement: WHILE LPAREN expression RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5231,10 +5279,10 @@ state 243
     primary_expression         go to state 84
 
 
-state 244
+State 244
 
-   65 loop_statement: FOR LPAREN expression_statement expression_statement . RPAREN statement
-   66               | FOR LPAREN expression_statement expression_statement . expression RPAREN statement
+   65 loop_statement: FOR LPAREN expression_statement expression_statement • RPAREN statement
+   66               | FOR LPAREN expression_statement expression_statement • expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5296,9 +5344,9 @@ state 244
     primary_expression         go to state 84
 
 
-state 245
+State 245
 
-   67 loop_statement: FOR LPAREN expression COLON . expression RPAREN statement
+   67 loop_statement: FOR LPAREN expression COLON • expression RPAREN statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5359,9 +5407,9 @@ state 245
     primary_expression         go to state 84
 
 
-state 246
+State 246
 
-   64 loop_statement: DO statement WHILE LPAREN . expression RPAREN SEMICOLON
+   64 loop_statement: DO statement WHILE LPAREN • expression RPAREN SEMICOLON
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5422,9 +5470,9 @@ state 246
     primary_expression         go to state 84
 
 
-state 247
+State 247
 
-   69 loop_statement: DO statement UNTIL LPAREN . expression RPAREN SEMICOLON
+   69 loop_statement: DO statement UNTIL LPAREN • expression RPAREN SEMICOLON
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5485,9 +5533,9 @@ state 247
     primary_expression         go to state 84
 
 
-state 248
+State 248
 
-   70 loop_statement: LOOP LPAREN expression RPAREN . statement
+   70 loop_statement: LOOP LPAREN expression RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5565,9 +5613,9 @@ state 248
     primary_expression         go to state 84
 
 
-state 249
+State 249
 
-   68 loop_statement: UNTIL LPAREN expression RPAREN . statement
+   68 loop_statement: UNTIL LPAREN expression RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5645,39 +5693,39 @@ state 249
     primary_expression         go to state 84
 
 
-state 250
+State 250
 
-   83 array_empty: LBRACK RBRACK .
+   83 array_empty: LBRACK RBRACK •
 
     $default  reduce using rule 83 (array_empty)
 
 
-state 251
+State 251
 
-   84 array_empty: array_empty LBRACK . RBRACK
+   84 array_empty: array_empty LBRACK • RBRACK
 
     RBRACK  shift, and go to state 275
 
 
-state 252
+State 252
 
-   93 var_decl_list: var_decl COMMA var_decl_list .
+   93 var_decl_list: var_decl COMMA var_decl_list •
 
     $default  reduce using rule 93 (var_decl_list)
 
 
-state 253
+State 253
 
-   23 id_list: ID COMMA . id_list
+   23 id_list: ID COMMA • id_list
 
     ID  shift, and go to state 206
 
     id_list  go to state 276
 
 
-state 254
+State 254
 
-    6 class_definition: class_decl CLASS id_list LBRACE . class_body RBRACE
+    6 class_definition: class_decl CLASS id_list LBRACE • class_body RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5770,36 +5818,36 @@ state 254
     primary_expression         go to state 84
 
 
-state 255
+State 255
 
-   12 class_ext: EXTENDS . id_dot
-   13          | EXTENDS . id_dot IMPLEMENTS id_list
+   12 class_ext: EXTENDS • id_dot
+   13          | EXTENDS • id_dot IMPLEMENTS id_list
 
     ID  shift, and go to state 91
 
     id_dot  go to state 283
 
 
-state 256
+State 256
 
-   10 class_ext: IMPLEMENTS . id_list
-   11          | IMPLEMENTS . id_list EXTENDS id_dot
+   10 class_ext: IMPLEMENTS • id_list
+   11          | IMPLEMENTS • id_list EXTENDS id_dot
 
     ID  shift, and go to state 206
 
     id_list  go to state 284
 
 
-state 257
+State 257
 
-    7 class_definition: class_decl CLASS id_list class_ext . LBRACE class_body RBRACE
+    7 class_definition: class_decl CLASS id_list class_ext • LBRACE class_body RBRACE
 
     LBRACE  shift, and go to state 285
 
 
-state 258
+State 258
 
-    8 class_definition: class_decl INTERFACE id_list LBRACE . class_body RBRACE
+    8 class_definition: class_decl INTERFACE id_list LBRACE • class_body RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -5892,52 +5940,52 @@ state 258
     primary_expression         go to state 84
 
 
-state 259
+State 259
 
-   21 iface_ext: EXTENDS . id_list
+   21 iface_ext: EXTENDS • id_list
 
     ID  shift, and go to state 206
 
     id_list  go to state 287
 
 
-state 260
+State 260
 
-    9 class_definition: class_decl INTERFACE id_list iface_ext . LBRACE class_body RBRACE
+    9 class_definition: class_decl INTERFACE id_list iface_ext • LBRACE class_body RBRACE
 
     LBRACE  shift, and go to state 288
 
 
-state 261
+State 261
 
-   83 array_empty: LBRACK . RBRACK
+   83 array_empty: LBRACK • RBRACK
 
     RBRACK  shift, and go to state 250
 
 
-state 262
+State 262
 
-   47 type_decl2: type_decl array_empty .
-   84 array_empty: array_empty . LBRACK RBRACK
+   47 type_decl2: type_decl array_empty •
+   84 array_empty: array_empty • LBRACK RBRACK
 
     LBRACK  shift, and go to state 251
 
     $default  reduce using rule 47 (type_decl2)
 
 
-state 263
+State 263
 
-   26 function_definition: function_decl static_decl type_decl2 ID . LPAREN arg_list RPAREN code_segment
-   27                    | function_decl static_decl type_decl2 ID . LPAREN RPAREN code_segment
-   28                    | function_decl static_decl type_decl2 ID . LPAREN arg_list RPAREN SEMICOLON
-   29                    | function_decl static_decl type_decl2 ID . LPAREN RPAREN SEMICOLON
+   26 function_definition: function_decl static_decl type_decl2 ID • LPAREN arg_list RPAREN code_segment
+   27                    | function_decl static_decl type_decl2 ID • LPAREN RPAREN code_segment
+   28                    | function_decl static_decl type_decl2 ID • LPAREN arg_list RPAREN SEMICOLON
+   29                    | function_decl static_decl type_decl2 ID • LPAREN RPAREN SEMICOLON
 
     LPAREN  shift, and go to state 289
 
 
-state 264
+State 264
 
-  117 conditional_expression: logical_or_expression QUESTION expression COLON . conditional_expression
+  117 conditional_expression: logical_or_expression QUESTION expression COLON • conditional_expression
 
     ID            shift, and go to state 102
     STRING_LIT    shift, and go to state 2
@@ -5986,17 +6034,17 @@ state 264
     primary_expression         go to state 84
 
 
-state 265
+State 265
 
-  169 postfix_expression: postfix_expression LPAREN expression RPAREN .
+  169 postfix_expression: postfix_expression LPAREN expression RPAREN •
 
     $default  reduce using rule 169 (postfix_expression)
 
 
-state 266
+State 266
 
-   61 selection_statement: IF LPAREN expression RPAREN statement .
-   62                    | IF LPAREN expression RPAREN statement . ELSE statement
+   61 selection_statement: IF LPAREN expression RPAREN statement •
+   62                    | IF LPAREN expression RPAREN statement • ELSE statement
 
     ELSE  shift, and go to state 291
 
@@ -6004,16 +6052,16 @@ state 266
     $default  reduce using rule 61 (selection_statement)
 
 
-state 267
+State 267
 
-   63 loop_statement: WHILE LPAREN expression RPAREN statement .
+   63 loop_statement: WHILE LPAREN expression RPAREN statement •
 
     $default  reduce using rule 63 (loop_statement)
 
 
-state 268
+State 268
 
-   65 loop_statement: FOR LPAREN expression_statement expression_statement RPAREN . statement
+   65 loop_statement: FOR LPAREN expression_statement expression_statement RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6091,95 +6139,95 @@ state 268
     primary_expression         go to state 84
 
 
-state 269
+State 269
 
-   66 loop_statement: FOR LPAREN expression_statement expression_statement expression . RPAREN statement
-   76 expression: expression . COMMA chuck_expression
+   66 loop_statement: FOR LPAREN expression_statement expression_statement expression • RPAREN statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 293
 
 
-state 270
+State 270
 
-   67 loop_statement: FOR LPAREN expression COLON expression . RPAREN statement
-   76 expression: expression . COMMA chuck_expression
+   67 loop_statement: FOR LPAREN expression COLON expression • RPAREN statement
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 294
 
 
-state 271
+State 271
 
-   64 loop_statement: DO statement WHILE LPAREN expression . RPAREN SEMICOLON
-   76 expression: expression . COMMA chuck_expression
+   64 loop_statement: DO statement WHILE LPAREN expression • RPAREN SEMICOLON
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 295
 
 
-state 272
+State 272
 
-   69 loop_statement: DO statement UNTIL LPAREN expression . RPAREN SEMICOLON
-   76 expression: expression . COMMA chuck_expression
+   69 loop_statement: DO statement UNTIL LPAREN expression • RPAREN SEMICOLON
+   76 expression: expression • COMMA chuck_expression
 
     COMMA   shift, and go to state 131
     RPAREN  shift, and go to state 296
 
 
-state 273
+State 273
 
-   70 loop_statement: LOOP LPAREN expression RPAREN statement .
+   70 loop_statement: LOOP LPAREN expression RPAREN statement •
 
     $default  reduce using rule 70 (loop_statement)
 
 
-state 274
+State 274
 
-   68 loop_statement: UNTIL LPAREN expression RPAREN statement .
+   68 loop_statement: UNTIL LPAREN expression RPAREN statement •
 
     $default  reduce using rule 68 (loop_statement)
 
 
-state 275
+State 275
 
-   84 array_empty: array_empty LBRACK RBRACK .
+   84 array_empty: array_empty LBRACK RBRACK •
 
     $default  reduce using rule 84 (array_empty)
 
 
-state 276
+State 276
 
-   23 id_list: ID COMMA id_list .
+   23 id_list: ID COMMA id_list •
 
     $default  reduce using rule 23 (id_list)
 
 
-state 277
+State 277
 
-   20 class_section: class_definition .
+   20 class_section: class_definition •
 
     $default  reduce using rule 20 (class_section)
 
 
-state 278
+State 278
 
-    6 class_definition: class_decl CLASS id_list LBRACE class_body . RBRACE
+    6 class_definition: class_decl CLASS id_list LBRACE class_body • RBRACE
 
     RBRACE  shift, and go to state 297
 
 
-state 279
+State 279
 
-   14 class_body: class_body2 .
+   14 class_body: class_body2 •
 
     $default  reduce using rule 14 (class_body)
 
 
-state 280
+State 280
 
-   16 class_body2: class_section .
-   17            | class_section . class_body2
+   16 class_body2: class_section •
+   17            | class_section • class_body2
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6271,17 +6319,17 @@ state 280
     primary_expression         go to state 84
 
 
-state 281
+State 281
 
-   19 class_section: function_definition .
+   19 class_section: function_definition •
 
     $default  reduce using rule 19 (class_section)
 
 
-state 282
+State 282
 
-   18 class_section: statement_list .
-   51 statement_list: statement_list . statement
+   18 class_section: statement_list •
+   51 statement_list: statement_list • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6399,29 +6447,29 @@ state 282
     primary_expression         go to state 84
 
 
-state 283
+State 283
 
-   12 class_ext: EXTENDS id_dot .
-   13          | EXTENDS id_dot . IMPLEMENTS id_list
+   12 class_ext: EXTENDS id_dot •
+   13          | EXTENDS id_dot • IMPLEMENTS id_list
 
     IMPLEMENTS  shift, and go to state 299
 
     $default  reduce using rule 12 (class_ext)
 
 
-state 284
+State 284
 
-   10 class_ext: IMPLEMENTS id_list .
-   11          | IMPLEMENTS id_list . EXTENDS id_dot
+   10 class_ext: IMPLEMENTS id_list •
+   11          | IMPLEMENTS id_list • EXTENDS id_dot
 
     EXTENDS  shift, and go to state 300
 
     $default  reduce using rule 10 (class_ext)
 
 
-state 285
+State 285
 
-    7 class_definition: class_decl CLASS id_list class_ext LBRACE . class_body RBRACE
+    7 class_definition: class_decl CLASS id_list class_ext LBRACE • class_body RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6514,23 +6562,23 @@ state 285
     primary_expression         go to state 84
 
 
-state 286
+State 286
 
-    8 class_definition: class_decl INTERFACE id_list LBRACE class_body . RBRACE
+    8 class_definition: class_decl INTERFACE id_list LBRACE class_body • RBRACE
 
     RBRACE  shift, and go to state 302
 
 
-state 287
+State 287
 
-   21 iface_ext: EXTENDS id_list .
+   21 iface_ext: EXTENDS id_list •
 
     $default  reduce using rule 21 (iface_ext)
 
 
-state 288
+State 288
 
-    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE . class_body RBRACE
+    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE • class_body RBRACE
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6623,12 +6671,12 @@ state 288
     primary_expression         go to state 84
 
 
-state 289
+State 289
 
-   26 function_definition: function_decl static_decl type_decl2 ID LPAREN . arg_list RPAREN code_segment
-   27                    | function_decl static_decl type_decl2 ID LPAREN . RPAREN code_segment
-   28                    | function_decl static_decl type_decl2 ID LPAREN . arg_list RPAREN SEMICOLON
-   29                    | function_decl static_decl type_decl2 ID LPAREN . RPAREN SEMICOLON
+   26 function_definition: function_decl static_decl type_decl2 ID LPAREN • arg_list RPAREN code_segment
+   27                    | function_decl static_decl type_decl2 ID LPAREN • RPAREN code_segment
+   28                    | function_decl static_decl type_decl2 ID LPAREN • arg_list RPAREN SEMICOLON
+   29                    | function_decl static_decl type_decl2 ID LPAREN • RPAREN SEMICOLON
 
     ID      shift, and go to state 109
     RPAREN  shift, and go to state 304
@@ -6640,16 +6688,16 @@ state 289
     arg_list     go to state 306
 
 
-state 290
+State 290
 
-  117 conditional_expression: logical_or_expression QUESTION expression COLON conditional_expression .
+  117 conditional_expression: logical_or_expression QUESTION expression COLON conditional_expression •
 
     $default  reduce using rule 117 (conditional_expression)
 
 
-state 291
+State 291
 
-   62 selection_statement: IF LPAREN expression RPAREN statement ELSE . statement
+   62 selection_statement: IF LPAREN expression RPAREN statement ELSE • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6727,16 +6775,16 @@ state 291
     primary_expression         go to state 84
 
 
-state 292
+State 292
 
-   65 loop_statement: FOR LPAREN expression_statement expression_statement RPAREN statement .
+   65 loop_statement: FOR LPAREN expression_statement expression_statement RPAREN statement •
 
     $default  reduce using rule 65 (loop_statement)
 
 
-state 293
+State 293
 
-   66 loop_statement: FOR LPAREN expression_statement expression_statement expression RPAREN . statement
+   66 loop_statement: FOR LPAREN expression_statement expression_statement expression RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6814,9 +6862,9 @@ state 293
     primary_expression         go to state 84
 
 
-state 294
+State 294
 
-   67 loop_statement: FOR LPAREN expression COLON expression RPAREN . statement
+   67 loop_statement: FOR LPAREN expression COLON expression RPAREN • statement
 
     ID            shift, and go to state 1
     STRING_LIT    shift, and go to state 2
@@ -6894,77 +6942,77 @@ state 294
     primary_expression         go to state 84
 
 
-state 295
+State 295
 
-   64 loop_statement: DO statement WHILE LPAREN expression RPAREN . SEMICOLON
+   64 loop_statement: DO statement WHILE LPAREN expression RPAREN • SEMICOLON
 
     SEMICOLON  shift, and go to state 310
 
 
-state 296
+State 296
 
-   69 loop_statement: DO statement UNTIL LPAREN expression RPAREN . SEMICOLON
+   69 loop_statement: DO statement UNTIL LPAREN expression RPAREN • SEMICOLON
 
     SEMICOLON  shift, and go to state 311
 
 
-state 297
+State 297
 
-    6 class_definition: class_decl CLASS id_list LBRACE class_body RBRACE .
+    6 class_definition: class_decl CLASS id_list LBRACE class_body RBRACE •
 
     $default  reduce using rule 6 (class_definition)
 
 
-state 298
+State 298
 
-   17 class_body2: class_section class_body2 .
+   17 class_body2: class_section class_body2 •
 
     $default  reduce using rule 17 (class_body2)
 
 
-state 299
+State 299
 
-   13 class_ext: EXTENDS id_dot IMPLEMENTS . id_list
+   13 class_ext: EXTENDS id_dot IMPLEMENTS • id_list
 
     ID  shift, and go to state 206
 
     id_list  go to state 312
 
 
-state 300
+State 300
 
-   11 class_ext: IMPLEMENTS id_list EXTENDS . id_dot
+   11 class_ext: IMPLEMENTS id_list EXTENDS • id_dot
 
     ID  shift, and go to state 91
 
     id_dot  go to state 313
 
 
-state 301
+State 301
 
-    7 class_definition: class_decl CLASS id_list class_ext LBRACE class_body . RBRACE
+    7 class_definition: class_decl CLASS id_list class_ext LBRACE class_body • RBRACE
 
     RBRACE  shift, and go to state 314
 
 
-state 302
+State 302
 
-    8 class_definition: class_decl INTERFACE id_list LBRACE class_body RBRACE .
+    8 class_definition: class_decl INTERFACE id_list LBRACE class_body RBRACE •
 
     $default  reduce using rule 8 (class_definition)
 
 
-state 303
+State 303
 
-    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE class_body . RBRACE
+    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE class_body • RBRACE
 
     RBRACE  shift, and go to state 315
 
 
-state 304
+State 304
 
-   27 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN . code_segment
-   29                    | function_decl static_decl type_decl2 ID LPAREN RPAREN . SEMICOLON
+   27 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN • code_segment
+   29                    | function_decl static_decl type_decl2 ID LPAREN RPAREN • SEMICOLON
 
     SEMICOLON  shift, and go to state 316
     LBRACE     shift, and go to state 9
@@ -6972,115 +7020,115 @@ state 304
     code_segment  go to state 317
 
 
-state 305
+State 305
 
-   48 arg_list: type_decl . var_decl
-   49         | type_decl . var_decl COMMA arg_list
+   48 arg_list: type_decl • var_decl
+   49         | type_decl • var_decl COMMA arg_list
 
     ID  shift, and go to state 115
 
     var_decl  go to state 318
 
 
-state 306
+State 306
 
-   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list . RPAREN code_segment
-   28                    | function_decl static_decl type_decl2 ID LPAREN arg_list . RPAREN SEMICOLON
+   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list • RPAREN code_segment
+   28                    | function_decl static_decl type_decl2 ID LPAREN arg_list • RPAREN SEMICOLON
 
     RPAREN  shift, and go to state 319
 
 
-state 307
+State 307
 
-   62 selection_statement: IF LPAREN expression RPAREN statement ELSE statement .
+   62 selection_statement: IF LPAREN expression RPAREN statement ELSE statement •
 
     $default  reduce using rule 62 (selection_statement)
 
 
-state 308
+State 308
 
-   66 loop_statement: FOR LPAREN expression_statement expression_statement expression RPAREN statement .
+   66 loop_statement: FOR LPAREN expression_statement expression_statement expression RPAREN statement •
 
     $default  reduce using rule 66 (loop_statement)
 
 
-state 309
+State 309
 
-   67 loop_statement: FOR LPAREN expression COLON expression RPAREN statement .
+   67 loop_statement: FOR LPAREN expression COLON expression RPAREN statement •
 
     $default  reduce using rule 67 (loop_statement)
 
 
-state 310
+State 310
 
-   64 loop_statement: DO statement WHILE LPAREN expression RPAREN SEMICOLON .
+   64 loop_statement: DO statement WHILE LPAREN expression RPAREN SEMICOLON •
 
     $default  reduce using rule 64 (loop_statement)
 
 
-state 311
+State 311
 
-   69 loop_statement: DO statement UNTIL LPAREN expression RPAREN SEMICOLON .
+   69 loop_statement: DO statement UNTIL LPAREN expression RPAREN SEMICOLON •
 
     $default  reduce using rule 69 (loop_statement)
 
 
-state 312
+State 312
 
-   13 class_ext: EXTENDS id_dot IMPLEMENTS id_list .
+   13 class_ext: EXTENDS id_dot IMPLEMENTS id_list •
 
     $default  reduce using rule 13 (class_ext)
 
 
-state 313
+State 313
 
-   11 class_ext: IMPLEMENTS id_list EXTENDS id_dot .
+   11 class_ext: IMPLEMENTS id_list EXTENDS id_dot •
 
     $default  reduce using rule 11 (class_ext)
 
 
-state 314
+State 314
 
-    7 class_definition: class_decl CLASS id_list class_ext LBRACE class_body RBRACE .
+    7 class_definition: class_decl CLASS id_list class_ext LBRACE class_body RBRACE •
 
     $default  reduce using rule 7 (class_definition)
 
 
-state 315
+State 315
 
-    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE class_body RBRACE .
+    9 class_definition: class_decl INTERFACE id_list iface_ext LBRACE class_body RBRACE •
 
     $default  reduce using rule 9 (class_definition)
 
 
-state 316
+State 316
 
-   29 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN SEMICOLON .
+   29 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN SEMICOLON •
 
     $default  reduce using rule 29 (function_definition)
 
 
-state 317
+State 317
 
-   27 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN code_segment .
+   27 function_definition: function_decl static_decl type_decl2 ID LPAREN RPAREN code_segment •
 
     $default  reduce using rule 27 (function_definition)
 
 
-state 318
+State 318
 
-   48 arg_list: type_decl var_decl .
-   49         | type_decl var_decl . COMMA arg_list
+   48 arg_list: type_decl var_decl •
+   49         | type_decl var_decl • COMMA arg_list
 
     COMMA  shift, and go to state 320
 
     $default  reduce using rule 48 (arg_list)
 
 
-state 319
+State 319
 
-   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN . code_segment
-   28                    | function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN . SEMICOLON
+   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN • code_segment
+   28                    | function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN • SEMICOLON
 
     SEMICOLON  shift, and go to state 321
     LBRACE     shift, and go to state 9
@@ -7088,9 +7136,9 @@ state 319
     code_segment  go to state 322
 
 
-state 320
+State 320
 
-   49 arg_list: type_decl var_decl COMMA . arg_list
+   49 arg_list: type_decl var_decl COMMA • arg_list
 
     ID  shift, and go to state 109
     LT  shift, and go to state 13
@@ -7101,22 +7149,22 @@ state 320
     arg_list     go to state 323
 
 
-state 321
+State 321
 
-   28 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN SEMICOLON .
+   28 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN SEMICOLON •
 
     $default  reduce using rule 28 (function_definition)
 
 
-state 322
+State 322
 
-   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN code_segment .
+   26 function_definition: function_decl static_decl type_decl2 ID LPAREN arg_list RPAREN code_segment •
 
     $default  reduce using rule 26 (function_definition)
 
 
-state 323
+State 323
 
-   49 arg_list: type_decl var_decl COMMA arg_list .
+   49 arg_list: type_decl var_decl COMMA arg_list •
 
     $default  reduce using rule 49 (arg_list)

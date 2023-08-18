@@ -3,10 +3,10 @@
 
 *.chug
 
-core/chuck.output
-core/chuck.tab.c
-core/chuck.tab.h
-core/chuck.yy.c
+thirdparty/chuck/core/chuck.output
+thirdparty/chuck/core/chuck.tab.c
+thirdparty/chuck/core/chuck.tab.h
+thirdparty/chuck/core/chuck.yy.c
 
 project.xcworkspace
 xcuserdata

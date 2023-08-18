@@ -105,8 +105,10 @@ target_compile_options(chuck_lib
 target_compile_definitions(chuck_lib
 	PUBLIC
 	$<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
-	$<$<PLATFORM_ID:Linux>:__LINUX_ALSA__>	
-	$<$<PLATFORM_ID:Linux>:__CK_SNDFILE_NATIVE__>	
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_ALSA}>>:__LINUX_ALSA__>
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_PULSE}>>:__LINUX_PULSE__>
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_JACK}>>:__UNIX_JACK__>
+	$<$<PLATFORM_ID:Linux>:__CK_SNDFILE_NATIVE__>
 	HAVE_CONFIG_H
 )
 
@@ -124,6 +126,9 @@ target_link_libraries(chuck_lib
 	$<$<PLATFORM_ID:Linux>:-lm>
 	$<$<PLATFORM_ID:Linux>:-lsndfile>
 	$<$<PLATFORM_ID:Linux>:-lpthread>
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_JACK}>>:-ljack>
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_PULSE}>>:-lpulse-simple>
+	$<$<AND:$<PLATFORM_ID:Linux>,$<BOOL:${LINUX_PULSE}>>:-lpulse>
 )
 
 # target_link_options(chuck_lib
