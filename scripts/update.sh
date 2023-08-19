@@ -93,7 +93,7 @@ function update_chugins() {
 function fix_chuck_tilde() {
 	# replace "msg->reply" "msg->reply_cb" ${CHUCK_TILDE}
 	# patch chuck~/chuck~.cpp < scripts/patch/chuck_xxxx.patch
-
+}
 
 function apply_all_patches() {
 	# empty for now

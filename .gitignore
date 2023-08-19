@@ -1,13 +1,23 @@
 
+# puredata specific
+*.pd_darwin
+*.pd_linux
+*.pd_windows
+
+
+# general
 .DS_Store
 
+# chugins
 *.chug
 
+# chuck
 thirdparty/chuck/core/chuck.output
 thirdparty/chuck/core/chuck.tab.c
 thirdparty/chuck/core/chuck.tab.h
 thirdparty/chuck/core/chuck.yy.c
 
+# build detritus
 project.xcworkspace
 xcuserdata
 .vscode

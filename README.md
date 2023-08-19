@@ -23,8 +23,6 @@ The current chuck version used is `1.5.1.0`
 
 ## Status
 
-Currently producing audio in a minimal proof-of-concept kind of way.
-
 - [ ] Add support for callbacks and events
 - [X] Preliminary Linux support
 - [ ] No Windows support yet
