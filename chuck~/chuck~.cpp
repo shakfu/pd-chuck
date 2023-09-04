@@ -404,12 +404,14 @@ t_int *ck_perform(t_int *w)
 
     // interleave
     for (i = 0; i < n; i++) {
-        *in_ptr = in1[i]; in_ptr += N_IN_CHANNELS;
+        *in_ptr = in1[i];
+        in_ptr += N_IN_CHANNELS;
     }
     // set in_ptr to input with offset
     in_ptr = x->in_chuck_buffer+1;
     for (i = 0; i < n; i++) {
-        *in_ptr = in2[i]; in_ptr += N_IN_CHANNELS;
+        *in_ptr = in2[i];
+        in_ptr += N_IN_CHANNELS;
     }
 
     // NB pd non-interleaved; chuck interleaved by default
@@ -418,12 +420,14 @@ t_int *ck_perform(t_int *w)
     // de-interleave
     out_ptr = x->out_chuck_buffer;
     for (i = 0; i < n; i++) {
-        out1[i] = *out_ptr; out_ptr += N_OUT_CHANNELS;
+        out1[i] = *out_ptr;
+        out_ptr += N_OUT_CHANNELS;
     }
     // set out_ptr to output with offset
     out_ptr = x->out_chuck_buffer+1;
     for (i = 0; i < n; i++) {
-        out2[i] = *out_ptr; out_ptr += N_OUT_CHANNELS;
+        out2[i] = *out_ptr;
+        out_ptr += N_OUT_CHANNELS;
     }
 
     /* Return the next address in the DSP chain */

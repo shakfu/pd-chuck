@@ -24,10 +24,10 @@ function update_chuck() {
 }
 
 
-
 function move_to_new() {
 	mv chugins-src/"$1" thirdparty/chugins-new/"$1"
 }
+
 
 function update_new_chugin() {
 	move_to_new "$1" && \
@@ -36,9 +36,10 @@ function update_new_chugin() {
 	rm -rf thirdparty/chugins-new/"$1"/*.dsw && \
 	rm -rf thirdparty/chugins-new/"$1"/*.dsp && \
 	rm -rf thirdparty/chugins-new/"$1"/*.xcodeproj && \
-	rm -rf thirdparty/chugins-new/"$1"/*.vcxproj
+	rm -rf thirdparty/chugins-new/"$1"/*.vcxproj && \
+	rm -rf thirdparty/chugins-new/"$1"/*.sln && \
+	rm -rf thirdparty/chugins-new/"$1"/*.gitignore
 }
-
 
 
 function update_chugins() {
@@ -90,24 +91,9 @@ function update_chugins() {
 }
 
 
-function fix_chuck_tilde() {
-	echo
-	# replace "msg->reply" "msg->reply_cb" ${CHUCK_TILDE}
-	# patch chuck~/chuck~.cpp < scripts/patch/chuck_xxxx.patch
-}
-
-function apply_all_patches() {
-	echo
-	# empty for now
-}
-
-
 function update() {
 	update_chuck
 	update_chugins
-	if [ "${APPLY_PATCHES}" = true ] ; then
-    apply_all_patches
-	fi
 	if [ "${REMOVE_OLD}" = true ] ; then
     rm -rf thirdpary/*-old
 	fi

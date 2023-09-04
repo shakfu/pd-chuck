@@ -4,7 +4,7 @@ A project which minimally embeds the [chuck](https://chuck.stanford.edu) engine 
 
 Includes an external, `chuck~` with the following features and limitations:
 
-- Generate and process audio via an embedded chuck engine by running chuck files with global parameters adjusted and controlled in realtime via pd messages.
+- Generate and process audio via an embedded chuck engine running chuck files with global parameters adjusted and controlled in realtime via pd messages.
 
 - Layer sounds by running multiple chuck files (or `shreds`) concurrently.
 

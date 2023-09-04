@@ -2,6 +2,13 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CHUCK_DIR ${CMAKE_SOURCE_DIR}/thirdparty/chuck)
 
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+	execute_process(
+		COMMAND xcrun --show-sdk-path
+		OUTPUT_VARIABLE MACOS_SDK_PATH
+	)
+endif()
+
 set(CXX_HOST
 	chuck_main.cpp
 	chuck_console.cpp
@@ -15,7 +22,7 @@ add_executable(chuck
 
 target_compile_options(chuck
 	PUBLIC	
-	$<$<PLATFORM_ID:Darwin>:-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk>
+	$<$<PLATFORM_ID:Darwin>:-isysroot ${MACOS_SDK_PATH}>
 	# $<$<PLATFORM_ID:Linux>:-fno-strict-aliasing>
 	# -O3
 )
