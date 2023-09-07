@@ -85,6 +85,7 @@ function update_chugins() {
 	update_new_chugin Wavetable && \
 	update_new_chugin WinFuncEnv && \
 	rm -rf thirdparty/chugins-new/RegEx/RegEx.vcxproj.filters && \
+	rm -rf thirdparty/chugins-new/chuginate && \
 	mv thirdparty/chugins thirdparty/chugins-old && \
 	mv thirdparty/chugins-new thirdparty/chugins && \
 	rm -rf chugins-src
