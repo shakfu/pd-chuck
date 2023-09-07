@@ -94,7 +94,8 @@ function update() {
 	update_chuck
 	update_chugins
 	if [ "${REMOVE_OLD}" = true ] ; then
-    rm -rf thirdpary/*-old
+    rm -rf thirdpary/chuck-old
+    rm -rf thirdpary/chugins-old
 	fi
 }
 
