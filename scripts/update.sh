@@ -7,7 +7,6 @@
 
 CHUCK_REPO=https://github.com/ccrma/chuck.git
 CHUGINS_REPO=https://github.com/ccrma/chugins.git
-REMOVE_OLD=true
 
 
 function update_chuck() {
@@ -91,13 +90,15 @@ function update_chugins() {
 	rm -rf chugins-src
 }
 
+function rm_old() {
+	rm -rf ./thirdparty/chuck-old
+	rm -rf ./thirdparty/chugins-old
+}
+
 function update() {
 	update_chuck
 	update_chugins
-	if [ "${REMOVE_OLD}" = true ] ; then
-    rm -rf thirdpary/chuck-old
-    rm -rf thirdpary/chugins-old
-	fi
+	rm_old
 }
 
 update
