@@ -7,8 +7,7 @@
 
 CHUCK_REPO=https://github.com/ccrma/chuck.git
 CHUGINS_REPO=https://github.com/ccrma/chugins.git
-APPLY_PATCHES=false
-REMOVE_OLD=false
+REMOVE_OLD=true
 
 
 function update_chuck() {
@@ -38,7 +37,7 @@ function update_new_chugin() {
 	rm -rf thirdparty/chugins-new/"$1"/*.xcodeproj && \
 	rm -rf thirdparty/chugins-new/"$1"/*.vcxproj && \
 	rm -rf thirdparty/chugins-new/"$1"/*.sln && \
-	rm -rf thirdparty/chugins-new/"$1"/*.gitignore
+	rm -rf thirdparty/chugins-new/"$1"/.gitignore
 }
 
 
@@ -85,11 +84,11 @@ function update_chugins() {
 	update_new_chugin WPKorg35 && \
 	update_new_chugin Wavetable && \
 	update_new_chugin WinFuncEnv && \
+	rm -rf thirdparty/chugins-new/RegEx/RegEx.vcxproj.filters && \
 	mv thirdparty/chugins thirdparty/chugins-old && \
 	mv thirdparty/chugins-new thirdparty/chugins && \
 	rm -rf chugins-src
 }
-
 
 function update() {
 	update_chuck
