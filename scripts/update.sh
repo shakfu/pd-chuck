@@ -9,6 +9,7 @@ CHUCK_REPO=https://github.com/ccrma/chuck.git
 CHUGINS_REPO=https://github.com/ccrma/chugins.git
 
 
+
 function update_chuck() {
 	git clone ${CHUCK_REPO} chuck-src && \
 	mkdir -p thirdparty/chuck-new && \
