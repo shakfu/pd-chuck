@@ -49,6 +49,8 @@ void ck_free(t_ck *x);
 extern "C" void chuck_tilde_setup(void);
 
 // helpers
+void ck_stdout_print(const char* msg);
+void ck_stderr_print(const char* msg);
 void ck_run_file(t_ck *x);
 void ck_compile_file(t_ck *x, const char *filename);
 void ck_send_chuck_vm_msg(t_ck* x, Chuck_Msg_Type msg_type);
@@ -119,6 +121,8 @@ void *ck_new(t_symbol *s)
         std::list<std::string> chugin_search;
         chugin_search.push_back(examples_dir + "/chugins");
         x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search);
+        x->chuck->setStdoutCallback(ck_stdout_print);
+        x->chuck->setStderrCallback(ck_stderr_print);
 
 	    // initialize our chuck
 	    x->chuck->init();
@@ -181,6 +185,18 @@ extern "C" void chuck_tilde_setup(void)
 
 //-----------------------------------------------------------------------------------------------
 // helpers
+
+void ck_stdout_print(const char* msg)
+{
+    post("ck_stdout -> %s", msg);
+}
+
+
+void ck_stderr_print(const char* msg)
+{
+    post("ck_stderr -> %s", msg);
+}
+
 
 void ck_send_chuck_vm_msg(t_ck *x, Chuck_Msg_Type msg_type)
 {
