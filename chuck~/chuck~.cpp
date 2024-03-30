@@ -61,6 +61,7 @@ void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv); // set global pa
 
 // special message handlers
 void ck_run(t_ck* x, t_symbol* s);         // run chuck file
+void ck_info(t_ck* x);                     // get info about running shreds
 void ck_reset(t_ck* x);                    // remove all shreds and clean vm
 void ck_signal(t_ck* x, t_symbol* s);      // signal global event
 void ck_broadcast(t_ck* x, t_symbol* s);   // broadcast global event
@@ -170,6 +171,7 @@ extern "C" void chuck_tilde_setup(void)
 	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"), A_CANT, A_NULL);
 
     class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),       A_DEFSYM, 	 A_NULL);
+    class_addmethod(ck_class, (t_method)ck_info,       gensym("info"),                   A_NULL);
     class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),                  A_NULL);
     class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),       A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"), A_SYMBOL,    A_NULL);
@@ -309,6 +311,16 @@ error:
 
 //-----------------------------------------------------------------------------------------------
 // special message handlers
+
+void ck_info(t_ck *x)
+{
+    Chuck_VM_Shreduler * shreduler = x->chuck->vm()->shreduler();
+    std::vector<Chuck_VM_Shred *> shreds;
+    shreduler->get_all_shreds(shreds);
+    for(const Chuck_VM_Shred* i : shreds) {
+        post("shred #%d %s", i->get_id(), i->name.c_str());
+    }
+}
 
 void ck_reset(t_ck *x)
 {
