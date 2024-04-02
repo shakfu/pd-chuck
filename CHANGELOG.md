@@ -13,6 +13,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
+# [0.1.x]
+
+- `info` now shows `<object id> - <shred-id>`
+
+- Added test for two object instances running simultaneously
+
+- Added `info` message to list running shreds in the console
+
+- Update to chuck 1.5.2.3-dev (chai)
+
+
 # [0.1.0]
 
 - Initial support for chuck 1.5.1.3

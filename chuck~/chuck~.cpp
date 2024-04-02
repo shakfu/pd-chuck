@@ -9,6 +9,8 @@
 #define N_IN_CHANNELS 2
 #define N_OUT_CHANNELS 2
 
+static int PD_CK_COUNT = 0;
+
 enum DSP {
     PERFORM,
     OBJECT,
@@ -25,7 +27,8 @@ typedef struct _ck {
 	t_object obj;
 	t_float x_f;
 
-    int srate;
+    int oid;                    // object id
+    int srate;                  // sample rate
 
 	// chuck
 	int buffer_size;  			// buffer size for for both input and output
@@ -125,6 +128,8 @@ void *ck_new(t_symbol *s)
         x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search);
         x->chuck->setStdoutCallback(ck_stdout_print);
         x->chuck->setStderrCallback(ck_stderr_print);
+        PD_CK_COUNT += 1;
+        x->oid = PD_CK_COUNT;
 
 	    // initialize our chuck
 	    x->chuck->init();
@@ -318,9 +323,11 @@ void ck_info(t_ck *x)
     Chuck_VM_Shreduler * shreduler = x->chuck->vm()->shreduler();
     std::vector<Chuck_VM_Shred *> shreds;
     shreduler->get_all_shreds(shreds);
+    post("\nRUNNING SHREDS:");
     for(const Chuck_VM_Shred* i : shreds) {
-        post("shred #%d %s", i->get_id(), i->name.c_str());
+        post("%d-%d: %s", x->oid, i->get_id(), i->name.c_str());
     }
+    post("");
 }
 
 void ck_reset(t_ck *x)
