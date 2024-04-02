@@ -5,21 +5,21 @@
 all: build
 
 linux-alsa:
-	@mkdir -p build && cd build && cmake .. -DLINUX_ALSA=ON && make
+	@mkdir -p build && cd build && cmake .. -DLINUX_ALSA=ON && cmake --build . --config Release
 
 linux-pulse:
-	@mkdir -p build && cd build && cmake .. -DLINUX_PULSE=ON && make
+	@mkdir -p build && cd build && cmake .. -DLINUX_PULSE=ON && cmake --build . --config Release
 
 linux-jack:
-	@mkdir -p build && cd build && cmake .. -DLINUX_JACK=ON && make
+	@mkdir -p build && cd build && cmake .. -DLINUX_JACK=ON && cmake --build . --config Release
 
 linux-all:
-	@mkdir -p build && cd build && cmake .. -DLINUX_ALL=ON && make
+	@mkdir -p build && cd build && cmake .. -DLINUX_ALL=ON && cmake --build . --config Release
 
 macos: build
 
 build:
-	@mkdir -p build && cd build && cmake .. && make
+	@mkdir -p build && cd build && cmake .. && cmake --build . --config Release
 
 clean:
 	@rm -rf build

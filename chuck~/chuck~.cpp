@@ -313,7 +313,6 @@ error:
 //-----------------------------------------------------------------------------------------------
 // special message handlers
 
-
 void ck_info(t_ck *x)
 {
     Chuck_VM_Shreduler * shreduler = x->chuck->vm()->shreduler();
@@ -323,7 +322,6 @@ void ck_info(t_ck *x)
         post("shred #%d %s", i->get_id(), i->name.c_str());
     }
 }
-
 
 void ck_reset(t_ck *x)
 {

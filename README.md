@@ -18,7 +18,7 @@ see `chuck~/help-chuck.pd` for a basic demo of current features.
 
 Note that this is project is the sibling to [chuck-max](https://github.com/shakfu/chuck-max), a Max-MSP external with similar features.
 
-The current chuck version used is `1.5.1.0`
+The current chuck version used is `1.5.2.2-dev (chai)`
 
 
 ## Status
@@ -63,6 +63,11 @@ On linux this will build the default alsa option (which can also be built via `m
 
 If you need jack or pulse audio support, use `make linux-jack` or `make linux-pulse`, or if you want to build with all supported linux drivers, use `make linux-all`
 
+On macOS, if you want to build for a particular macos deployment target:
+
+```bash
+make MACOSX_DEPLOYMENT_TARGET=12.6
+```
 
 **Or, long way**:
 
@@ -71,7 +76,7 @@ git clone https://github.com/shakfu/pd-chuck
 cd pd-chuck
 mkdir build && cd build
 cmake ..
-make
+cmake --build . --config Release
 ```
 
 For linux you can also use cmake linux boolean options, `LINUX_ALSA`, `LINUX_PULSE`, `LINUX_JACK` and `LINUX_ALL` which correspond the linux audio driver options. (Look at `pd-chuck/Makefile` for further details.)
