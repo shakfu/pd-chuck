@@ -128,8 +128,7 @@ void *ck_new(t_symbol *s)
         x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search);
         x->chuck->setStdoutCallback(ck_stdout_print);
         x->chuck->setStderrCallback(ck_stderr_print);
-        PD_CK_COUNT += 1;
-        x->oid = PD_CK_COUNT;
+        x->oid = ++PD_CK_COUNT;
 
 	    // initialize our chuck
 	    x->chuck->init();
