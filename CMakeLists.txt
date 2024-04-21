@@ -7,6 +7,10 @@ option(LINUX_PULSE "enable linux pulseaudio build")
 option(LINUX_JACK "enable linux jack build")
 option(LINUX_ALL "enable all linux build")
 
+option(SNDFILE_MAX "include most sndfile dependencies")
+option(ENABLE_WARPBUF "build WarpBuf chugin")
+option(ENABLE_FAUCK "build Faust chugin")
+
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "Platform: Linux")
@@ -36,6 +40,8 @@ endif()
 
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
+
 
 add_subdirectory(thirdparty/chuck/core)
 
@@ -43,4 +49,4 @@ add_subdirectory(thirdparty/chuck/host)
 
 add_subdirectory(thirdparty/chugins)
 
-add_subdirectory(chuck~)
+add_subdirectory(chuck_tilde)
