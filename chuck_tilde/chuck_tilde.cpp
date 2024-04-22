@@ -3,11 +3,14 @@
 #include "chuck.h"
 #include "chuck_globals.h"
 
+#include <string>
+#include <unordered_map>
+
 #include <libgen.h>
 #include <unistd.h>
 
 // globals defs
-#define LOG_LEVEL CK_LOG_CORE // chuck log levels 0-10
+#define LOG_LEVEL CK_LOG_SYSTEM // chuck log levels 0-10 (default: 2)
 #define N_IN_CHANNELS 2
 #define N_OUT_CHANNELS 2
 
@@ -24,7 +27,11 @@ enum DSP {
     NEXT
 };
 
+// typedefs
+typedef void (*ck_callback)(void);
+typedef std::unordered_map<std::string, ck_callback> callback_map;
 
+// object struct
 typedef struct _ck {
 	t_object obj;
 	t_float x_f;
@@ -32,6 +39,7 @@ typedef struct _ck {
     int oid;                    // object id
     int srate;                  // sample rate
     int loglevel;               // loglevel
+    callback_map cb_map;        // callback map<string,callback>
 
 	// chuck
 	int buffer_size;  			// buffer size for for both input and output
@@ -65,24 +73,44 @@ void ck_send_chuck_vm_msg(t_ck* x, Chuck_Msg_Type msg_type);
 void ck_bang(t_ck *x);                     // (re)load chuck file
 void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv); // set global params by name, value
 
+// chuck vm message handlers
+void ck_add(t_ck* x, t_symbol* s); // add shred from file
+void ck_run(t_ck* x, t_symbol* s); // alias of add, run chuck file
+void ck_remove(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
+void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv); // replace shreds 
+void ck_clear(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, clear_globals
+void ck_reset(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, reset_id
+void ck_status(t_ck* x); // get info about running shreds
+void ck_time(t_ck* x);
+
 // special message handlers
-void ck_run(t_ck* x, t_symbol* s);         // run chuck file
 void ck_info(t_ck* x);                     // get info about running shreds
-void ck_reset(t_ck* x);                    // remove all shreds and clean vm
-void ck_loglevel(t_ck* x, t_floatarg f);   // set loglevel
+// void ck_reset(t_ck* x);                    // remove all shreds and clean vm
 void ck_signal(t_ck* x, t_symbol* s);      // signal global event
 void ck_broadcast(t_ck* x, t_symbol* s);   // broadcast global event
-void ck_remove(t_ck *x, t_symbol *s, int argc, t_atom *argv);   // remove shreds (all, last or by #)
-
+void ck_loglevel(t_ck* x, t_symbol* s, long argc, t_atom* argv); 
 
 // audio processing
 void ck_dsp(t_ck *x, t_signal **sp);
 t_int *ck_perform(t_int *w);
 
+// callback registeration
+void ck_register(t_ck* x, t_symbol* s);
+void ck_unregister(t_ck* x, t_symbol* s);
+
 
 // global class instance
 static t_class *ck_class;
 
+//-----------------------------------------------------------------------------------------------
+// callbacks
+
+/* nothing useful here yet */
+
+void cb_demo(void)
+{
+    post("==> demo callback is called!");
+}
 
 //-----------------------------------------------------------------------------------------------
 // initialization / destruction
@@ -135,12 +163,16 @@ void *ck_new(t_symbol *s)
         x->oid = ++PD_CK_COUNT;
         x->loglevel = LOG_LEVEL;
 
+        // init cb_map and register callbacks
+        x->cb_map = callback_map();
+        x->cb_map.emplace("demo", &cb_demo);
+
 	    // initialize our chuck
 	    x->chuck->init();
 	    x->chuck->start();
 
         // set chuck log level
-        EM_setlog(x->loglevel);
+        ChucK::setLogLevel(x->loglevel);
 
 		/* Print message to Max window */
 		post("ChucK %s", x->chuck->version());
@@ -181,15 +213,23 @@ extern "C" void chuck_tilde_setup(void)
 	CLASS_MAINSIGNALIN(ck_class, t_ck, x_f);
 	
 	/* Bind the DSP method, which is called when the DACs are turned on */
-	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"), A_CANT, A_NULL);
+	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"),        A_CANT, A_NULL);
 
-    class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),       A_DEFSYM, 	 A_NULL);
-    class_addmethod(ck_class, (t_method)ck_info,       gensym("info"),                   A_NULL);
-    class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),                  A_NULL);
-    class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),       A_SYMBOL,    A_NULL);
-    class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"), A_SYMBOL,    A_NULL);
-    class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),    A_GIMME,     A_NULL);
-    class_addmethod(ck_class, (t_method)ck_loglevel,   gensym("loglevel"), A_DEFFLOAT,  A_NULL);
+    class_addmethod(ck_class, (t_method)ck_add,        gensym("add"),        A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),        A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),        A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"),  A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_register,   gensym("register"),   A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_unregister, gensym("unregister"), A_SYMBOL,    A_NULL);
+
+    class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),     A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_replace,    gensym("replace"),    A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_clear,      gensym("clear"),      A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),      A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_loglevel,   gensym("loglevel"),   A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_info,       gensym("info"),                    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_status,     gensym("status"),                  A_NULL);
+    class_addmethod(ck_class, (t_method)ck_time,       gensym("time"),                    A_NULL);
 
     class_addbang(ck_class,   (t_method)ck_bang);
     class_addanything(ck_class, (t_method)ck_anything);
@@ -204,13 +244,13 @@ extern "C" void chuck_tilde_setup(void)
 
 void ck_stdout_print(const char* msg)
 {
-    post("ck_stdout -> %s", msg);
+    post("-> %s", msg);
 }
 
 
 void ck_stderr_print(const char* msg)
 {
-    post("ck_stderr -> %s", msg);
+    post("=> %s", msg);
 }
 
 
@@ -248,19 +288,82 @@ void ck_run_file(t_ck *x)
     }
 }
 
+
+t_symbol* ck_get_loglevel_name(long level)
+{
+    t_symbol* name = NULL;
+
+    switch (level) {
+        case CK_LOG_NONE:
+            name = gensym("CK_LOG_NONE");
+            break;
+        case CK_LOG_CORE:
+            name = gensym("CK_LOG_CORE");
+            break;
+        case CK_LOG_SYSTEM:
+            name = gensym("CK_LOG_SYSTEM");
+            break;
+        case CK_LOG_HERALD:
+            name = gensym("CK_LOG_HERALD");
+            break;
+        case CK_LOG_WARNING:
+            name = gensym("CK_LOG_WARNING");
+            break;
+        case CK_LOG_INFO:
+            name = gensym("CK_LOG_INFO");
+            break;
+        case CK_LOG_DEBUG:
+            name = gensym("CK_LOG_DEBUG");
+            break;
+        case CK_LOG_FINE:
+            name = gensym("CK_LOG_NONE");
+            break;
+        case CK_LOG_FINER:
+            name = gensym("CK_LOG_FINER");
+            break;
+        case CK_LOG_FINEST:
+            name = gensym("CK_LOG_FINEST");
+            break;
+        case CK_LOG_ALL:
+            name = gensym("CK_LOG_ALL");
+            break;
+        default:
+            name = gensym("CK_LOG_SYSTEM");
+    }
+    return name;
+}
+
 //-----------------------------------------------------------------------------------------------
 // general message handlers
 
-
-void ck_loglevel(t_ck* x, t_floatarg f)
+void ck_loglevel(t_ck* x, t_symbol* s, long argc, t_atom* argv)
 {
-    int level = (int)f;
-    if (level < 0 || level > 10) {
-        pd_error(x, "loglevel can only be between 0-10 inclusive");
+    t_symbol* name = NULL;
+
+    if (argc == 0) {
+        x->loglevel = ChucK::getLogLevel();
+        name = ck_get_loglevel_name(x->loglevel);
+        post("loglevel is %d (%s)", x->loglevel, name->s_name);
         return;
     }
-    x->loglevel = level;
-    EM_setlog(x->loglevel);
+    if (argc == 1) {
+        long level = 2;
+        if (argv->a_type == A_FLOAT) {
+            level = (long)atom_getfloat(argv);
+            if ((level >= 0) && (level <= 10)) {
+                name = ck_get_loglevel_name(level);
+                x->loglevel = level;
+                post("setting loglevel to %d (%s)", x->loglevel, name->s_name);
+                ChucK::setLogLevel(x->loglevel);
+                return;
+            } else {
+                pd_error(x, "out-of-range: defaulting to level 2. loglevel must be between 0-10 inclusive");
+                ChucK::setLogLevel(CK_LOG_SYSTEM);
+                return;
+            }
+        }
+    }
+    pd_error(x, "could not get or set loglevel");
 }
 
 void ck_bang(t_ck *x) { ck_run_file(x); }
@@ -275,7 +378,38 @@ void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv)
         goto error;
     }
 
-    // post("anything.symbol: %s", s->s_name);
+    // set '+' as shorthand for ck_add method
+    if (s == gensym("+")) {
+        ck_add(x, atom_getsymbol(argv));
+        return;
+    }
+
+    // set '-' as shorthand for ck_remove method
+    if (s == gensym("-")) {
+        ck_remove(x, gensym(""), argc, argv);
+        return;
+    }
+
+    // FIXME: if possible `--` doesn't work in puredata 
+    // set '--' as shorthand for ck_remove (last) method
+    // if (s == gensym("--")) {
+    //     t_atom atoms[1];
+    //     SETSYMBOL(atoms, gensym("last"));
+    //     ck_remove(x, gensym(""), 1, atoms);
+    //     return;
+    // }
+
+    // set '=' as shorthand for ck_replace method
+    if (s == gensym("=")) {
+        ck_replace(x, gensym(""), argc, argv);
+        return;
+    }
+
+    // set '^' as shorthand for ck_status method
+    if (s == gensym("^")) {
+        ck_status(x);
+        return;
+    }
 
     if (argc == 1) {            // <param-name> <value>
         switch (argv->a_type) { // really argv[0]
@@ -350,14 +484,14 @@ void ck_info(t_ck *x)
     post("");
 }
 
-void ck_reset(t_ck *x)
-{
-    post("reset vm");
-    ck_send_chuck_vm_msg(x, CK_MSG_CLEARGLOBALS);
-    ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
-}
+// void ck_reset(t_ck *x)
+// {
+//     post("reset vm");
+//     ck_send_chuck_vm_msg(x, CK_MSG_CLEARGLOBALS);
+//     ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
+// }
 
-void ck_run(t_ck *x, t_symbol *s)
+void ck_add(t_ck *x, t_symbol *s)
 {
     if (s != gensym("")) {
         post("filename: %s", s->s_name);
@@ -366,9 +500,13 @@ void ck_run(t_ck *x, t_symbol *s)
     }
 }
 
-void ck_remove(t_ck *x, t_symbol *s, int argc, t_atom *argv)
+void ck_run(t_ck *x, t_symbol *s)
 {
+    ck_add(x, s);
+}
 
+void ck_remove(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+{
     post("%s: %d", s->s_name, argc);
 
     Chuck_Msg *msg = new Chuck_Msg;
@@ -403,6 +541,112 @@ void ck_remove(t_ck *x, t_symbol *s, int argc, t_atom *argv)
     x->chuck->vm()->queue_msg(msg, 1);
 }
 
+
+void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    long shred_id;
+    t_symbol *filename_sym = NULL;
+
+    if (argc < 2) {
+        pd_error(x, "ck_replace: two arguments are required");
+        return;
+    }
+    if (argv->a_type != A_FLOAT) {
+        pd_error(x, "first argument must a shred id number");
+        return;
+    }
+    shred_id = (long)atom_getfloat(argv);
+
+    if ((argv+1)->a_type != A_SYMBOL) {
+        pd_error(x, "second argument must be a symbol");
+        return;
+    }
+    filename_sym = atom_getsymbol(argv+1);
+
+    // get string
+    std::string path = std::string(filename_sym->s_name);
+    // filename
+    std::string filename;
+    // arguments
+    std::string args;
+    // extract args FILE:arg1:arg2:arg3
+    extract_args( path, filename, args );
+
+    std::string full_path = std::string(x->examples_dir) + "/" + filename; // not portable
+
+    // compile but don't run yet (instance == 0)
+    if( !x->chuck->compileFile( full_path, args, 0 ) ) {
+        pd_error(x, "could not compile file");
+        return;
+    }
+
+    // construct chuck msg (must allocate on heap, as VM will clean up)
+    Chuck_Msg * msg = new Chuck_Msg();
+    // set type
+    msg->type = CK_MSG_REPLACE;
+    // set shred id to replace
+    msg->param = shred_id;
+    // set code for incoming shred
+    msg->code = x->chuck->vm()->carrier()->compiler->output();
+    // create args array
+    msg->args = new vector<string>;
+    // extract args again but this time into vector
+    extract_args( path, filename, *(msg->args) );
+    // process REPLACE message, return new shred ID
+    x->chuck->vm()->process_msg( msg );
+}
+
+void ck_clear(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    if (argc == 0) {
+        return ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
+    }
+
+    if (argc == 1) {
+        if (argv->a_type == A_SYMBOL) {
+            t_symbol* target = atom_getsymbol(argv);
+            if (target == gensym("globals")) {
+                post("=> [chuck]: clean up global variables without clearing the whole VM");
+                return ck_send_chuck_vm_msg(x, CK_MSG_CLEARGLOBALS);
+            } 
+            if (target == gensym("vm")) {
+                return ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM); 
+            }
+        }
+    }
+    pd_error(x, "must be 'clear globals' or 'clear vm'");
+}
+
+void ck_reset(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    if (argc == 0) {
+        return ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
+    }
+    
+    if (argc == 1) {
+        if (argv->a_type == A_SYMBOL) {
+            t_symbol* target = atom_getsymbol(argv);
+            if (target == gensym("id")) {
+                return ck_send_chuck_vm_msg(x, CK_MSG_RESET_ID);
+            } 
+        }
+    }
+    pd_error(x, "must be 'reset id' or just 'reset' for clearvm");
+}
+
+
+void ck_status(t_ck* x)
+{
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+    shreduler->status();
+}
+
+void ck_time(t_ck* x)
+{
+    return ck_send_chuck_vm_msg(x, CK_MSG_TIME);
+}
+
+
 void ck_signal(t_ck *x, t_symbol *s)
 {
     if (!x->chuck->vm()->globals_manager()->signalGlobalEvent(s->s_name))
@@ -414,6 +658,35 @@ void ck_broadcast(t_ck *x, t_symbol *s)
     if (!x->chuck->vm()->globals_manager()->broadcastGlobalEvent(s->s_name))
         pd_error(x, "[ck_broadcast] broadcast global event '%s' failed",
                  s->s_name);
+}
+
+
+void ck_register(t_ck* x, t_symbol* s)
+{
+    if (!x->cb_map.count(s->s_name)) {
+        pd_error(x, "event/callback not found: %s", s->s_name);
+        return;
+    }
+    std::string key = std::string(s->s_name);
+    ck_callback cb = x->cb_map[key];
+    // false: for a one off call, true: called everytime it is called
+    if (x->chuck->vm()->globals_manager()->listenForGlobalEvent(s->s_name, cb, false)) {
+        post("%s event/callback registered", s->s_name);
+    };
+}
+
+
+void ck_unregister(t_ck* x, t_symbol* s)
+{
+    if (!x->cb_map.count(s->s_name)) {
+        pd_error(x, "event/callback not found: %s", s->s_name);
+        return;
+    }
+    std::string key = std::string(s->s_name);
+    ck_callback cb = x->cb_map[key];
+    if (x->chuck->vm()->globals_manager()->stopListeningForGlobalEvent(s->s_name, cb)) {
+        post("%s event/callback unregistered", s->s_name);
+    };
 }
 
 //-----------------------------------------------------------------------------------------------

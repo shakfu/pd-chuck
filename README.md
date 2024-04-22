@@ -10,9 +10,11 @@ Includes an external, `chuck~` with the following features and limitations:
 
 - Add and remove audio and audio processes on the fly via pd messages.
 
-- Includes [standard chugins](https://github.com/ccrma/chugins) except [`Faust`, `FluidSynth`, `Ladspa`, `MIAP`]
+- Includes [standard base chugins](https://github.com/ccrma/chugins) including `WarpBuf`, `Faust` except [`FluidSynth`, `Ladspa`]
 
-- As of this version, there is no support for callbacks and events except via the `signal` and `broadcast` messages.
+- Includes support for callbacks and events via the `signal` and `broadcast` messages.
+
+- Includes support for core chuck messages (`add`, `remove`, `replace`, `status`, `clear vm`, etc..) via pd messages.
 
 see `chuck~/help-chuck.pd` for a basic demo of current features.
 
@@ -23,11 +25,10 @@ The current chuck version used is `1.5.2.3-dev (chai)`
 
 ## Status
 
-- [ ] Add support for callbacks and events
-- [X] Preliminary Linux support
 - [ ] No Windows support yet
-- [ ] Add multichannel support
-- [ ] Add rest of the standard chugins
+- [x] Add support for callbacks and events
+- [X] Preliminary Linux support
+- [x] Add rest of the standard chugins
 - [x] Audio quality needs improvement (fix thanks to Professor GE Wang!)
 - [x] No errors during compilation of external
 - [x] Instantiate Chuck class without errors.
@@ -38,10 +39,16 @@ The current chuck version used is `1.5.2.3-dev (chai)`
 
 Only tested on macOS and linux and needs `cmake` to build.
 
-For macOS requires:
+To build everything use:
 
-```bash
-brew install libsndfile
+```
+make full
+```
+
+to build a smaller set of dependencies sue:
+
+```
+make light
 ```
 
 For linux, the dependencies are more varied and follow the chuck linux build options. To install all linux dependencies:
@@ -69,7 +76,7 @@ On macOS, if you want to build for a particular macos deployment target:
 make MACOSX_DEPLOYMENT_TARGET=12.6
 ```
 
-**Or, long way**:
+**Or, long way** if you already have depdencies installed:
 
 ```bash
 git clone https://github.com/shakfu/pd-chuck
