@@ -2,7 +2,6 @@
 
 A project which minimally embeds the [chuck](https://chuck.stanford.edu) engine in a puredata external.
 
-## chuck~
 
 Includes an external, `chuck~` with the following features and limitations:
 
@@ -24,12 +23,6 @@ Note that this is project is the sibling to [chuck-max](https://github.com/shakf
 
 The current chuck version used is `1.5.2.3-dev (chai)`
 
-
-## faustgen2~
-
-In addition, another pure-data external, [faustgen2~] by Albert Graef, is included for macOS for no other reason than the dependencies, due to the `Faust.chugin`, are already available and it would be nice to have two faust-related externals for the price of one.
-
-Builds with `make faustgen`
 
 
 ## Status
