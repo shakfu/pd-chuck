@@ -1,0 +1,1000 @@
+#N canvas 832 186 520 581 10;
+#X obj 12 15 cnv 15 380 20 empty empty empty 2 9 0 14 -204280 -66577
+0;
+#X text 26 401 FAUST institution: GRAME;
+#X text 26 415 FAUST website: faust.grame.fr;
+#X text 132 430 Yann Orlarey \, Stéphane Letz \, Dominique Fober \,
+...;
+#X text 26 429 FAUST developers:;
+#X text 122 17 the FAUST compiler embedded in a Pd external;
+#X text 26 463 faustgen2~ website: github.com/agraef/pd-faustgen;
+#X text 26 499 This object was inspired by faustgen~ for Max developed
+by Martin Di Rollo and Stéphane Letz., f 50;
+#X text 26 449 faustgen2~ institutions: CICM - ANR MUSICOLL \, JGU
+IKM - Music-Informatics, f 73;
+#X text 26 477 faustgen2~ developers: Pierre Guillot \, Albert Gräf
+;
+#X text 10 39 The faustgen2~ external hooks into the Pd loader \, so
+if the external is in the startup libraries \, you can create a Faust
+dsp by simply typing dsp-name (without the .dsp extension) \, or dsp-name~
+(the ~ suffix is for cosmetic purposes only and will be ignored when
+searching for the file). Otherwise type faustgen2~ followed by the
+dsp name. The dsp file can be relative to the patch or on the Pd search
+path. Extra arguments can be used to define compilation options \,
+see the FAUST documentation for further information. Use debug level
+3 to display information about the code in the Pd console., f 72;
+#X text 26 529 The latest version by Albert Gräf adds many improvements
+\, most notably OSC and MIDI support \, polyphony \, and automatic
+Pd GUI generation., f 70;
+#X obj 13 16 faustgen2~;
+#X obj 336 165 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 336 185 \; pd dsp \$1;
+#X obj 166 355 dac~ 1 2;
+#X obj 62 212 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 0 256;
+#X obj 62 169 loadbang;
+#X msg 62 191 0;
+#X text 125 209 Control the parameters with their names, f 15;
+#X msg 62 231 gain \$1;
+#X obj 143 168 osc~ 220;
+#N canvas 766 136 471 246 options 0;
+#X text 16 50 Change the compile options and recompile;
+#X msg 17 71 compileoptions -vec -vs 64;
+#X text 56 141 Use the compile options as default arguments;
+#X text 19 196 All the compile options are listed page 54 and page
+55 of the PDF file faust-quick-reference, f 46;
+#X text 11 8 Use the compile options to optimize the CPU or improve
+the redering, f 55;
+#X msg 41 115 print;
+#X text 84 116 Print faustgen2~ informations;
+#X obj 17 165 examples/gain~ -vec -lv 1;
+#X connect 1 0 7 0;
+#X connect 5 0 7 0;
+#X restore 327 312 pd options;
+#N canvas 287 129 410 324 recompilation 0;
+#X obj 17 75 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+;
+#X msg 17 134 autocompile \$1 100;
+#X text 14 11 The automatic compilation can be used during the Faust
+code edition to recompile the code each time the file has been modified.
+;
+#X text 50 62 Active/deactivate the autocompilation when the dsp file
+changed., f 37;
+#X text 50 92 The second argument is the time between each check.,
+f 37;
+#X msg 55 174 compile;
+#X text 114 168 Reload and recompile the FAUST file manually, f 23
+;
+#X text 59 205 Click on the object to open the code in your default
+text editor \, then recompile to listen to the changes, f 47;
+#X obj 17 246 examples/dummy;
+#X connect 0 0 1 0;
+#X connect 1 0 8 0;
+#X connect 5 0 8 0;
+#X restore 327 338 pd recompilation;
+#X obj 103 355 snapshot~;
+#X obj 103 376 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 103 334 metro 100;
+#X obj 103 314 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X text 177 273 Click on the object to open the code in your default
+text editor, f 22;
+#N canvas 774 304 619 492 get.parameters.values 0;
+#X obj 22 396 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 78 396 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 1 256;
+#X obj 134 396 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 3 256;
+#X obj 190 396 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 4 256;
+#X text 20 9 You can use the name of the parameters without any arguments
+to output their current values via the extra control outlet.;
+#X msg 189 134 print;
+#X msg 22 104 button;
+#X msg 72 104 checkbox;
+#X msg 132 104 slider;
+#X msg 181 104 number;
+#X obj 22 375 route button checkbox slider number, f 38;
+#X obj 288 261 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 375 262 nbx 5 14 0 3 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 3 256;
+#X obj 448 260 nbx 5 14 0 4 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 4 256;
+#X obj 209 200 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 209 220 t b b, f 9;
+#X obj 209 241 del 200;
+#X obj 260 241 f 1;
+#X obj 209 262 f 0;
+#X msg 375 237 3;
+#X msg 448 237 4;
+#X msg 288 237 1;
+#X obj 375 196 loadbang;
+#X msg 209 283 button \$1 \, button, f 10;
+#X msg 288 283 checkbox \$1 \, checkbox, f 12;
+#X msg 375 283 slider \$1 \, slider, f 10;
+#X msg 448 283 number \$1 \, number, f 10;
+#X text 20 57 Click on the name of the parameter to output its current
+value, f 23;
+#X text 205 176 Set and output the value;
+#X text 233 129 Print the informations of the FAUST code, f 22;
+#X msg 272 104 dump;
+#X text 316 99 Dump the information on the control outlet, f 22;
+#X obj 247 396 print dump;
+#X obj 22 352 examples/parameters;
+#X connect 5 0 33 0;
+#X connect 6 0 33 0;
+#X connect 7 0 33 0;
+#X connect 8 0 33 0;
+#X connect 9 0 33 0;
+#X connect 10 0 0 0;
+#X connect 10 1 1 0;
+#X connect 10 2 2 0;
+#X connect 10 3 3 0;
+#X connect 10 4 32 0;
+#X connect 11 0 24 0;
+#X connect 12 0 25 0;
+#X connect 13 0 26 0;
+#X connect 14 0 15 0;
+#X connect 15 0 16 0;
+#X connect 15 1 17 0;
+#X connect 16 0 18 0;
+#X connect 17 0 23 0;
+#X connect 18 0 23 0;
+#X connect 19 0 12 0;
+#X connect 20 0 13 0;
+#X connect 21 0 11 0;
+#X connect 22 0 19 0;
+#X connect 22 0 20 0;
+#X connect 22 0 21 0;
+#X connect 23 0 33 0;
+#X connect 24 0 33 0;
+#X connect 25 0 33 0;
+#X connect 26 0 33 0;
+#X connect 30 0 33 0;
+#X connect 33 0 10 0;
+#X restore 327 259 pd get.parameters.values;
+#N canvas 1161 418 614 360 set.parameters.values 0;
+#X obj 335 84 noise~;
+#X obj 333 303 dac~ 1 2;
+#X msg 282 204 print;
+#X obj 162 139 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 162 161 checkbox \$1;
+#X obj 245 140 nbx 5 14 0 3 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 3 256;
+#X msg 245 161 slider \$1;
+#X obj 322 138 nbx 5 14 0 4 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 4 256;
+#X obj 73 88 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X msg 73 171 button \$1;
+#X obj 73 108 t b b, f 9;
+#X obj 73 129 del 200;
+#X obj 124 129 f 1;
+#X obj 73 150 f 0;
+#X msg 322 161 number \$1;
+#X msg 245 115 3;
+#X msg 322 115 4;
+#X msg 162 115 1;
+#X text 71 69 Generate sounds;
+#X obj 245 84 loadbang;
+#X text 20 9 You can use the name of the parameters without any arguments
+to output their current values via the extra control outlet. In this
+example \, all the parameters are used to control the gain of the output
+signal.;
+#X text 324 198 Print the informations of the FAUST code, f 22;
+#X obj 222 252 examples/parameters;
+#X connect 0 0 22 1;
+#X connect 2 0 22 0;
+#X connect 3 0 4 0;
+#X connect 4 0 22 0;
+#X connect 5 0 6 0;
+#X connect 6 0 22 0;
+#X connect 7 0 14 0;
+#X connect 8 0 10 0;
+#X connect 9 0 22 0;
+#X connect 10 0 11 0;
+#X connect 10 1 12 0;
+#X connect 11 0 13 0;
+#X connect 12 0 9 0;
+#X connect 13 0 9 0;
+#X connect 14 0 22 0;
+#X connect 15 0 5 0;
+#X connect 16 0 7 0;
+#X connect 17 0 3 0;
+#X connect 19 0 15 0;
+#X connect 19 0 16 0;
+#X connect 19 0 17 0;
+#X connect 22 1 1 0;
+#X connect 22 1 1 1;
+#X restore 327 231 pd set.parameters.values;
+#N canvas 693 146 649 657 set.parameters.lists 0;
+#X obj 141 618 dac~ 1 2;
+#X msg 29 245 print;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array \$0-gains 20 float 3;
+#A 0 0.619565 0.782608 0.75 0.717391 0.717391 0.717391 0.195654 0.195654
+0.163046 0.119568 0.108698 0.0652174 0.0652174 0.0597826 0.0543479
+0.0326089 -0.0108691 -0.0434777 -0.0706514 -0.20652;
+#X coords 0 1 20 0 199 92 1;
+#X restore 427 74 graph;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array \$0-decays 20 float 3;
+#A 0 0.11956 0.228258 0.282606 0.347825 0.402173 0.434783 0.434786
+0.402176 0.347828 0.315218 0.298914 0.282609 0.25 0.25 0.25 0.25 0.25
+0.25 0.66304 0.608692;
+#X coords 0 1 20 0 199 92 1;
+#X restore 427 198 graph;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array \$0-freq 20 float 3;
+#A 0 -0.0351562 217.363 434.762 652.16 652.16 652.16 869.559 7391.3
+7391.3 7826.1 8260.9 8695.7 8913.09 9782.69 5217.38 3912.99 3260.8
+2608.6 2391.2 1086.81;
+#X coords 0 20000 20 0 199 92 1;
+#X restore 427 328 graph;
+#X obj 141 561 noise~;
+#X obj 103 227 list trim;
+#X obj 103 183 array get \$0-gains;
+#X obj 103 162 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 133 342 list trim;
+#X obj 133 278 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 133 299 array get \$0-decays 2 4;
+#X text 28 191 Print to display the parameters' information, f 11
+;
+#X obj 197 371 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 197 413 freq 4 \$1;
+#X text 425 10 Change the value of the arrays and use the bangs to
+send them to the faustgen2~ object, f 33;
+#X text 100 134 Set the values of all the "gain" parameters, f 23
+;
+#X text 131 250 Set the values of 4 "decay" parameters starting with
+the index 2, f 36;
+#X text 195 343 Set the value of the 3rd "freq" parameter, f 23;
+#X obj 195 532 list trim;
+#X obj 195 468 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 337 440 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 278 441 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 195 489 array get \$0-decays;
+#X obj 195 511 list prepend decay 0;
+#X text 193 439 Dynamic approach, f 9;
+#X text 335 422 Index;
+#X text 278 423 Size;
+#X obj 30 585 examples/resonator~;
+#X obj 103 205 list prepend gain 0;
+#X obj 133 321 list prepend decay 2;
+#X obj 197 392 array get \$0-freq 3 1;
+#X msg 53 545 defaults;
+#X obj 337 462 t f f;
+#X msg 364 486 list decay \$1;
+#X text 17 13 Indexed collections of parameters can be set all at once.
+This kind of message has n+2 values \, first the name of the parameter
+\, then the index of the first parameter to be modified \, followed
+by the n values to be set starting at the given index. In the Faust
+program \, the collection of parameters must have labels of the form
+"name%i" with the index i running from 0 to N-1 \, where N is the total
+number of parameters in the collection. Click on the resonator~ example
+below to see how this is done., f 64;
+#X connect 1 0 28 0;
+#X connect 5 0 28 1;
+#X connect 6 0 28 0;
+#X connect 7 0 29 0;
+#X connect 8 0 7 0;
+#X connect 9 0 28 0;
+#X connect 10 0 11 0;
+#X connect 11 0 30 0;
+#X connect 13 0 31 0;
+#X connect 14 0 28 0;
+#X connect 19 0 28 0;
+#X connect 20 0 23 0;
+#X connect 21 0 33 0;
+#X connect 22 0 23 1;
+#X connect 23 0 24 0;
+#X connect 24 0 19 0;
+#X connect 28 1 0 0;
+#X connect 28 1 0 1;
+#X connect 29 0 6 0;
+#X connect 30 0 9 0;
+#X connect 31 0 14 0;
+#X connect 32 0 28 0;
+#X connect 33 0 23 0;
+#X connect 33 1 34 0;
+#X connect 34 0 24 1;
+#X restore 327 286 pd set.parameters.lists;
+#N canvas 573 249 656 492 midi 0;
+#X obj 273 63 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 273 116 clock;
+#X msg 169 116 start;
+#X msg 219 116 stop;
+#N canvas 0 0 450 300 (subpatch) 0;
+#X array scope-l 1000 float 1;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X array scope-r 1000 float 1;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 1 999 -1 200 140 1;
+#X restore 440 307 graph;
+#X obj 273 87 metro 10;
+#X obj 326 34 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 326 58 5 0 0 0 - - -;
+#X obj 506 141 r midi;
+#X obj 506 170 route ctl;
+#X msg 506 199 \$2 \$1;
+#X floatatom 506 257 5 0 0 0 - - -;
+#X floatatom 556 257 5 0 0 0 - - -;
+#X obj 507 48 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 507 71 \; pd dsp \$1;
+#X obj 103 240 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 103 214 midiout midi;
+#X msg 103 262 midiout \$1;
+#X msg 103 188 midiout;
+#X msg 123 324 midichan \$1;
+#X floatatom 123 299 5 0 0 0 - - -;
+#X obj 350 90 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 350 114 active \$1;
+#X obj 387 210 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 387 234 active \$1;
+#N canvas 860 399 450 300 dac 0;
+#X obj 23 64 metro 100;
+#X obj 48 127 dac~;
+#X obj 111 152 tabwrite~ scope-r;
+#X obj 111 121 tabwrite~ scope-l;
+#X obj 112 32 inlet~;
+#X obj 172 32 inlet~;
+#X obj 23 32 inlet;
+#X connect 0 0 2 0;
+#X connect 0 0 3 0;
+#X connect 4 0 1 0;
+#X connect 4 0 3 0;
+#X connect 5 0 1 1;
+#X connect 5 0 2 0;
+#X connect 6 0 0 0;
+#X restore 321 412 pd dac;
+#X obj 321 382 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 279 338 print midiout;
+#X text 377 89 mute dsp;
+#X text 412 208 bypass dsp;
+#X text 17 142 MIDI sync (start \, stop \, clock);
+#X text 506 116 "midi" receiver;
+#X text 4 184 send MIDI to "midi" receiver, f 11;
+#X text 4 245 send MIDI to control outlet, f 11;
+#N canvas 916 411 450 300 midi-input 0;
+#X obj 14 50 ctlin;
+#X obj 14 71 pack f f f;
+#X msg 14 92 ctl \$1 \$2 \$3;
+#X obj 116 70 pack f f f;
+#X obj 213 70 pack f f f;
+#X obj 116 49 notein;
+#X msg 116 91 note \$1 \$2 \$3;
+#X obj 213 49 polytouchin;
+#X msg 213 91 polytouch \$1 \$2 \$3;
+#X obj 12 121 pgmin;
+#X obj 12 142 pack f f;
+#X msg 12 163 pgm \$1 \$2;
+#X obj 116 142 pack f f;
+#X obj 213 142 pack f f;
+#X obj 116 121 bendin;
+#X msg 116 163 bend \$1 \$2;
+#X obj 213 121 touchin;
+#X msg 213 163 touch \$1 \$2;
+#X obj 11 193 midiin;
+#X obj 11 214 sel 250 251 252;
+#X msg 11 235 start;
+#X msg 45 258 cont;
+#X msg 79 237 stop;
+#X obj 213 259 outlet;
+#X text 10 7 This is a little helper patch which encodes MIDI messages
+in SMMF format.;
+#X connect 0 0 1 0;
+#X connect 0 1 1 1;
+#X connect 0 2 1 2;
+#X connect 1 0 2 0;
+#X connect 2 0 23 0;
+#X connect 3 0 6 0;
+#X connect 4 0 8 0;
+#X connect 5 0 3 0;
+#X connect 5 1 3 1;
+#X connect 5 2 3 2;
+#X connect 6 0 23 0;
+#X connect 7 0 4 0;
+#X connect 7 1 4 1;
+#X connect 7 2 4 2;
+#X connect 8 0 23 0;
+#X connect 9 0 10 0;
+#X connect 9 1 10 1;
+#X connect 10 0 11 0;
+#X connect 11 0 23 0;
+#X connect 12 0 15 0;
+#X connect 13 0 17 0;
+#X connect 14 0 12 0;
+#X connect 14 1 12 1;
+#X connect 15 0 23 0;
+#X connect 16 0 13 0;
+#X connect 16 1 13 1;
+#X connect 17 0 23 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 0;
+#X connect 19 1 21 0;
+#X connect 19 2 22 0;
+#X connect 20 0 23 0;
+#X connect 21 0 23 0;
+#X connect 22 0 23 0;
+#X restore 254 238 pd midi-input;
+#X msg 320 145 compile;
+#X msg 318 296 compile;
+#X msg 375 145 defaults;
+#X msg 375 296 defaults;
+#X text 253 202 MIDI input uses SMMF format, f 16;
+#X obj 506 228 route 18 19;
+#X text 5 391 Extra creation arguments: one or more numbers denote
+MIDI channels (0 = omni accepts all channels \, <0 blocks a channel)
+\, midiout=1 enables MIDI output \, midiout=sym sends outgoing MIDI
+messages to the given receiver, f 49;
+#X text 11 8 Click on the sync and amp objects to see the Faust source.
+MIDI controls are marked up with "midi" meta data as described in the
+Faust manual. Various different types of MIDI messages are available
+\, please see the Faust manual for details., f 38;
+#X text 4 297 set MIDI channel (0 = omni \, <0 = blocked channel \,
+see creation args below), f 16;
+#X obj 273 163 examples/sync~;
+#X obj 279 314 examples/amp~;
+#X obj 7 369 examples/amp~ 1 midiout=midi;
+#X connect 0 0 5 0;
+#X connect 1 0 44 0;
+#X connect 2 0 44 0;
+#X connect 3 0 44 0;
+#X connect 5 0 1 0;
+#X connect 6 0 7 0;
+#X connect 7 0 5 1;
+#X connect 8 0 9 0;
+#X connect 9 0 10 0;
+#X connect 10 0 40 0;
+#X connect 13 0 14 0;
+#X connect 15 0 17 0;
+#X connect 16 0 45 0;
+#X connect 17 0 45 0;
+#X connect 18 0 45 0;
+#X connect 19 0 45 0;
+#X connect 20 0 19 0;
+#X connect 21 0 22 0;
+#X connect 22 0 44 0;
+#X connect 23 0 24 0;
+#X connect 24 0 45 0;
+#X connect 26 0 25 0;
+#X connect 34 0 45 0;
+#X connect 35 0 44 0;
+#X connect 36 0 45 0;
+#X connect 37 0 44 0;
+#X connect 38 0 45 0;
+#X connect 40 0 11 0;
+#X connect 40 1 12 0;
+#X connect 44 1 45 1;
+#X connect 44 1 45 2;
+#X connect 45 0 27 0;
+#X connect 45 1 25 1;
+#X connect 45 2 25 2;
+#X restore 327 364 pd midi;
+#X text 223 209 Reset parameters to their defaults, f 15;
+#X msg 224 190 defaults;
+#N canvas 702 414 463 334 receivers 0;
+#X text 22 19 The faustgen2~ receiver can be used to send a message
+to all faustgen2~ objects in a patch., f 25;
+#X msg 23 83 \; faustgen2~ print;
+#X msg 23 182 \; examples/gain print;
+#X text 23 129 You can also send a message to all instances of a given
+dsp..., f 25;
+#X msg 23 282 \; examples/gain-0 print;
+#X text 222 95 You can send a message to the instance name..., f 16
+;
+#X msg 302 153 \; examples/gain:foo print;
+#X msg 222 153 \; foo print;
+#X text 23 229 ... or to just a single instance given by its unique
+receiver (printed as "unique name" by the print message)., f 40;
+#X text 222 17 faustgen2~ objects can also have an additional instance
+name:, f 31;
+#X text 342 95 ... or to the name:instance receiver., f 16;
+#X msg 274 274 compile;
+#X msg 334 274 defaults;
+#X obj 274 300 s faustgen2~;
+#X text 272 197 Two useful examples: recompile all faustgen2~ objects
+\, and reset their control variables to the defaults., f 27;
+#X obj 223 63 examples/gain~ foo;
+#X connect 11 0 13 0;
+#X connect 12 0 13 0;
+#X restore 327 390 pd receivers;
+#N canvas 574 322 453 354 gui 0;
+#N canvas 0 70 450 300 gain 0;
+#X obj 10 30 hsl 128 15 0 1 0 0 examples/gain-2/gain/gain examples/gain-2/gain/gain
+gain -2 -6 0 10 -262144 -1 -1 0 1;
+#X obj 160 30 nbx 5 14 0 1 0 0 examples/gain-2/gain/gain examples/gain-2/gain/gain
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 197 3 bng 15 250 50 1 examples/gain-2/init examples/gain-2/init
+empty 0 -6 0 10 -262144 -1 -1;
+#X obj 217 3 tgl 15 1 examples/gain-2/active examples/gain-2/active
+empty 0 -6 0 10 -262144 -1 -1 1 1;
+#X coords 0 -1 1 1 235 60 1 0 0;
+#X restore 201 89 pd gain;
+#X obj 15 88 faustgen2~ examples/gain gain;
+#X obj 141 157 dac~ 1 2;
+#X obj 71 157 snapshot~;
+#X obj 71 178 nbx 5 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
+-262144 -1 -1 0 256;
+#X obj 71 136 metro 100;
+#X obj 71 116 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 186 61 noise~;
+#X msg 15 61 gui;
+#X text 17 209 faustgen2~ can automatically generate a Pd GUI (GOP
+subpatch) for a Faust dsp. To do this: (1) Create a one-off subpatch
+for the GUI. (2) Enter the name of the subpatch as the instance name
+(2nd creation argument) of the faustgen2~ object. => The subpatch will
+be populated with an IEM slider/number combo for each UI element. The
+subpatch is updated each time the object is recompiled \, and you can
+also trigger a GUI update manually by sending a "gui" message to the
+object., f 68;
+#X text 15 18 gui message triggers the GUI update manually, f 23;
+#X text 233 51 left (bang) button in titlebar resets controls to their
+defaults, f 33;
+#X text 233 156 right (toggle) button deactivates (mutes or bypasses)
+the dsp, f 33;
+#X text 233 31 special GUI controls in titlebar:;
+#X connect 1 1 2 1;
+#X connect 1 1 2 0;
+#X connect 1 1 3 0;
+#X connect 3 0 4 0;
+#X connect 5 0 3 0;
+#X connect 6 0 5 0;
+#X connect 7 0 1 1;
+#X connect 8 0 1 0;
+#X restore 413 390 pd gui;
+#N canvas 488 301 644 358 poly 0;
+#X msg 19 215 tuning;
+#X msg 19 238 tuning default;
+#X text 121 241 1/4 comma meantone;
+#X obj 19 155 print organ;
+#X obj 113 212 dac~;
+#N canvas 0 0 450 300 organ 0;
+#X obj 10 30 hsl 128 15 0 1 0 0 examples/organ-0/organ/pan examples/organ-0/organ/pan
+pan -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 30 nbx 5 14 0 1 0 0 examples/organ-0/organ/pan examples/organ-0/organ/pan
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 60 hsl 128 15 0 1 0 0 examples/organ-0/organ/vol examples/organ-0/organ/vol
+vol -2 -6 0 10 -262144 -1 -1 3810 1;
+#X obj 160 60 nbx 5 14 0 1 0 0 examples/organ-0/organ/vol examples/organ-0/organ/vol
+empty 0 -6 0 10 -262144 -1 -1 0.3 256;
+#X obj 10 90 hsl 128 15 0 1 0 0 examples/organ-0/organ/attack examples/organ-0/organ/attack
+attack -2 -6 0 10 -262144 -1 -1 127 1;
+#X obj 160 90 nbx 5 14 0 1 0 0 examples/organ-0/organ/attack examples/organ-0/organ/attack
+empty 0 -6 0 10 -262144 -1 -1 0.01 256;
+#X obj 10 120 hsl 128 15 0 1 0 0 examples/organ-0/organ/decay examples/organ-0/organ/decay
+decay -2 -6 0 10 -262144 -1 -1 3810 1;
+#X obj 160 120 nbx 5 14 0 1 0 0 examples/organ-0/organ/decay examples/organ-0/organ/decay
+empty 0 -6 0 10 -262144 -1 -1 0.3 256;
+#X obj 10 150 hsl 128 15 0 1 0 0 examples/organ-0/organ/sustain examples/organ-0/organ/sustain
+sustain -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 150 nbx 5 14 0 1 0 0 examples/organ-0/organ/sustain examples/organ-0/organ/sustain
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 180 hsl 128 15 0 1 0 0 examples/organ-0/organ/release examples/organ-0/organ/release
+release -2 -6 0 10 -262144 -1 -1 2540 1;
+#X obj 160 180 nbx 5 14 0 1 0 0 examples/organ-0/organ/release examples/organ-0/organ/release
+empty 0 -6 0 10 -262144 -1 -1 0.2 256;
+#X obj 10 210 hsl 128 15 0 3 0 0 examples/organ-0/organ/amp1 examples/organ-0/organ/amp1
+amp1 -2 -6 0 10 -262144 -1 -1 4233 1;
+#X obj 160 210 nbx 5 14 0 3 0 0 examples/organ-0/organ/amp1 examples/organ-0/organ/amp1
+empty 0 -6 0 10 -262144 -1 -1 1 256;
+#X obj 10 240 hsl 128 15 0 3 0 0 examples/organ-0/organ/amp2 examples/organ-0/organ/amp2
+amp2 -2 -6 0 10 -262144 -1 -1 2117 1;
+#X obj 160 240 nbx 5 14 0 3 0 0 examples/organ-0/organ/amp2 examples/organ-0/organ/amp2
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 270 hsl 128 15 0 3 0 0 examples/organ-0/organ/amp3 examples/organ-0/organ/amp3
+amp3 -2 -6 0 10 -262144 -1 -1 1411 1;
+#X obj 160 270 nbx 5 14 0 3 0 0 examples/organ-0/organ/amp3 examples/organ-0/organ/amp3
+empty 0 -6 0 10 -262144 -1 -1 0.333333 256;
+#X obj 10 300 hsl 128 15 -2 2 0 0 examples/organ-0/organ/bend examples/organ-0/organ/bend
+bend -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 300 nbx 5 14 -2 2 0 0 examples/organ-0/organ/bend examples/organ-0/organ/bend
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 177 3 bng 15 250 50 1 examples/organ-0/panic examples/organ-0/panic
+empty 0 -6 0 10 -233017 -1 -1;
+#X obj 197 3 bng 15 250 50 1 examples/organ-0/init examples/organ-0/init
+empty 0 -6 0 10 -262144 -1 -1;
+#X obj 217 3 tgl 15 1 examples/organ-0/active examples/organ-0/active
+empty 0 -6 0 10 -262144 -1 -1 1 1;
+#X coords 0 -1 1 1 235 330 1 0 0;
+#X restore 388 13 pd organ;
+#X obj 19 286 s organ;
+#X msg 19 261 tuning examples/meanquar 9;
+#X obj 240 151 ctlin 123;
+#X text 240 131 all notes off;
+#X obj 240 263 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 240 286 s organ;
+#X text 12 12 Synths a.k.a. polyphonic dsps have special freq/gain/gate
+controls marked up with the 'voice' meta data. Please check the source
+of the organ object below to see how these are implemented. Voice assignment
+is done automatically by the faustgen2~ object. Please also see synth.pd
+for a more comprehensive example. You can also find a few more synths
+in the examples.;
+#N canvas 916 411 450 300 midi-input 0;
+#X obj 14 50 ctlin;
+#X obj 14 71 pack f f f;
+#X msg 14 92 ctl \$1 \$2 \$3;
+#X obj 116 70 pack f f f;
+#X obj 213 70 pack f f f;
+#X obj 116 49 notein;
+#X msg 116 91 note \$1 \$2 \$3;
+#X obj 213 49 polytouchin;
+#X msg 213 91 polytouch \$1 \$2 \$3;
+#X obj 12 121 pgmin;
+#X obj 12 142 pack f f;
+#X msg 12 163 pgm \$1 \$2;
+#X obj 116 142 pack f f;
+#X obj 213 142 pack f f;
+#X msg 116 163 bend \$1 \$2;
+#X obj 213 121 touchin;
+#X msg 213 163 touch \$1 \$2;
+#X obj 11 193 midiin;
+#X obj 11 214 sel 250 251 252;
+#X msg 11 235 start;
+#X msg 45 258 cont;
+#X msg 79 237 stop;
+#X obj 213 259 outlet;
+#X text 10 7 This is a little helper patch which encodes MIDI messages
+in SMMF format.;
+#X obj 116 121 bendin 0 1;
+#X connect 0 0 1 0;
+#X connect 0 1 1 1;
+#X connect 0 2 1 2;
+#X connect 1 0 2 0;
+#X connect 2 0 22 0;
+#X connect 3 0 6 0;
+#X connect 4 0 8 0;
+#X connect 5 0 3 0;
+#X connect 5 1 3 1;
+#X connect 5 2 3 2;
+#X connect 6 0 22 0;
+#X connect 7 0 4 0;
+#X connect 7 1 4 1;
+#X connect 7 2 4 2;
+#X connect 8 0 22 0;
+#X connect 9 0 10 0;
+#X connect 9 1 10 1;
+#X connect 10 0 11 0;
+#X connect 11 0 22 0;
+#X connect 12 0 14 0;
+#X connect 13 0 16 0;
+#X connect 14 0 22 0;
+#X connect 15 0 13 0;
+#X connect 15 1 13 1;
+#X connect 16 0 22 0;
+#X connect 17 0 18 0;
+#X connect 18 0 19 0;
+#X connect 18 1 20 0;
+#X connect 18 2 21 0;
+#X connect 19 0 22 0;
+#X connect 20 0 22 0;
+#X connect 21 0 22 0;
+#X connect 24 0 12 0;
+#X connect 24 1 12 1;
+#X restore 108 109 pd midi-input;
+#X text 247 174 Sending the synth a bang turns off all sounding notes.
+The gray "panic" button in the titlebar of the GUI does the same.,
+f 22;
+#X text 19 308 synths can be tuned with the tuning message \, giving
+either a Scala file and an optional reference tone in the octave \,
+or 12 tuning offsets in cent as arguments, f 58;
+#X obj 19 130 examples/organ~ organ, f 22;
+#X obj 19 180 examples/chorus chorus;
+#X connect 0 0 6 0;
+#X connect 1 0 6 0;
+#X connect 7 0 6 0;
+#X connect 8 0 10 0;
+#X connect 10 0 11 0;
+#X connect 13 0 16 0;
+#X connect 13 0 17 0;
+#X connect 16 0 3 0;
+#X connect 16 1 17 1;
+#X connect 16 2 17 2;
+#X connect 17 1 4 0;
+#X connect 17 2 4 1;
+#X restore 379 364 pd poly;
+#N canvas 491 261 770 406 osc 0;
+#X obj 19 155 print organ;
+#X obj 146 207 dac~;
+#N canvas 916 411 450 300 midi-input 0;
+#X obj 14 50 ctlin;
+#X obj 14 71 pack f f f;
+#X msg 14 92 ctl \$1 \$2 \$3;
+#X obj 116 70 pack f f f;
+#X obj 213 70 pack f f f;
+#X obj 116 49 notein;
+#X msg 116 91 note \$1 \$2 \$3;
+#X obj 213 49 polytouchin;
+#X msg 213 91 polytouch \$1 \$2 \$3;
+#X obj 12 121 pgmin;
+#X obj 12 142 pack f f;
+#X msg 12 163 pgm \$1 \$2;
+#X obj 116 142 pack f f;
+#X obj 213 142 pack f f;
+#X obj 116 121 bendin;
+#X msg 116 163 bend \$1 \$2;
+#X obj 213 121 touchin;
+#X msg 213 163 touch \$1 \$2;
+#X obj 11 193 midiin;
+#X obj 11 214 sel 250 251 252;
+#X msg 11 235 start;
+#X msg 45 258 cont;
+#X msg 79 237 stop;
+#X obj 213 259 outlet;
+#X text 10 7 This is a little helper patch which encodes MIDI messages
+in SMMF format.;
+#X connect 0 0 1 0;
+#X connect 0 1 1 1;
+#X connect 0 2 1 2;
+#X connect 1 0 2 0;
+#X connect 2 0 23 0;
+#X connect 3 0 6 0;
+#X connect 4 0 8 0;
+#X connect 5 0 3 0;
+#X connect 5 1 3 1;
+#X connect 5 2 3 2;
+#X connect 6 0 23 0;
+#X connect 7 0 4 0;
+#X connect 7 1 4 1;
+#X connect 7 2 4 2;
+#X connect 8 0 23 0;
+#X connect 9 0 10 0;
+#X connect 9 1 10 1;
+#X connect 10 0 11 0;
+#X connect 11 0 23 0;
+#X connect 12 0 15 0;
+#X connect 13 0 17 0;
+#X connect 14 0 12 0;
+#X connect 14 1 12 1;
+#X connect 15 0 23 0;
+#X connect 16 0 13 0;
+#X connect 16 1 13 1;
+#X connect 17 0 23 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 0;
+#X connect 19 1 21 0;
+#X connect 19 2 22 0;
+#X connect 20 0 23 0;
+#X connect 21 0 23 0;
+#X connect 22 0 23 0;
+#X restore 20 109 pd midi-input;
+#X obj 210 309 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 210 261 oscout;
+#X msg 210 331 oscout \$1;
+#X obj 18 271 hsl 128 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X obj 18 313 hsl 128 15 -1 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X msg 18 291 /vol \$1;
+#X msg 18 333 /pan \$1;
+#X msg 18 227 /adsr 0.1 0.3 0.2 0.2;
+#X msg 65 355 /dump /dump.reply;
+#X msg 18 355 /dump;
+#X text 208 241 enable OSC output;
+#X text 17 207 send an OSC message;
+#X text 12 12 faustgen2~ objects can process incoming OSC messages
+\, and output OSC messages for passive controls. Click on the faustgen2~
+objects below and look at the [osc:/...] meta data in their UI elements
+to see how this is configured., f 41;
+#X text 280 354 NOTE: This patch doesn't show communication with external
+OSC devices \, you need the mrpeach externals to do that (cf. synth-osc.pd
+for details)., f 79;
+#X floatatom 325 291 5 0 0 0 - - -;
+#X floatatom 377 291 5 0 0 0 - - -;
+#N canvas 0 0 450 300 amp-1 0;
+#X obj 10 30 hsl 128 15 -20 20 0 0 examples/amp-2/amp/bass examples/amp-2/amp/bass
+bass -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 30 nbx 5 14 -20 20 0 0 examples/amp-2/amp/bass examples/amp-2/amp/bass
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 10 60 hsl 128 15 -20 20 0 0 examples/amp-2/amp/treble examples/amp-2/amp/treble
+treble -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 60 nbx 5 14 -20 20 0 0 examples/amp-2/amp/treble examples/amp-2/amp/treble
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 10 90 hsl 128 15 -60 10 0 0 examples/amp-2/amp/gain examples/amp-2/amp/gain
+gain -2 -6 0 10 -262144 -1 -1 10886 1;
+#X obj 160 90 nbx 5 14 -60 10 0 0 examples/amp-2/amp/gain examples/amp-2/amp/gain
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 10 120 hsl 128 15 -1 1 0 0 examples/amp-2/amp/balance examples/amp-2/amp/balance
+balance -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 120 nbx 5 14 -1 1 0 0 examples/amp-2/amp/balance examples/amp-2/amp/balance
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 10 150 hsl 128 15 -60 10 0 0 examples/amp-2/amp/left examples/amp-2/amp/left
+left -2 -6 0 10 -233017 -1 -1 0 1;
+#X obj 160 150 nbx 5 14 -60 10 0 0 examples/amp-2/amp/left examples/amp-2/amp/left
+empty 0 -6 0 10 -233017 -1 -1 -60 256;
+#X obj 10 180 hsl 128 15 -60 10 0 0 examples/amp-2/amp/right examples/amp-2/amp/right
+right -2 -6 0 10 -233017 -1 -1 0 1;
+#X obj 160 180 nbx 5 14 -60 10 0 0 examples/amp-2/amp/right examples/amp-2/amp/right
+empty 0 -6 0 10 -233017 -1 -1 -60 256;
+#X obj 197 3 bng 15 250 50 1 examples/amp-2/init examples/amp-2/init
+empty 0 -6 0 10 -262144 -1 -1;
+#X obj 217 3 tgl 15 1 examples/amp-2/active examples/amp-2/active empty
+0 -6 0 10 -262144 -1 -1 1 1;
+#X coords 0 -1 1 1 235 210 1 0 0;
+#X restore 280 15 pd amp-1;
+#N canvas 0 0 450 300 organ-1 0;
+#X obj 10 30 hsl 128 15 0 1 0 0 examples/organ-1/organ/pan examples/organ-1/organ/pan
+pan -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 30 nbx 5 14 0 1 0 0 examples/organ-1/organ/pan examples/organ-1/organ/pan
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 60 hsl 128 15 0 1 0 0 examples/organ-1/organ/vol examples/organ-1/organ/vol
+vol -2 -6 0 10 -262144 -1 -1 3810 1;
+#X obj 160 60 nbx 5 14 0 1 0 0 examples/organ-1/organ/vol examples/organ-1/organ/vol
+empty 0 -6 0 10 -262144 -1 -1 0.3 256;
+#X obj 10 90 hsl 128 15 0 1 0 0 examples/organ-1/organ/attack examples/organ-1/organ/attack
+attack -2 -6 0 10 -262144 -1 -1 127 1;
+#X obj 160 90 nbx 5 14 0 1 0 0 examples/organ-1/organ/attack examples/organ-1/organ/attack
+empty 0 -6 0 10 -262144 -1 -1 0.01 256;
+#X obj 10 120 hsl 128 15 0 1 0 0 examples/organ-1/organ/decay examples/organ-1/organ/decay
+decay -2 -6 0 10 -262144 -1 -1 3810 1;
+#X obj 160 120 nbx 5 14 0 1 0 0 examples/organ-1/organ/decay examples/organ-1/organ/decay
+empty 0 -6 0 10 -262144 -1 -1 0.3 256;
+#X obj 10 150 hsl 128 15 0 1 0 0 examples/organ-1/organ/sustain examples/organ-1/organ/sustain
+sustain -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 150 nbx 5 14 0 1 0 0 examples/organ-1/organ/sustain examples/organ-1/organ/sustain
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 180 hsl 128 15 0 1 0 0 examples/organ-1/organ/release examples/organ-1/organ/release
+release -2 -6 0 10 -262144 -1 -1 2540 1;
+#X obj 160 180 nbx 5 14 0 1 0 0 examples/organ-1/organ/release examples/organ-1/organ/release
+empty 0 -6 0 10 -262144 -1 -1 0.2 256;
+#X obj 10 210 hsl 128 15 0 3 0 0 examples/organ-1/organ/amp1 examples/organ-1/organ/amp1
+amp1 -2 -6 0 10 -262144 -1 -1 4233 1;
+#X obj 160 210 nbx 5 14 0 3 0 0 examples/organ-1/organ/amp1 examples/organ-1/organ/amp1
+empty 0 -6 0 10 -262144 -1 -1 1 256;
+#X obj 10 240 hsl 128 15 0 3 0 0 examples/organ-1/organ/amp2 examples/organ-1/organ/amp2
+amp2 -2 -6 0 10 -262144 -1 -1 2117 1;
+#X obj 160 240 nbx 5 14 0 3 0 0 examples/organ-1/organ/amp2 examples/organ-1/organ/amp2
+empty 0 -6 0 10 -262144 -1 -1 0.5 256;
+#X obj 10 270 hsl 128 15 0 3 0 0 examples/organ-1/organ/amp3 examples/organ-1/organ/amp3
+amp3 -2 -6 0 10 -262144 -1 -1 1411 1;
+#X obj 160 270 nbx 5 14 0 3 0 0 examples/organ-1/organ/amp3 examples/organ-1/organ/amp3
+empty 0 -6 0 10 -262144 -1 -1 0.333333 256;
+#X obj 10 300 hsl 128 15 -2 2 0 0 examples/organ-1/organ/bend examples/organ-1/organ/bend
+bend -2 -6 0 10 -262144 -1 -1 6350 1;
+#X obj 160 300 nbx 5 14 -2 2 0 0 examples/organ-1/organ/bend examples/organ-1/organ/bend
+empty 0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 177 3 bng 15 250 50 1 examples/organ-1/panic examples/organ-1/panic
+empty 0 -6 0 10 -233017 -1 -1;
+#X obj 197 3 bng 15 250 50 1 examples/organ-1/init examples/organ-1/init
+empty 0 -6 0 10 -262144 -1 -1;
+#X obj 217 3 tgl 15 1 examples/organ-1/active examples/organ-1/active
+empty 0 -6 0 10 -262144 -1 -1 1 1;
+#X coords 0 -1 1 1 235 330 1 0 0;
+#X restore 525 15 pd organ-1;
+#X obj 210 377 s osc-in;
+#X obj 113 109 r osc-in;
+#X msg 210 285 oscout osc-out;
+#X obj 430 291 print dump;
+#X obj 325 241 r osc-out;
+#X obj 18 377 s osc-in;
+#X text 398 241 receive OSC output;
+#X obj 325 266 route /left /right;
+#X msg 18 249 /amp 0.5 0 0.25;
+#X obj 19 130 examples/organ~ organ-1;
+#X obj 19 180 examples/amp~ amp-1, f 23;
+#X obj 202 111 ctlin 123;
+#X obj 202 137 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 202 160 s organ-1;
+#X connect 2 0 30 0;
+#X connect 2 0 31 0;
+#X connect 3 0 5 0;
+#X connect 4 0 21 0;
+#X connect 5 0 21 0;
+#X connect 6 0 8 0;
+#X connect 7 0 9 0;
+#X connect 8 0 26 0;
+#X connect 9 0 26 0;
+#X connect 10 0 26 0;
+#X connect 11 0 26 0;
+#X connect 12 0 26 0;
+#X connect 22 0 30 0;
+#X connect 22 0 31 0;
+#X connect 23 0 21 0;
+#X connect 25 0 28 0;
+#X connect 28 0 17 0;
+#X connect 28 1 18 0;
+#X connect 28 2 24 0;
+#X connect 29 0 26 0;
+#X connect 30 0 0 0;
+#X connect 30 1 31 1;
+#X connect 30 2 31 2;
+#X connect 31 1 1 0;
+#X connect 31 2 1 1;
+#X connect 32 0 33 0;
+#X connect 33 0 34 0;
+#X restore 431 364 pd osc;
+#X obj 62 282 examples/gain~;
+#X connect 13 0 14 0;
+#X connect 16 0 20 0;
+#X connect 17 0 18 0;
+#X connect 18 0 16 0;
+#X connect 20 0 39 0;
+#X connect 21 0 39 1;
+#X connect 24 0 25 0;
+#X connect 26 0 24 0;
+#X connect 27 0 26 0;
+#X connect 34 0 39 0;
+#X connect 39 1 15 0;
+#X connect 39 1 15 1;
+#X connect 39 1 24 0;

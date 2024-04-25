@@ -1,7 +1,7 @@
 
 
 .PHONY: build macos linux-alsa linux-pulse linux-jack linux-all full light clean \
-		install_all_deps install_min_deps
+		install_all_deps install_min_deps faustgen
 
 all: build
 
@@ -33,6 +33,10 @@ install_min_deps:
 
 light: install_min_deps
 	@mkdir -p build && cd build && cmake .. -DSNDFILE_MAX=OFF -DENABLE_WARPBUF=ON -DENABLE_FAUCK=ON && cmake --build . --config Release
+
+faustgen: install_min_deps
+	@mkdir -p build && cd build && cmake .. -DSNDFILE_MAX=OFF -DENABLE_WARPBUF=ON -DENABLE_FAUCK=ON -DENABLE_FAUSTGEN=ON && cmake --build . --config Release
+
 
 clean:
 	@rm -rf build

@@ -1,0 +1,289 @@
+#N canvas 443 114 601 766 12;
+#X declare -lib faustgen2~;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array scope-l 1000 float 0 black black;
+#X array scope-r 1000 float 1 black black;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 1 999 -1 200 140 1;
+#X restore 25 30 graph;
+#X obj 170 371 tgl 15 1 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 1 1;
+#X msg 170 394 \; pd dsp \$1;
+#N canvas 916 411 450 300 midi-input 0;
+#X obj 14 50 ctlin;
+#X obj 14 71 pack f f f;
+#X msg 14 92 ctl \$1 \$2 \$3;
+#X obj 116 70 pack f f f;
+#X obj 213 70 pack f f f;
+#X obj 116 49 notein;
+#X msg 116 91 note \$1 \$2 \$3;
+#X obj 213 49 polytouchin;
+#X msg 213 91 polytouch \$1 \$2 \$3;
+#X obj 12 121 pgmin;
+#X obj 12 142 pack f f;
+#X msg 12 163 pgm \$1 \$2;
+#X obj 116 142 pack f f;
+#X obj 213 142 pack f f;
+#X msg 116 163 bend \$1 \$2;
+#X obj 213 121 touchin;
+#X msg 213 163 touch \$1 \$2;
+#X obj 11 193 midiin;
+#X obj 11 214 sel 250 251 252;
+#X msg 11 235 start;
+#X msg 45 258 cont;
+#X msg 79 237 stop;
+#X obj 213 259 outlet;
+#X text 10 7 This is a little helper patch which encodes MIDI messages
+in SMMF format.;
+#X obj 116 121 bendin 0 1;
+#X connect 0 0 1 0;
+#X connect 0 1 1 1;
+#X connect 0 2 1 2;
+#X connect 1 0 2 0;
+#X connect 2 0 22 0;
+#X connect 3 0 6 0;
+#X connect 4 0 8 0;
+#X connect 5 0 3 0;
+#X connect 5 1 3 1;
+#X connect 5 2 3 2;
+#X connect 6 0 22 0;
+#X connect 7 0 4 0;
+#X connect 7 1 4 1;
+#X connect 7 2 4 2;
+#X connect 8 0 22 0;
+#X connect 9 0 10 0;
+#X connect 9 1 10 1;
+#X connect 10 0 11 0;
+#X connect 11 0 22 0;
+#X connect 12 0 14 0;
+#X connect 13 0 16 0;
+#X connect 14 0 22 0;
+#X connect 15 0 13 0;
+#X connect 15 1 13 1;
+#X connect 16 0 22 0;
+#X connect 17 0 18 0;
+#X connect 18 0 19 0;
+#X connect 18 1 20 0;
+#X connect 18 2 21 0;
+#X connect 19 0 22 0;
+#X connect 20 0 22 0;
+#X connect 21 0 22 0;
+#X connect 24 0 12 0;
+#X connect 24 1 12 1;
+#X restore 29 468 pd midi-input;
+#X msg 169 467 compile;
+#X msg 169 443 defaults;
+#X obj 169 548 s faustgen2~;
+#X msg 169 492 dump;
+#X msg 169 519 print;
+#N canvas 0 22 450 300 synth 0;
+#X obj 10 30 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/pan examples/chimes-0/chimes/pan
+pan -2 -6 0 10 #fcfcfc #000000 #000000 6350 1;
+#X obj 160 30 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/pan examples/chimes-0/chimes/pan
+empty 0 -6 0 10 #fcfcfc #000000 #000000 0.5 256 0;
+#X obj 10 60 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/vol examples/chimes-0/chimes/vol
+vol -2 -6 0 10 #fcfcfc #000000 #000000 6350 1;
+#X obj 160 60 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/vol examples/chimes-0/chimes/vol
+empty 0 -6 0 10 #fcfcfc #000000 #000000 0.5 256 0;
+#X obj 10 90 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/excitator/decay
+examples/chimes-0/chimes/excitator/decay decay -2 -6 0 10 #fcfcfc #000000
+#000000 127 1;
+#X obj 160 90 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/excitator/decay
+examples/chimes-0/chimes/excitator/decay empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.01 256 0;
+#X obj 10 120 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/amp0
+examples/chimes-0/chimes/resonators/amp0 amp0 -2 -6 0 10 #fcfcfc #000000
+#000000 2121 1;
+#X obj 160 120 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/amp0
+examples/chimes-0/chimes/resonators/amp0 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.167 256 0;
+#X obj 10 150 hsl 128 15 0 10 0 0 examples/chimes-0/chimes/resonators/decay0
+examples/chimes-0/chimes/resonators/decay0 decay0 -2 -6 0 10 #fcfcfc
+#000000 #000000 4690 1;
+#X obj 160 150 nbx 5 14 0 10 0 0 examples/chimes-0/chimes/resonators/decay0
+examples/chimes-0/chimes/resonators/decay0 empty 0 -6 0 10 #fcfcfc
+#000000 #000000 3.693 256 0;
+#X obj 10 180 hsl 128 15 0 50 0 0 examples/chimes-0/chimes/resonators/harm0
+examples/chimes-0/chimes/resonators/harm0 harm0 -2 -6 0 10 #fcfcfc
+#000000 #000000 254 1;
+#X obj 160 180 nbx 5 14 0 50 0 0 examples/chimes-0/chimes/resonators/harm0
+examples/chimes-0/chimes/resonators/harm0 empty 0 -6 0 10 #fcfcfc #000000
+#000000 1 256 0;
+#X obj 10 210 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/rq0
+examples/chimes-0/chimes/resonators/rq0 rq0 -2 -6 0 10 #fcfcfc #000000
+#000000 25 1;
+#X obj 160 210 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/rq0
+examples/chimes-0/chimes/resonators/rq0 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.002 256 0;
+#X obj 10 240 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/amp1
+examples/chimes-0/chimes/resonators/amp1 amp1 -2 -6 0 10 #fcfcfc #000000
+#000000 1054 1;
+#X obj 160 240 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/amp1
+examples/chimes-0/chimes/resonators/amp1 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.083 256 0;
+#X obj 10 270 hsl 128 15 0 10 0 0 examples/chimes-0/chimes/resonators/decay1
+examples/chimes-0/chimes/resonators/decay1 decay1 -2 -6 0 10 #fcfcfc
+#000000 #000000 2855 1;
+#X obj 160 270 nbx 5 14 0 10 0 0 examples/chimes-0/chimes/resonators/decay1
+examples/chimes-0/chimes/resonators/decay1 empty 0 -6 0 10 #fcfcfc
+#000000 #000000 2.248 256 0;
+#X obj 10 300 hsl 128 15 0 50 0 0 examples/chimes-0/chimes/resonators/harm1
+examples/chimes-0/chimes/resonators/harm1 harm1 -2 -6 0 10 #fcfcfc
+#000000 #000000 764 1;
+#X obj 160 300 nbx 5 14 0 50 0 0 examples/chimes-0/chimes/resonators/harm1
+examples/chimes-0/chimes/resonators/harm1 empty 0 -6 0 10 #fcfcfc #000000
+#000000 3.007 256 0;
+#X obj 10 330 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/rq1
+examples/chimes-0/chimes/resonators/rq1 rq1 -2 -6 0 10 #fcfcfc #000000
+#000000 25 1;
+#X obj 160 330 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/rq1
+examples/chimes-0/chimes/resonators/rq1 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.002 256 0;
+#X obj 10 360 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/amp2
+examples/chimes-0/chimes/resonators/amp2 amp2 -2 -6 0 10 #fcfcfc #000000
+#000000 1105 1;
+#X obj 160 360 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/amp2
+examples/chimes-0/chimes/resonators/amp2 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.087 256 0;
+#X obj 10 390 hsl 128 15 0 10 0 0 examples/chimes-0/chimes/resonators/decay2
+examples/chimes-0/chimes/resonators/decay2 decay2 -2 -6 0 10 #fcfcfc
+#000000 #000000 3592 1;
+#X obj 160 390 nbx 5 14 0 10 0 0 examples/chimes-0/chimes/resonators/decay2
+examples/chimes-0/chimes/resonators/decay2 empty 0 -6 0 10 #fcfcfc
+#000000 #000000 2.828 256 0;
+#X obj 10 420 hsl 128 15 0 50 0 0 examples/chimes-0/chimes/resonators/harm2
+examples/chimes-0/chimes/resonators/harm2 harm2 -2 -6 0 10 #fcfcfc
+#000000 #000000 1262 1;
+#X obj 160 420 nbx 5 14 0 50 0 0 examples/chimes-0/chimes/resonators/harm2
+examples/chimes-0/chimes/resonators/harm2 empty 0 -6 0 10 #fcfcfc #000000
+#000000 4.968 256 0;
+#X obj 10 450 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/rq2
+examples/chimes-0/chimes/resonators/rq2 rq2 -2 -6 0 10 #fcfcfc #000000
+#000000 25 1;
+#X obj 160 450 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/rq2
+examples/chimes-0/chimes/resonators/rq2 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.002 256 0;
+#X obj 10 480 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/amp3
+examples/chimes-0/chimes/resonators/amp3 amp3 -2 -6 0 10 #fcfcfc #000000
+#000000 673 1;
+#X obj 160 480 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/amp3
+examples/chimes-0/chimes/resonators/amp3 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.053 256 0;
+#X obj 10 510 hsl 128 15 0 10 0 0 examples/chimes-0/chimes/resonators/decay3
+examples/chimes-0/chimes/resonators/decay3 decay3 -2 -6 0 10 #fcfcfc
+#000000 #000000 4272 1;
+#X obj 160 510 nbx 5 14 0 10 0 0 examples/chimes-0/chimes/resonators/decay3
+examples/chimes-0/chimes/resonators/decay3 empty 0 -6 0 10 #fcfcfc
+#000000 #000000 3.364 256 0;
+#X obj 10 540 hsl 128 15 0 50 0 0 examples/chimes-0/chimes/resonators/harm3
+examples/chimes-0/chimes/resonators/harm3 harm3 -2 -6 0 10 #fcfcfc
+#000000 #000000 2284 1;
+#X obj 160 540 nbx 5 14 0 50 0 0 examples/chimes-0/chimes/resonators/harm3
+examples/chimes-0/chimes/resonators/harm3 empty 0 -6 0 10 #fcfcfc #000000
+#000000 8.994 256 0;
+#X obj 10 570 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/rq3
+examples/chimes-0/chimes/resonators/rq3 rq3 -2 -6 0 10 #fcfcfc #000000
+#000000 25 1;
+#X obj 160 570 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/rq3
+examples/chimes-0/chimes/resonators/rq3 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.002 256 0;
+#X obj 10 600 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/amp4
+examples/chimes-0/chimes/resonators/amp4 amp4 -2 -6 0 10 #fcfcfc #000000
+#000000 673 1;
+#X obj 160 600 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/amp4
+examples/chimes-0/chimes/resonators/amp4 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.053 256 0;
+#X obj 10 630 hsl 128 15 0 10 0 0 examples/chimes-0/chimes/resonators/decay4
+examples/chimes-0/chimes/resonators/decay4 decay4 -2 -6 0 10 #fcfcfc
+#000000 #000000 3160 1;
+#X obj 160 630 nbx 5 14 0 10 0 0 examples/chimes-0/chimes/resonators/decay4
+examples/chimes-0/chimes/resonators/decay4 empty 0 -6 0 10 #fcfcfc
+#000000 #000000 2.488 256 0;
+#X obj 10 660 hsl 128 15 0 50 0 0 examples/chimes-0/chimes/resonators/harm4
+examples/chimes-0/chimes/resonators/harm4 harm4 -2 -6 0 10 #fcfcfc
+#000000 #000000 3050 1;
+#X obj 160 660 nbx 5 14 0 50 0 0 examples/chimes-0/chimes/resonators/harm4
+examples/chimes-0/chimes/resonators/harm4 empty 0 -6 0 10 #fcfcfc #000000
+#000000 12.006 256 0;
+#X obj 10 690 hsl 128 15 0 1 0 0 examples/chimes-0/chimes/resonators/rq4
+examples/chimes-0/chimes/resonators/rq4 rq4 -2 -6 0 10 #fcfcfc #000000
+#000000 25 1;
+#X obj 160 690 nbx 5 14 0 1 0 0 examples/chimes-0/chimes/resonators/rq4
+examples/chimes-0/chimes/resonators/rq4 empty 0 -6 0 10 #fcfcfc #000000
+#000000 0.002 256 0;
+#X obj 197 3 bng 15 250 50 1 examples/chimes-0/init examples/chimes-0/init
+empty 0 -6 0 10 #fcfcfc #000000 #000000;
+#X obj 217 3 tgl 15 1 examples/chimes-0/active examples/chimes-0/active
+empty 0 -6 0 10 #fcfcfc #000000 #000000 1 1;
+#X coords 0 -1 1 1 235 720 1 0 0;
+#X restore 324 25 pd synth;
+#X obj 30 394 ctlin 123;
+#X text 30 370 all notes off;
+#X obj 29 497 s faustgen2~;
+#X msg 30 423 \; synth bang;
+#X obj 25 187 declare -lib faustgen2~;
+#N canvas 860 399 450 300 dac 0;
+#X obj 23 64 metro 100;
+#X obj 48 127 dac~;
+#X obj 111 152 tabwrite~ scope-r;
+#X obj 111 121 tabwrite~ scope-l;
+#X obj 112 32 inlet~;
+#X obj 172 32 inlet~;
+#X obj 23 32 inlet;
+#X connect 0 0 2 0;
+#X connect 0 0 3 0;
+#X connect 4 0 1 0;
+#X connect 4 0 3 0;
+#X connect 5 0 1 1;
+#X connect 5 0 2 0;
+#X connect 6 0 0 0;
+#X restore 137 330 pd dac;
+#X obj 137 300 tgl 15 1 empty empty scope 17 7 0 10 #fcfcfc #000000
+#000000 1 1;
+#X obj 25 245 print synth;
+#X obj 25 216 examples/chimes~ synth;
+#X text 20 590 This uses "old-style" Faust polyphony \, via the 'nvoices'
+declaration in the Faust source \, as most of the other Faust architectures
+do. Supported as of faustgen2~ 2.2.0 for better compatibility. It allows
+you to use pretty much any Faust synth with faustgen2~ as is now.,
+f 38;
+#X connect 1 0 2 0;
+#X connect 3 0 12 0;
+#X connect 4 0 6 0;
+#X connect 5 0 6 0;
+#X connect 7 0 6 0;
+#X connect 8 0 6 0;
+#X connect 10 0 13 0;
+#X connect 16 0 15 0;
+#X connect 18 0 17 0;
+#X connect 18 1 15 1;
+#X connect 18 2 15 2;

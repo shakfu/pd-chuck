@@ -21,6 +21,15 @@ function install_faust() {
 	fi
 }
 
+# function install_pd() {
+# 	VERSION="0.54-1"
+# 	SRC=${THIRDPARTY}/pure-data
+#     if [ ! -d ${THIRDPARTY}/pure-data/src ]; then
+#     	rm -rf ${THIRDPARTY}/pure-data && \
+# 		git clone -b "${VERSION}" --depth=1 https://github.com/pure-data/pure-data.git ${THIRDPARTY}/pure-data
+# 	fi
+# }
+
 function install_libfaust() {
 	VERSION=${FAUST_VERSION}
 	if [ "$(uname)" = "Darwin" ]; then
@@ -143,4 +152,5 @@ install_libfaust
 install_libsndfile
 install_rubberband
 install_libsamplerate
+# install_pd
 
