@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Updated chuck codebase to ChucK 1.5.2.5-dev (chai)
+
 - Added `external_dir`, which contains the external binary and made the `examples_dir` relative to it, instead of previously when it was relative to the `patch_dir`.
 
 - Added `loglevel` / `loglevel <int>` message for setting chuck log level 0-10.

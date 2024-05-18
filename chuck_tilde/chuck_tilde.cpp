@@ -85,6 +85,7 @@ void ck_status(t_ck* x); // get info about running shreds
 void ck_time(t_ck* x);
 
 // special message handlers
+void ck_chugins(t_ck* x);                  // probe and list available chugins
 void ck_info(t_ck* x);                     // get info about running shreds
 // void ck_reset(t_ck* x);                    // remove all shreds and clean vm
 void ck_signal(t_ck* x, t_symbol* s);      // signal global event
@@ -234,6 +235,7 @@ extern "C" void chuck_tilde_setup(void)
     class_addmethod(ck_class, (t_method)ck_clear,      gensym("clear"),      A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),      A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_loglevel,   gensym("loglevel"),   A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_chugins,    gensym("chugins"),                 A_NULL);
     class_addmethod(ck_class, (t_method)ck_info,       gensym("info"),                    A_NULL);
     class_addmethod(ck_class, (t_method)ck_status,     gensym("status"),                  A_NULL);
     class_addmethod(ck_class, (t_method)ck_time,       gensym("time"),                    A_NULL);
@@ -478,6 +480,12 @@ error:
 
 //-----------------------------------------------------------------------------------------------
 // special message handlers
+
+void ck_chugins(t_ck* x)
+{
+    post("probe chugins:");
+    x->chuck->probeChugins();
+}
 
 void ck_info(t_ck *x)
 {

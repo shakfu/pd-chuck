@@ -26,7 +26,7 @@ install_all_deps:
 	./scripts/install_deps.sh
 
 full: install_all_deps
-	@mkdir -p build && cd build && cmake .. -DSNDFILE_MAX=OFF -DENABLE_WARPBUF=ON -DENABLE_FAUCK=ON && cmake --build . --config Release
+	@mkdir -p build && cd build && cmake .. -DSNDFILE_MAX=ON -DENABLE_WARPBUF=ON -DENABLE_FAUCK=ON && cmake --build . --config Release
 
 install_min_deps:
 	./scripts/install_min_deps.sh

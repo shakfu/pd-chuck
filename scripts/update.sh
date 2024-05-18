@@ -51,6 +51,9 @@ function update_chugins() {
 	move_to_new LICENSE && \
 	move_to_new notes && \
 	move_to_new README.md && \
+	# handle Fauck and WarpBuf
+	mv thirdparty/chugins/Fauck thirdparty/chugins-new/ && \
+	mv thirdparty/chugins/WarpBuf thirdparty/chugins-new/ && \
 	# chugins
 	update_new_chugin ABSaturator && \
 	update_new_chugin AmbPan && \
@@ -65,6 +68,7 @@ function update_chugins() {
 	update_new_chugin KasFilter && \
 	update_new_chugin MagicSine && \
 	update_new_chugin Mesh2D && \
+	update_new_chugin MIAP && \
 	update_new_chugin Multicomb && \
 	update_new_chugin NHHall && \
 	update_new_chugin Overdrive && \
