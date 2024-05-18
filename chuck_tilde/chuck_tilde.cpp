@@ -45,8 +45,9 @@ typedef struct _ck {
 	int buffer_size;  			// buffer size for for both input and output
     float *in_chuck_buffer;     // intermediate chuck input buffer
     float *out_chuck_buffer;    // intermediate chuck output buffer
-    t_symbol *current_dir;
-    char examples_dir[MAXPDSTRING];
+    t_symbol *patch_dir;        // directory containing the current patch
+    t_symbol *external_dir;     // directory containing this external
+    t_symbol *examples_dir;     // directory containing the `examples` dir
 	t_symbol *filename;
 	ChucK *chuck;
 
@@ -131,9 +132,13 @@ void *ck_new(t_symbol *s)
         x->x_outR = outlet_new((t_object *)x, &s_signal); 	// Output Right
 
 		// initial inits
-        x->current_dir = canvas_getcurrentdir();
-        snprintf(x->examples_dir, MAXPDSTRING, "%s/examples", x->current_dir->s_name);
-        std:string examples_dir = std::string(x->examples_dir);
+        x->patch_dir = canvas_getcurrentdir();
+        const char* external_dir = class_gethelpdir(ck_class);
+        x->external_dir = gensym(external_dir);
+        char examples_dir_cstr[MAXPDSTRING];
+        snprintf(examples_dir_cstr, MAXPDSTRING, "%s/examples", x->external_dir->s_name);
+        x->examples_dir = gensym(examples_dir_cstr);
+        std:string examples_dir = std::string(x->examples_dir->s_name);
 
 		x->filename = s;
 		x->x_f = 0.0;
@@ -149,11 +154,10 @@ void *ck_new(t_symbol *s)
 	    x->chuck->setParam(CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) x->srate);
         x->chuck->setParam(CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS);
 	    x->chuck->setParam(CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS);
-	    x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir);
+	    x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir->s_name);
         x->chuck->setParam(CHUCK_PARAM_VM_HALT, (t_CKINT) 0);
         x->chuck->setParam(CHUCK_PARAM_DUMP_INSTRUCTIONS, (t_CKINT) 0);
         // directory for compiled code
-        // std::string global_dir = std::string(x->examples_dir);
         x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, examples_dir);
         std::list<std::string> chugin_search;
         chugin_search.push_back(examples_dir + "/chugins");
@@ -177,6 +181,9 @@ void *ck_new(t_symbol *s)
 		/* Print message to Max window */
 		post("ChucK %s", x->chuck->version());
 		post("chuck~ • Object was created");
+        post("patch_dir: %s", x->patch_dir->s_name);
+        post("external_dir: %s", x->external_dir->s_name);
+        post("examples_dir: %s", x->examples_dir->s_name);
 	}
 	return (void *)x;
 }
@@ -281,7 +288,7 @@ void ck_run_file(t_ck *x)
         if (access(x->filename->s_name, F_OK) == 0) { // file exists in path
             ck_compile_file(x, x->filename->s_name);
         } else { // try in the examples folder
-            snprintf(filepath, MAXPDSTRING, "%s/%s", x->examples_dir, x->filename->s_name);
+            snprintf(filepath, MAXPDSTRING, "%s/%s", x->examples_dir->s_name, x->filename->s_name);
             // post("filepath: %s", filepath);
             ck_compile_file(x, filepath);
         }
@@ -572,7 +579,7 @@ void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv)
     // extract args FILE:arg1:arg2:arg3
     extract_args( path, filename, args );
 
-    std::string full_path = std::string(x->examples_dir) + "/" + filename; // not portable
+    std::string full_path = std::string(x->examples_dir->s_name) + "/" + filename; // not portable
 
     // compile but don't run yet (instance == 0)
     if( !x->chuck->compileFile( full_path, args, 0 ) ) {

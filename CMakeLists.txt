@@ -11,8 +11,6 @@ option(SNDFILE_MAX "include most sndfile dependencies")
 option(ENABLE_WARPBUF "build WarpBuf chugin")
 option(ENABLE_FAUCK "build Faust chugin")
 
-option(ENABLE_FAUSTGEN "build Faustgen2 external")
-
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "Platform: Linux")
@@ -53,6 +51,3 @@ add_subdirectory(thirdparty/chugins)
 
 add_subdirectory(chuck_tilde)
 
-if(ENABLE_FAUSTGEN)
-add_subdirectory(faustgen2_tilde)
-endif()

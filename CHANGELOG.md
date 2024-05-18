@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added `external_dir`, which contains the external binary and made the `examples_dir` relative to it, instead of previously when it was relative to the `patch_dir`.
+
 - Added `loglevel` / `loglevel <int>` message for setting chuck log level 0-10.
 
 - Added a number of missing chuck messages: `add <filepath>`, `replace <shredID> <filepath>`, `reset id`, `clear vm`, `clear globals`, `time`, `status` along with their respective symbols: `+`, `-`, `--`, `=`, `^`, etc.
