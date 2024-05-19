@@ -77,6 +77,7 @@ void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv); // set global pa
 // chuck vm message handlers
 void ck_add(t_ck* x, t_symbol* s); // add shred from file
 void ck_run(t_ck* x, t_symbol* s); // alias of add, run chuck file
+void ck_text(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
 void ck_remove(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
 void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv); // replace shreds 
 void ck_clear(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, clear_globals
@@ -230,6 +231,7 @@ extern "C" void chuck_tilde_setup(void)
     class_addmethod(ck_class, (t_method)ck_register,   gensym("register"),   A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_unregister, gensym("unregister"), A_SYMBOL,    A_NULL);
 
+    class_addmethod(ck_class, (t_method)ck_text,       gensym("text"),       A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),     A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_replace,    gensym("replace"),    A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_clear,      gensym("clear"),      A_GIMME,     A_NULL);
@@ -515,10 +517,67 @@ void ck_add(t_ck *x, t_symbol *s)
     }
 }
 
+
 void ck_run(t_ck *x, t_symbol *s)
 {
     ck_add(x, s);
 }
+
+// void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+// {
+//     char cmdbuf[MAXPDSTRING+5];
+//     char atombuf[MAXPDSTRING];
+//     int i;
+//     cmdbuf[0] = 0;
+//     for (i = 0; i < argc; i++)
+//     {
+//         if (i > 0) strcat(cmdbuf, " ");
+//         // atom_string(&argv[i], atombuf, MAXPDSTRING);
+//         atom_string(argv+i, atombuf, MAXPDSTRING);
+//         strncat(cmdbuf, atombuf, MAXPDSTRING);
+//         cmdbuf[MAXPDSTRING-1] = 0;
+//     }
+//     // strcat(cmdbuf, ";\n");
+//     // strcat(cmdbuf, "\n");
+//     post(cmdbuf);
+// }
+
+// void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+// {
+//     char cmdbuf[MAXPDSTRING];
+//     char atombuf[MAXPDSTRING];
+//     int i;
+//     cmdbuf[0] = 0;
+//     for (i = 0; i < argc; i++)
+//     {
+//         if (i > 0) strcat(cmdbuf, " ");
+//         atom_string(argv+i, atombuf, MAXPDSTRING);
+//         strncat(cmdbuf, atombuf, MAXPDSTRING);
+//     }
+//     post(cmdbuf);
+// }
+
+void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+{
+    char cmdbuf[MAXPDSTRING];
+    char atombuf[MAXPDSTRING];
+    int i;
+    int cum_len = 0;
+    cmdbuf[0] = 0;
+    for (i = 0; i < argc; i++)
+    {
+        if (i > 0) strcat(cmdbuf, " ");
+        atom_string(argv+i, atombuf, MAXPDSTRING);
+        cum_len += (int)strlen(atombuf);
+        strncat(cmdbuf, atombuf, MAXPDSTRING);
+    }
+    // cmdbuf[MAXPDSTRING-1] = 0;
+    cmdbuf[strlen(cmdbuf)+1] = '\0';
+    post("final length: %d = %d", strlen(cmdbuf), cum_len+argc-1);
+    post(cmdbuf);
+}
+
+
 
 void ck_remove(t_ck *x, t_symbol *s, long argc, t_atom *argv)
 {

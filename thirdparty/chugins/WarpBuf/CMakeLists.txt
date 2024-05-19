@@ -21,16 +21,6 @@ set(CK_SRC_PATH
     ${CMAKE_SOURCE_DIR}/thirdparty/chugins/chuck/include
 )
 
-# add_custom_target(warpbuf_deps
-#     # TARGET  ${CHUGIN_NAME} PRE_BUILD
-#     BYPRODUCTS  
-#         ${THIRDPARTY}/install/lib/librubberband.a
-#         ${THIRDPARTY}/install/lib/libsndfile.a
-#         ${THIRDPARTY}/install/lib/libsamplerate.a
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#     COMMAND ${CMAKE_SOURCE_DIR}/source/scripts/install_warpbuf_deps.sh
-# )
-
 add_library(${CHUGIN_NAME}
     ${PROJECT_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/portable_endian/include/portable_endian.h
@@ -68,6 +58,7 @@ target_compile_definitions(${CHUGIN_NAME}
 
 target_include_directories(${CHUGIN_NAME}
     PUBLIC
+    ${local_prefix}/include
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${THIRDPARTY}/install/include
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/portable_endian/include
@@ -83,25 +74,28 @@ target_link_options(${CHUGIN_NAME}
 
 target_link_directories(${CHUGIN_NAME}
     PUBLIC
+    ${local_prefix}/lib
     ${THIRDPARTY}/install/lib
 )
 
+
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libFLAC.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libogg.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libvorbis.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libvorbisenc.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libvorbisfile.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libopus.a>
-    $<$<BOOL:${SNDFILE_MAX}>:${THIRDPARTY}/install/lib/libmpg123.a>
-    ${THIRDPARTY}/install/lib/libsndfile.a
-    ${THIRDPARTY}/install/lib/librubberband.a
-    ${THIRDPARTY}/install/lib/libsamplerate.a
-    "-framework CoreFoundation"
-    "-framework CoreMIDI"
-    "-framework CoreAudio"
-    "-framework Accelerate"
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libFLAC.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libogg.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbis.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisenc.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisfile.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libopus.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libmpg123.a>
+    $<$<BOOL:${ENABLE_MP3}>:${local_prefix}/lib/libmp3lame.a>
+    ${local_prefix}/lib/libsndfile.a
+    ${local_prefix}/lib/librubberband.a
+    ${local_prefix}/lib/libsamplerate.a
+    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
+    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
+    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
+    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
 )
 
 # set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/examples")
