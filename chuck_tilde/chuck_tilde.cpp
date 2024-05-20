@@ -3,6 +3,7 @@
 #include "chuck.h"
 #include "chuck_globals.h"
 
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 
@@ -27,6 +28,8 @@ enum DSP {
     NEXT
 };
 
+
+
 // typedefs
 typedef void (*ck_callback)(void);
 typedef std::unordered_map<std::string, ck_callback> callback_map;
@@ -45,11 +48,13 @@ typedef struct _ck {
 	int buffer_size;  			// buffer size for for both input and output
     float *in_chuck_buffer;     // intermediate chuck input buffer
     float *out_chuck_buffer;    // intermediate chuck output buffer
-    t_symbol *patch_dir;        // directory containing the current patch
+    t_symbol *patcher_dir;      // directory containing the current patch
     t_symbol *external_dir;     // directory containing this external
     t_symbol *examples_dir;     // directory containing the `examples` dir
-	t_symbol *filename;
-	ChucK *chuck;
+	t_symbol *filename;         // last chuck file run
+ 	long current_shred_id;      // current shred ID
+    ChucK *chuck;               // chuck instance
+
 
 	// inlets & outlets (default inlet is inL)
 	t_inlet *x_inR;
@@ -69,15 +74,18 @@ void ck_stderr_print(const char* msg);
 void ck_run_file(t_ck *x);
 void ck_compile_file(t_ck *x, const char *filename);
 void ck_send_chuck_vm_msg(t_ck* x, Chuck_Msg_Type msg_type);
+bool path_exists(const char* name);
+t_symbol* ck_check_file(t_ck* x, t_symbol* name);
 
 // general message handlers
 void ck_bang(t_ck *x);                     // (re)load chuck file
 void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv); // set global params by name, value
 
 // chuck vm message handlers
-void ck_add(t_ck* x, t_symbol* s); // add shred from file
+// void ck_add(t_ck* x, t_symbol* s); // add shred from file
+void ck_add(t_ck* x, t_symbol* s, long argc, t_atom* argv); // add shred from file
 void ck_run(t_ck* x, t_symbol* s); // alias of add, run chuck file
-void ck_text(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
+void ck_eval(t_ck* x, t_symbol* s, long argc, t_atom* argv);    // evaluation chuck code
 void ck_remove(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
 void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv); // replace shreds 
 void ck_clear(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, clear_globals
@@ -134,7 +142,7 @@ void *ck_new(t_symbol *s)
         x->x_outR = outlet_new((t_object *)x, &s_signal); 	// Output Right
 
 		// initial inits
-        x->patch_dir = canvas_getcurrentdir();
+        x->patcher_dir = canvas_getcurrentdir();
         const char* external_dir = class_gethelpdir(ck_class);
         x->external_dir = gensym(external_dir);
         char examples_dir_cstr[MAXPDSTRING];
@@ -143,6 +151,7 @@ void *ck_new(t_symbol *s)
         std:string examples_dir = std::string(x->examples_dir->s_name);
 
 		x->filename = s;
+        x->current_shred_id = 0;
 		x->x_f = 0.0;
 
 		// chuck-related inits
@@ -183,7 +192,7 @@ void *ck_new(t_symbol *s)
 		/* Print message to Max window */
 		post("ChucK %s", x->chuck->version());
 		post("chuck~ • Object was created");
-        post("patch_dir: %s", x->patch_dir->s_name);
+        post("patcher_dir: %s", x->patcher_dir->s_name);
         post("external_dir: %s", x->external_dir->s_name);
         post("examples_dir: %s", x->examples_dir->s_name);
 	}
@@ -224,14 +233,15 @@ extern "C" void chuck_tilde_setup(void)
 	/* Bind the DSP method, which is called when the DACs are turned on */
 	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"),        A_CANT, A_NULL);
 
-    class_addmethod(ck_class, (t_method)ck_add,        gensym("add"),        A_SYMBOL,    A_NULL);
+    // class_addmethod(ck_class, (t_method)ck_add,        gensym("add"),        A_SYMBOL,    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_add,        gensym("add"),        A_GIMME,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),        A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),        A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"),  A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_register,   gensym("register"),   A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_unregister, gensym("unregister"), A_SYMBOL,    A_NULL);
 
-    class_addmethod(ck_class, (t_method)ck_text,       gensym("text"),       A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_eval,       gensym("eval"),       A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),     A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_replace,    gensym("replace"),    A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_clear,      gensym("clear"),      A_GIMME,     A_NULL);
@@ -275,6 +285,52 @@ void ck_send_chuck_vm_msg(t_ck *x, Chuck_Msg_Type msg_type)
 
     x->chuck->vm()->globals_manager()->execute_chuck_msg_with_globals(msg);
 }
+
+/* x-platform solution to check if a path exists
+ * 
+ * since ext_path.h (`path_exists`) is not available
+ * and std::filesystem::exists requires macos >= 10.15
+ */
+#ifdef __APPLE__
+bool path_exists(const char* name) {
+   return access( name, 0 ) == 0;
+}
+#else
+bool path_exists(const char* name) {
+
+    if (FILE *file = fopen(name, "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }
+}
+#endif
+
+t_symbol* ck_check_file(t_ck* x, t_symbol* name)
+{
+    // 1. check if file exists
+    if (path_exists(name->s_name)) {
+        return name;
+    }
+
+    // 2. check if exists with an `examples` folder prefix
+    char examples_path[MAXPDSTRING];
+    snprintf(examples_path, MAXPDSTRING, "%s/%s", x->examples_dir->s_name, name->s_name);
+    if (path_exists(examples_path)) {
+        return gensym(examples_path);
+    }
+
+    // 3. check if file exists in the patcher directory
+    char patcher_path[MAXPDSTRING];
+    snprintf(patcher_path, MAXPDSTRING, "%s/%s", x->patcher_dir->s_name, name->s_name);
+    if (path_exists(patcher_path)) {
+        return gensym(patcher_path);
+    }
+
+    return gensym("");
+}
+
 
 void ck_compile_file(t_ck *x, const char *filename)
 {
@@ -391,7 +447,8 @@ void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv)
 
     // set '+' as shorthand for ck_add method
     if (s == gensym("+")) {
-        ck_add(x, atom_getsymbol(argv));
+        // ck_add(x, atom_getsymbol(argv));
+        ck_add(x, gensym(""), argc, argv);
         return;
     }
 
@@ -426,8 +483,7 @@ void ck_anything(t_ck *x, t_symbol *s, int argc, t_atom *argv)
         switch (argv->a_type) { // really argv[0]
         case A_FLOAT: {
             float p_float = atom_getfloat(argv);
-            x->chuck->vm()->globals_manager()->setGlobalFloat(s->s_name,
-                                                              p_float);
+            x->chuck->vm()->globals_manager()->setGlobalFloat(s->s_name, p_float);
             break;
         }
         case A_SYMBOL: {
@@ -508,7 +564,17 @@ void ck_info(t_ck *x)
 //     ck_send_chuck_vm_msg(x, CK_MSG_CLEARVM);
 // }
 
-void ck_add(t_ck *x, t_symbol *s)
+// void ck_add(t_ck *x, t_symbol *s)
+// {
+//     if (s != gensym("")) {
+//         post("filename: %s", s->s_name);
+//         x->filename = s;
+//         ck_run_file(x);
+//     }
+// }
+
+
+void ck_run(t_ck *x, t_symbol *s)
 {
     if (s != gensym("")) {
         post("filename: %s", s->s_name);
@@ -518,65 +584,107 @@ void ck_add(t_ck *x, t_symbol *s)
 }
 
 
-void ck_run(t_ck *x, t_symbol *s)
+
+void ck_add(t_ck* x, t_symbol* s, long argc, t_atom* argv)
 {
-    ck_add(x, s);
-}
+    t_symbol *filename_sym = NULL;
 
-// void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
-// {
-//     char cmdbuf[MAXPDSTRING+5];
-//     char atombuf[MAXPDSTRING];
-//     int i;
-//     cmdbuf[0] = 0;
-//     for (i = 0; i < argc; i++)
-//     {
-//         if (i > 0) strcat(cmdbuf, " ");
-//         // atom_string(&argv[i], atombuf, MAXPDSTRING);
-//         atom_string(argv+i, atombuf, MAXPDSTRING);
-//         strncat(cmdbuf, atombuf, MAXPDSTRING);
-//         cmdbuf[MAXPDSTRING-1] = 0;
-//     }
-//     // strcat(cmdbuf, ";\n");
-//     // strcat(cmdbuf, "\n");
-//     post(cmdbuf);
-// }
-
-// void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
-// {
-//     char cmdbuf[MAXPDSTRING];
-//     char atombuf[MAXPDSTRING];
-//     int i;
-//     cmdbuf[0] = 0;
-//     for (i = 0; i < argc; i++)
-//     {
-//         if (i > 0) strcat(cmdbuf, " ");
-//         atom_string(argv+i, atombuf, MAXPDSTRING);
-//         strncat(cmdbuf, atombuf, MAXPDSTRING);
-//     }
-//     post(cmdbuf);
-// }
-
-void ck_text(t_ck *x, t_symbol *s, long argc, t_atom *argv)
-{
-    char cmdbuf[MAXPDSTRING];
-    char atombuf[MAXPDSTRING];
-    int i;
-    int cum_len = 0;
-    cmdbuf[0] = 0;
-    for (i = 0; i < argc; i++)
-    {
-        if (i > 0) strcat(cmdbuf, " ");
-        atom_string(argv+i, atombuf, MAXPDSTRING);
-        cum_len += (int)strlen(atombuf);
-        strncat(cmdbuf, atombuf, MAXPDSTRING);
+    if (argc < 1) {
+        pd_error(x, (char*)"add message needs at least one <filename> argument");
+        return;
     }
-    // cmdbuf[MAXPDSTRING-1] = 0;
-    cmdbuf[strlen(cmdbuf)+1] = '\0';
-    post("final length: %d = %d", strlen(cmdbuf), cum_len+argc-1);
-    post(cmdbuf);
+
+    if ((argv)->a_type != A_SYMBOL) {
+        pd_error(x, (char*)"first argument must be a symbol");
+        return;
+    }
+
+    if (argc > 1) { // args provided
+        
+        char atombuf[MAXPDSTRING];
+        std::string str;
+
+        for (int i = 0; i < argc; i++)
+        {
+            atom_string(argv+i, atombuf, MAXPDSTRING);
+            // test if ':' is in the filename
+            if (i==0) {
+                std::size_t found = std::string(atombuf).find(":");
+                if (found != std::string::npos) {
+                    pd_error(x, (char*)"cannot use colon-separated args, use space-separated args instead");
+                    return;
+                }
+            }
+            str.append(atombuf);
+            if (i < argc-1) 
+                str.append(" ");
+        }
+
+        std::replace( str.begin(), str.end(), ' ', ':');
+        filename_sym = gensym(str.c_str());
+    } else {
+        filename_sym = atom_getsymbol(argv);
+    }
+
+    std::string path = std::string(filename_sym->s_name);
+    std::string filename;
+    std::string args;
+    // extract args FILE:arg1:arg2:arg3
+    extract_args( path, filename, args );
+    
+    t_symbol* checked_file = ck_check_file(x, gensym(filename.c_str()));
+
+    if (checked_file == gensym("")) {
+        pd_error(x, (char*)"could not add file");
+        return;
+    }
+    
+    std::string full_path = std::string(checked_file->s_name);
+
+    // compile but don't run yet (instance == 0)
+    if( !x->chuck->compileFile( full_path, args, 0 ) ) {
+        pd_error(x, (char*)"could not compile file");
+        return;
+    }
+
+    // construct chuck msg (must allocate on heap, as VM will clean up)
+    Chuck_Msg * msg = new Chuck_Msg();
+    msg->type = CK_MSG_ADD;
+    msg->code = x->chuck->vm()->carrier()->compiler->output();
+    msg->args = new vector<string>;
+    extract_args( path, filename, *(msg->args) );
+    x->current_shred_id = x->chuck->vm()->process_msg( msg );
 }
 
+/**
+ * @brief      Evaluate a message as chuck code
+ *
+ * @param      x     object instance
+ * @param      s     symbol
+ * @param      argc  The count of arguments
+ * @param      argv  The atom array
+ */
+void ck_eval(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+{
+    char atombuf[MAXPDSTRING];
+    std::string str;
+
+    for (int i = 0; i < argc; i++)
+    {
+        atom_string(argv+i, atombuf, MAXPDSTRING);
+        str.append(atombuf);
+        if (i < argc-1) 
+            str.append(" ");
+    }
+    // remove escapes
+    str.erase(std::remove(str.begin(), str.end(), '\\'), str.end());
+    post("code: %s", str.c_str());
+    if (x->chuck->compileCode(str.c_str())) {
+        post("compiled: success");
+        return;
+    }
+    pd_error(x, (char*)"compiled: failed");
+}
 
 
 void ck_remove(t_ck *x, t_symbol *s, long argc, t_atom *argv)

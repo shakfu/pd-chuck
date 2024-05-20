@@ -15,6 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added argument parsing to `add` here args are space separated and not colon separated.
+
+- Added `tests` folder for feature tests
+
+- Added `eval` message (with test) to compile chuck code in puredata message
+
 - Updated chuck codebase to ChucK 1.5.2.5-dev (chai)
 
 - Added `external_dir`, which contains the external binary and made the `examples_dir` relative to it, instead of previously when it was relative to the `patch_dir`.

@@ -4,11 +4,16 @@ set(CMAKE_MACOSX_RPATH Off)
 set(CHUCK_DIR ${CMAKE_SOURCE_DIR}/thirdparty/chuck)
 set(CHUCK_INCLUDE ${CHUCK_DIR}/core)
 
-file(GLOB PROJECT_SRC
-    "*.h"
-    "*.c"
-    "*.cpp"
+# file(GLOB PROJECT_SRC
+#     "*.h"
+#     "*.c"
+#     "*.cpp"
+# )
+
+set(PROJECT_SRC
+    chuck_tilde.cpp
 )
+
 
 add_library( 
     ${PROJECT_NAME} 

@@ -1,19 +1,29 @@
-THIRDPARTY=$(PWD)/build/thirdparty
-PREFIX=$(THIRDPARTY)/install
-FAUST_VERSION=2.69.3
-# FAUST_VERSION=2.72.14
+PLATFORM = $(shell uname -s)
+ARCH = $(shell uname -m)
+
+THIRDPARTY = $(PWD)/build/thirdparty
+PREFIX = $(THIRDPARTY)/install
+FAUST_VERSION = 2.72.14
+#FAUST_VERSION = 2.69.3
 
 
 
-.PHONY: build full light nomp3 \
+
+.PHONY: full light nomp3 \
 		macos-native macos-universal macos-brew \
 		linux-alsa linux-pulse linux-jack linux-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps deps_nomp3 \
-		clean reset
+		clean reset sign
 		
 
 all: build
+
+
+build:
+	@mkdir -p build && cd build && cmake .. && cmake --build . --config Release
+
+
 
 faust:
 	mkdir -p $(PREFIX)/include && \
@@ -45,36 +55,6 @@ nomp3_deps: faust rubberband libsndfile_formats
 	./scripts/deps/install_libmpg123_gyp.sh && \
 	./scripts/deps/install_libsndfile_nomp3.sh
 
-linux-alsa:
-	@mkdir -p build && cd build && cmake .. -DLINUX_ALSA=ON && cmake --build . --config Release
-
-linux-pulse:
-	@mkdir -p build && cd build && cmake .. -DLINUX_PULSE=ON && cmake --build . --config Release
-
-linux-jack:
-	@mkdir -p build && cd build && cmake .. -DLINUX_JACK=ON && cmake --build . --config Release
-
-linux-all:
-	@mkdir -p build && cd build && cmake .. -DLINUX_ALL=ON && cmake --build . --config Release
-
-build:
-	@mkdir -p build && cd build && cmake .. && cmake --build . --config Release
-
-macos-native: macos-brew
-
-macos-universal:
-	@mkdir -p build && cd build && cmake .. -DBUILD_UNIVERSAL=ON && cmake --build . --config Release
-
-macos-brew: faust
-	@mkdir -p build && \
-		cd build && \
-		cmake .. \
-			-DENABLE_HOMEBREW=ON \
-			-DENABLE_EXTRA_FORMATS=ON \
-			-DENABLE_MP3=ON \
-			-DENABLE_WARPBUF=ON \
-			-DENABLE_FAUCK=ON && \
-		cmake --build . --config Release
 
 full: all_deps
 	@mkdir -p build && \
@@ -105,6 +85,40 @@ nomp3: nomp3_deps
 			-DENABLE_WARPBUF=ON \
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
+
+
+linux-alsa:
+	@mkdir -p build && cd build && cmake .. -DLINUX_ALSA=ON && cmake --build . --config Release
+
+linux-pulse:
+	@mkdir -p build && cd build && cmake .. -DLINUX_PULSE=ON && cmake --build . --config Release
+
+linux-jack:
+	@mkdir -p build && cd build && cmake .. -DLINUX_JACK=ON && cmake --build . --config Release
+
+linux-all:
+	@mkdir -p build && cd build && cmake .. -DLINUX_ALL=ON && cmake --build . --config Release
+
+macos-native: build
+
+macos-universal:
+	@mkdir -p build && cd build && cmake .. -DBUILD_UNIVERSAL=ON && cmake --build . --config Release
+
+macos-brew: faust
+	@mkdir -p build && \
+		cd build && \
+		cmake .. \
+			-DENABLE_HOMEBREW=ON \
+			-DENABLE_EXTRA_FORMATS=ON \
+			-DENABLE_MP3=ON \
+			-DENABLE_WARPBUF=ON \
+			-DENABLE_FAUCK=ON && \
+		cmake --build . --config Release
+
+
+sign:
+	@codesign --force --sign - chuck_tilde/chuck\~.pd_darwin
+	@codesign --force --sign - chuck_tilde/examples/chugins/*.chug
 
 clean:
 	@rm -rf build
