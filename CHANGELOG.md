@@ -15,11 +15,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added improved build system via additional build scripts to handle corner cases.
+
+- Added `listen` and `unlisten` to event related callbacks
+
+- Added get/set methods to get global var values via callbacks and to set the values of the same directly
+
+- Added `globals` message to provide a list of globals in the console
+
+- Added `vm` message to provide status of vm
+
+- Added `docs` message to open a browser window to the ChucK docs site
+
+- Dropped `info` method and merged its functionality into `status`.
+
+- Added `editor` and `edit` methods for setting external text editor and editing specified files as well as previously run files.
+
 - Added argument parsing to `add` here args are space separated and not colon separated.
 
 - Added `tests` folder for feature tests
 
 - Added `eval` message (with test) to compile chuck code in puredata message
+
+- Added `chugins` message to probe and list chugins in the console
 
 - Updated chuck codebase to ChucK 1.5.2.5-dev (chai)
 
@@ -45,7 +63,6 @@ stdlib in `pd-chuck/chuck_tilde/examples/faust`
 - Fixed the `sndbuf.ck` exmample (and added `sndbuf1.ck`) to demonstrate wav file playback via `SndBuf` with some samples
 
 - Changed `signal` message name to `sig` as it conflicted with a global Max message `signal`
-
 
 - Changed `info`: now shows `<object id> - <shred-id>`
 

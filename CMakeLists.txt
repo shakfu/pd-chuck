@@ -18,6 +18,9 @@ option(ENABLE_FAUCK "build Faust chugin")
 option(ENABLE_MP3 "Enable MP3 support for libsndfile")
 option(ENABLE_EXTRA_FORMATS "Enable extra file formats for libsndfile")
 
+# dev options
+option(DEV_WARNINGS "use additional warning settings durine development")
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
 

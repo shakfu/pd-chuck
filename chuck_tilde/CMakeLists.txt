@@ -49,8 +49,21 @@ target_compile_definitions(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
     PUBLIC
     $<$<PLATFORM_ID:Linux>:-fPIC>
-    $<$<PLATFORM_ID:Linux>:-fcheck-new>    
+    $<$<PLATFORM_ID:Linux>:-fcheck-new>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wall>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wextra>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wpedantic>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wformat=2>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wno-unused-parameter>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wshadowl>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wwrite-strings>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wstrict-prototypes>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wold-style-definition>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wredundant-decls>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wnested-externs>
+    $<$<BOOL:${DEV_WARNINGS}>:-Wmissing-include-dirs>
 )
+
 
 target_link_options(${PROJECT_NAME}
     PUBLIC
