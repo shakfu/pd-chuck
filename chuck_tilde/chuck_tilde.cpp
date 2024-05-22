@@ -15,7 +15,6 @@
 #define N_IN_CHANNELS 2
 #define N_OUT_CHANNELS 2
 
-static int PD_CK_COUNT = 0;
 
 enum DSP {
     PERFORM,
@@ -27,7 +26,6 @@ enum DSP {
     VECTOR_SIZE,
     NEXT
 };
-
 
 
 // typedefs
@@ -66,7 +64,6 @@ typedef struct _ck {
 
 // static global variables
 static int CK_INSTANCE_COUNT = 0;
-static std::vector<std::string> CK_INSTANCE_NAMES;
 
 // core
 static void *ck_new(t_symbol *s);
@@ -217,7 +214,7 @@ static void *ck_new(t_symbol *s)
         x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search);
         x->chuck->setStdoutCallback(ck_stdout_print);
         x->chuck->setStderrCallback(ck_stderr_print);
-        x->oid = ++PD_CK_COUNT;
+        x->oid = ++CK_INSTANCE_COUNT;
         x->loglevel = LOG_LEVEL;
 
         // init cb_map and register callbacks
@@ -761,22 +758,20 @@ static void ck_eval(t_ck *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-static void ck_remove(t_ck *x, t_symbol *s, long argc, t_atom *argv)
+static void ck_remove(t_ck* x, t_symbol* s, long argc, t_atom* argv)
 {
-    post("%s: %d", s->s_name, argc);
-
-    Chuck_Msg *msg = new Chuck_Msg;
+    Chuck_Msg* msg = new Chuck_Msg;
 
     if (argc == 1) {
 
         if (argv->a_type == A_FLOAT) {
-            int shred_id = atom_getint(argv);
+            t_int shred_id = atom_getint(argv);
             msg->type = CK_MSG_REMOVE;
             msg->param = shred_id;
 
         } else if (argv->a_type == A_SYMBOL) {
 
-            t_symbol *cmd = atom_getsymbol(argv);
+            t_symbol* cmd = atom_getsymbol(argv);
 
             if (cmd == gensym("all")) {
                 msg->type = CK_MSG_REMOVEALL;
@@ -787,14 +782,22 @@ static void ck_remove(t_ck *x, t_symbol *s, long argc, t_atom *argv)
             }
         }
 
-    } else {
-        // default to last
-        msg->type = CK_MSG_REMOVE;
-        msg->param = 0xffffffff;
-    }
+        // handle one arg case
+        msg->reply_cb = (ck_msg_func)0;
+        x->chuck->vm()->queue_msg(msg, 1);
+        return;
 
-    msg->reply_cb = (ck_msg_func)0;
-    x->chuck->vm()->queue_msg(msg, 1);
+    } else {
+        // assume message is along :-) the lines of (remove 2 4 1 [..])
+        for (int i = 0; i < argc; i++) {
+            // post("removing: long_array[%d] = %d", i, long_array[i]);
+            Chuck_Msg* m = new Chuck_Msg;
+            m->type = CK_MSG_REMOVE;
+            m->param = atom_getint(argv+i); // shred id
+            m->reply_cb = (ck_msg_func)0;
+            x->chuck->vm()->queue_msg(m, 1);
+        }
+    }
 }
 
 

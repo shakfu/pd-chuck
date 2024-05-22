@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Changed `remove` method, it can now remove multiple space separated shred_ids
+
 - Added improved build system via additional build scripts to handle corner cases.
 
 - Added `listen` and `unlisten` to event related callbacks

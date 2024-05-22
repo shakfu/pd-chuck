@@ -1,6 +1,8 @@
 # TODO
 
-- [ ] Enable multiple ids in `remove`
+- [ ] Update docs
+
+- [ ] Add more tests
 
 - [ ] Add Windows support
 
