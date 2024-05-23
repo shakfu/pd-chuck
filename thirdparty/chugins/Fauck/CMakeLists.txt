@@ -29,6 +29,9 @@ add_library(${CHUGIN_NAME}
     ${PROJECT_SRC}
 )
 
+
+set_property(TARGET ${CHUGIN_NAME} PROPERTY CXX_STANDARD 17)
+
 # add_dependencies(${CHUGIN_NAME} fauck_deps)
 
 set_target_properties(${CHUGIN_NAME} PROPERTIES CXX_STANDARD 17)

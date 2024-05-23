@@ -16,14 +16,6 @@ on:
           - macos-adv-full
           - macos-adv-nomp3
           - macos-adv-light
-          - linux-base-alsa
-          - linux-base-pulse
-          - linux-base-jack
-          - linux-base-all
-          - linux-adv-alsa
-          - linux-adv-pulse
-          - linux-adv-jack
-          - linux-adv-all
       platform:
         type: choice
         description: Please select a supported platform
@@ -33,12 +25,7 @@ on:
           - macos-14
           - macos-13
           - macos-12
-          - ubuntu-24.04
-          - ubuntu-22.04
-          - ubuntu-20.04
 
-# env:
-#   arch: darwin-x86
 
 jobs:
   build:
@@ -65,13 +52,8 @@ jobs:
         path: build/thirdparty/downloads
         key: $${{ env.cache-name }}-${{ hashFiles('source/scripts/dep/install_libfaust.sh') }}
 
-    - name: install macOS dependencies
-      if: startsWith(inputs.platform, 'macos')
+    - name: install dependencies
       run: brew install bison flex autogen automake flac libogg libvorbis opus mpg123 lame rubberband libsamplerate
-
-    - name: install Linux dependencies
-      if: startsWith(inputs.platform, 'ubuntu')
-      run: sudo apt install bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmp3lame-dev libresample1-dev librubberband-dev
 
     - name: build external
       run: make ${{ inputs.variant }}
