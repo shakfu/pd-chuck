@@ -65,13 +65,13 @@ target_compile_definitions(${CHUGIN_NAME}
 
 target_include_directories(${CHUGIN_NAME}
     PUBLIC
-    ${local_prefix}/include
+    ${LOCAL_INCLUDE}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${THIRDPARTY}/install/include
     ${CK_SRC_PATH}
     ${FAUST_DIR}/architecture
     ${FAUST_DIR}/compiler
-    ${FAUST_DIR}/compiler/utils
+    ${FAUST_DIR}/compiler/utils  
 )
 
 target_link_options(${CHUGIN_NAME}
@@ -85,7 +85,7 @@ target_link_options(${CHUGIN_NAME}
 
 target_link_directories(${CHUGIN_NAME}
     PUBLIC
-    ${local_prefix}/lib
+    ${LOCAL_LIB}
     ${LIBFAUST_DIR}/lib
     ${THIRDPARTY}/install/lib
 )
@@ -94,15 +94,15 @@ target_link_directories(${CHUGIN_NAME}
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
     ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libFLAC.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libogg.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbis.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisenc.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisfile.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libopus.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libmpg123.a>
-    $<$<BOOL:${ENABLE_MP3}>:${local_prefix}/lib/libmp3lame.a>    
-    ${local_prefix}/lib/libsndfile.a
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libogg.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbis.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisenc.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisfile.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libopus.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libmpg123.a>
+    $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>    
+    ${LOCAL_LIB}/libsndfile.a
     "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
     "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
     "$<$<BOOL:${APPLE}>:-framework CoreAudio>"

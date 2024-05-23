@@ -31,6 +31,7 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
+set(local_prefix "/usr/local")
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "Platform: Linux")
@@ -47,9 +48,16 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "LINUX_ALSA ENABLED: ${LINUX_ALSA}")
 	message(STATUS "LINUX_PULSE ENABLED: ${LINUX_PULSE}")
 	message(STATUS "LINUX_JACK ENABLED: ${LINUX_JACK}")
+
+    EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+    message(STATUS "Architecture: ${ARCHITECTURE}" )
+
+    if(DEFINED ARCHITECTURE)
+        set(LOCAL_LIB /usr/lib/${ARCHITECTURE}-linux-gnu)
+        set(LOCAL_INCLUDE /usr/include/${ARCHITECTURE}-linux-gnu)
+    endif()
 endif()
 
-set(local_prefix "/usr/local")
 if (APPLE)
     if (NOT CMAKE_OSX_ARCHITECTURES)
         if(BUILD_UNIVERSAL)
@@ -70,8 +78,11 @@ if (APPLE)
     else()
         set(local_prefix ${CMAKE_SOURCE_DIR}/build/thirdparty/install)
     endif()
+        set(LOCAL_LIB ${local_prefix}/lib)
+        set(LOCAL_INCLUDE ${local_prefix}/include)
 endif()
-message(STATUS "local_prefix: ${local_prefix}")
+message(STATUS "LOCAL_LIB: ${LOCAL_LIB}")
+message(STATUS "LOCAL_INCLUDE: ${LOCAL_INCLUDE}")
 
 
 add_subdirectory(thirdparty/chuck/core)
