@@ -48,9 +48,9 @@ function install_libfaust {
 	    	rm -rf ${THIRDPARTY}/libfaust
 		    if [ ! -f ${DOWNLOADS}/libfaust-ubuntu-x86_64.zip ]; then
 		        curl -L https://github.com/grame-cncm/faust/releases/download/$VERSION/libfaust-ubuntu-x86_64.zip -o ${DOWNLOADS}/libfaust-ubuntu-x86_64.zip
-				mkdir -p ${THIRDPARTY}/libfaust
-		        unzip libfaust-ubuntu-x86_64.zip -d ${THIRDPARTY}/libfaust/
 		    fi
+			mkdir -p ${THIRDPARTY}/libfaust
+	        unzip ${DOWNLOADS}/libfaust-ubuntu-x86_64.zip -d ${THIRDPARTY}/libfaust/		    
 		fi
 	elif [ "$(expr substr $(uname -s) 1 10)" = "MINGW32_NT" ] || [ "$(expr substr $(uname -s) 1 10)" = "MINGW64_NT" ]; then
 	    echo "You are running Windows. You should run \"call install_libfaust.bat\"" >&2
