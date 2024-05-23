@@ -2,6 +2,10 @@
 
 - [ ] Update docs
 
+- [ ] Update workflows
+
+- [ ] Test linux builds
+
 - [ ] Add more tests
 
 - [ ] Add Windows support

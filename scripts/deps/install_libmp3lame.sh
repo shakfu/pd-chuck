@@ -22,7 +22,7 @@ function install_libmp3lame() {
 		mv lame-3.100 ${THIRDPARTY}/libmp3lame && \
 		rm -f lame-3.100.tar.gz && \
 		patch -u ${THIRDPARTY}/libmp3lame/include/libmp3lame.sym \
-			  -i ${CWD}/source/scripts/patch/libmp3lame_sym.patch && \
+			  -i ${CWD}/scripts/patch/libmp3lame_sym.patch && \
 		cd ${THIRDPARTY}/libmp3lame && \
 		CFLAGS="-Os -s" ./configure \
 			--disable-dependency-tracking \
