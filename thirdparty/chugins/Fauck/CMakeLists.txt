@@ -57,6 +57,7 @@ target_compile_definitions(${CHUGIN_NAME}
     $<$<BOOL:${APPLE}>:__APPLE__>
     $<$<BOOL:${APPLE}>:__MACOSX_CORE__>
     $<$<BOOL:${APPLE}>:__PLATFORM_APPLE__>
+    $<$<BOOL:${LINUX}>:__PLATFORM_LINUX__>
     $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
     _USRDLL
     FAUCK_EXPORTS
