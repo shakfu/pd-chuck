@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -5,12 +7,12 @@ THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 FAUST_VERSION=$1
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
-function install_faust() {
+function install_faust {
 	VERSION=${FAUST_VERSION}
 	SRC=${THIRDPARTY}/faust
     if [ ! -d ${THIRDPARTY}/faust/architecture ]; then

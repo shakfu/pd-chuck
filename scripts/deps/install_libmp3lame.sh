@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -5,13 +7,13 @@ THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
 
-function install_libmp3lame() {
+function install_libmp3lame {
 	SRC=${THIRDPARTY}/libmp3lame
 	BUILD=${THIRDPARTY}/libmp3lame/build
 	if [ ! -f ${THIRDPARTY}/install/lib/libmp3lame.a ]; then

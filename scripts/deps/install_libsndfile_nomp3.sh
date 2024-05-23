@@ -1,16 +1,18 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
 THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
 
-function install_libsndfile() {
+function install_libsndfile {
 	SRC=${THIRDPARTY}/libsndfile
 	BUILD=${THIRDPARTY}/libsndfile/build
 	if [ ! -f ${THIRDPARTY}/install/lib/libsndfile.a ]; then

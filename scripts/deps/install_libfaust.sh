@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -7,14 +9,14 @@ PREFIX=${THIRDPARTY}/install
 DOWNLOADS=${BUILD}/downloads
 FAUST_VERSION=$1
 
-function setup() {
+function setup {
 	mkdir -p ${DOWNLOADS} && \
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
 
-function install_libfaust() {
+function install_libfaust {
 	VERSION=${FAUST_VERSION}
 	if [ "$(uname)" = "Darwin" ]; then
 		echo "You are running macOS"

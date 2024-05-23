@@ -71,7 +71,7 @@ jobs:
 
     - name: install Linux dependencies
       if: startsWith(inputs.platform, 'ubuntu')
-      run: sudo apt update && sudo apt upgrade && sudo apt install bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmp3lame-dev libresample1-dev librubberband-dev
+      run: sudo apt install bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmp3lame-dev libresample1-dev librubberband-dev
 
     - name: build external
       run: make ${{ inputs.variant }}

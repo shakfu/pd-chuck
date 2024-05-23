@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -5,12 +7,12 @@ THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
-function install_libopus() {
+function install_libopus {
 	SRC=${THIRDPARTY}/libopus
 	BUILD=${THIRDPARTY}/libopus/build
 	if [ ! -f ${THIRDPARTY}/install/lib/libopus.a ]; then

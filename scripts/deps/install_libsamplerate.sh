@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -5,13 +7,13 @@ THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
 
-function install_libsamplerate() {
+function install_libsamplerate {
 	SRC=${THIRDPARTY}/libsamplerate
 	BUILD=${THIRDPARTY}/libsamplerate/build
 	if [ ! -f ${THIRDPARTY}/install/lib/libsamplerate.a ]; then

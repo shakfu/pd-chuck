@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # install full stack dependencies to build the WarpBuf and Fauck chugins
 
 CWD=`pwd`
@@ -5,13 +7,13 @@ THIRDPARTY=${CWD}/build/thirdparty
 PREFIX=${THIRDPARTY}/install
 
 
-function setup() {
+function setup {
 	mkdir -p ${PREFIX}/include && \
 	mkdir -p ${PREFIX}/lib
 }
 
 
-function install_libvorbis() {
+function install_libvorbis {
 	SRC=${THIRDPARTY}/libvorbis
 	BUILD=${THIRDPARTY}/libvorbis/build
 	if [ ! -f ${THIRDPARTY}/install/lib/libvorbis.a ]; then
