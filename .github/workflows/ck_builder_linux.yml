@@ -1,4 +1,4 @@
-name: ck-builder
+name: ck-builder-linux
 run-name: cm-${{ inputs.variant }}-${{ inputs.platform }}
 
 on:
