@@ -16,10 +16,11 @@ function setup {
 function install_libflac {
 	SRC=${THIRDPARTY}/libflac
 	BUILD=${THIRDPARTY}/libflac/build
+	VERSION=1.4.3
 	if [ ! -f ${THIRDPARTY}/install/lib/libFLAC.a ]; then
 		rm -rf ${THIRDPARTY}/libflac && \
 		mkdir -p build/thirdparty && \
-		git clone --depth=1 https://github.com/xiph/flac.git ${THIRDPARTY}/libflac && \
+		git clone -b "${VERSION}" --depth=1 https://github.com/xiph/flac.git ${THIRDPARTY}/libflac && \
 		mkdir -p ${BUILD} && \
 		cd ${BUILD} && \
 		cmake .. \

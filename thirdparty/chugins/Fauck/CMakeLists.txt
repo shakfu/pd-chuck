@@ -8,6 +8,12 @@ cmake_path(GET path STEM PARENT_DIR)
 # set(CHUGIN_NAME ${PARENT_DIR})
 set(CHUGIN_NAME "Faust")
 
+if (DEFINED ENV{FAUCK_VERSION})
+set (VERSION $ENV{FAUCK_VERSION})
+else()
+set (VERSION "0.3.0")
+endif()
+
 set(THIRDPARTY ${CMAKE_SOURCE_DIR}/build/thirdparty)
 
 # where the chuck headers are
@@ -31,11 +37,10 @@ add_library(${CHUGIN_NAME}
 
 
 set_property(TARGET ${CHUGIN_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${CHUGIN_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 # add_dependencies(${CHUGIN_NAME} fauck_deps)
 
-set_target_properties(${CHUGIN_NAME} PROPERTIES CXX_STANDARD 17)
-set_target_properties(${CHUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 if(BUILD_SHARED_LIBS)
     set_target_properties(${CHUGIN_NAME}
@@ -53,15 +58,17 @@ target_compile_options(${CHUGIN_NAME}
 
 target_compile_definitions(${CHUGIN_NAME}
     PUBLIC
-    NOBUNDLE
+    FAUCK_VERSION=\"v${VERSION}\"
+    # FAUCK_EXPORTS    
     $<$<BOOL:${APPLE}>:__APPLE__>
     $<$<BOOL:${APPLE}>:__MACOSX_CORE__>
     $<$<BOOL:${APPLE}>:__PLATFORM_APPLE__>
+    $<$<BOOL:${APPLE}>:NOBUNDLE>
     $<$<BOOL:${LINUX}>:__PLATFORM_LINUX__>
+    $<$<BOOL:${LINUX}>:_GLIBCXX_USE_CXX11_ABI=0>
     $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
-    _USRDLL
-    FAUCK_EXPORTS
 )
+
 
 target_include_directories(${CHUGIN_NAME}
     PUBLIC
@@ -109,14 +116,10 @@ target_link_libraries(${CHUGIN_NAME}
     "$<$<BOOL:${APPLE}>:-framework Accelerate>"
 )
 
-# set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/examples")
+
 install(
     TARGETS ${CHUGIN_NAME}
-    # LIBRARY DESTINATION chugins
     LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/examples/chugins
 )
 
-# set (DST ${CMAKE_SOURCE_DIR}/externals/chuck~.mxo/Contents/Resources/chugins)
 set (DST ${CMAKE_SOURCE_DIR}/examples/chugins)
-
-

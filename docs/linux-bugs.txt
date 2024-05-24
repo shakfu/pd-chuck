@@ -1,0 +1,6 @@
+[chuck:2:SYSTEM]:  |  |  | reason: /home/sa/projects/pd-chuck/chuck_tilde/examples/chugins/Faust.chug: undefined symbol: FLAC__StreamDecoderErrorStatusString
+
+[chuck:2:SYSTEM]:  |  | [chugin] WarpBuf.chug [FAILED]...
+
+[chuck:2:SYSTEM]:  |  |  | reason: /home/sa/projects/pd-chuck/chuck_tilde/examples/chugins/WarpBuf.chug: undefined symbol: FLAC__StreamEncoderInitStatusString
+

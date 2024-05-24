@@ -8,8 +8,8 @@ FAUST_VERSION = 2.72.14
 
 
 .PHONY: all build \
-		macos macos-base-native macos-base-universal  \
-		macos-adv-brew macos-adv-full macos-adv-light macos-adv-nomp3 \
+		full light nomp3 \
+		macos macos-base-native macos-base-universal macos-adv-brew  \
 		linux linux-base-alsa linux-base-pulse linux-base-jack linux-base-all \
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
@@ -68,7 +68,7 @@ macos-adv-brew: faust
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
-macos-adv-full: all_deps
+full: all_deps
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
@@ -78,7 +78,7 @@ macos-adv-full: all_deps
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
-macos-adv-light: light_deps
+light: light_deps
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
@@ -88,7 +88,7 @@ macos-adv-light: light_deps
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
-macos-adv-nomp3: nomp3_deps
+nomp3: nomp3_deps
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
@@ -97,7 +97,6 @@ macos-adv-nomp3: nomp3_deps
 			-DENABLE_WARPBUF=ON \
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
-
 
 linux: linux-adv-alsa
 

@@ -20,7 +20,11 @@ function install_rubberband {
 		mkdir -p ${THIRDPARTY} && \
 		git clone --depth=1 https://github.com/breakfastquay/rubberband.git ${THIRDPARTY}/rubberband && \
 		cd ${SRC} && \
-		make -f otherbuilds/Makefile.macos && \
+		if [ "$(uname)" = "Darwin" ]; then
+			make -f otherbuilds/Makefile.macos
+		else
+			make -f otherbuilds/Makefile.linux ARCHFLAGS=-fPIC
+		fi
 		cp lib/librubberband.a ${PREFIX}/lib && \
 		cp -rf rubberband ${PREFIX}/include/
 	fi
