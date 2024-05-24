@@ -195,12 +195,12 @@ Each build option has a Makefile target as follows:
 
 | Makefile target        | alias        | external | chugins | faust | warpbuf | .wav   | .mp3    | .others |
 | :--------------------- | :----------- | :----: | :-------: | :---: | :-----: | :----: | :-----: | :-----: |
+| `full`                 |              | x      | x         | x     | x       | x      | x       | x       |
+| `nomp3`                |              | x      | x         | x     | x       | x      |         | x       |
+| `light`                |              | x      | x         | x     | x       | x      |         |         |
 | `macos-base-native`    | `make`       | x      | x         |       |         | x      |         |         |
 | `macos-base-universal` |              | x      | x         |       |         | x      |         |         |
 | `macos-adv-brew`       | `make macos` | x      | x         | x     | x       | x      | x       | x       |
-| `macos-adv-full`       |              | x      | x         | x     | x       | x      | x       | x       |
-| `macos-adv-nomp3`      |              | x      | x         | x     | x       | x      |         | x       |
-| `macos-adv-light`      |              | x      | x         | x     | x       | x      |         |         |
 | `linux-base-alsa`      | `make`       | x      | x         |       |         | x      |         |         |
 | `linux-base-pulse`     |              | x      | x         |       |         | x      |         |         |
 | `linux-base-jack`      |              | x      | x         |       |         | x      |         |         |

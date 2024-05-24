@@ -10,12 +10,12 @@ on:
         default: macos-adv-brew
         required: true
         options:
+          - full
+          - nomp3
+          - light
           - macos-base-native
           - macos-base-universal
           - macos-adv-brew
-          - macos-adv-full
-          - macos-adv-nomp3
-          - macos-adv-light
           - linux-base-alsa
           - linux-base-pulse
           - linux-base-jack
