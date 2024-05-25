@@ -14,6 +14,7 @@ FAUST_VERSION = 2.72.14
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
+		test test-audio test-faust test-warpbuf \
 		clean reset sign
 
 all: build
@@ -201,3 +202,13 @@ reset:
 	@rm -rf build/CMakeCache.txt build/Makefile build/CMakeFiles build/chuck_tilde build/chuck 
 	@rm -rf build/cmake_install.cmake build/thirdparty build/*.a
 
+test: test-audio
+
+test-audio:
+	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_audio.pd
+
+test-faust:
+	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_faust.pd
+
+test-warpbuf:
+	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd
