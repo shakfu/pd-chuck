@@ -133,6 +133,7 @@ linux-adv-alsa: faust
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
+			-DDYNAMIC_LINKING=ON \
 			-DLINUX_ALSA=ON \
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
@@ -144,6 +145,7 @@ linux-adv-pulse: faust
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
+			-DDYNAMIC_LINKING=ON \
 			-DLINUX_PULSE=ON \
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
@@ -155,6 +157,7 @@ linux-adv-jack: faust
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
+			-DDYNAMIC_LINKING=ON \
 			-DLINUX_JACK=ON \
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
@@ -166,6 +169,7 @@ linux-adv-all: faust
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
+			-DDYNAMIC_LINKING=ON \
 			-DLINUX_ALL=ON \
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \

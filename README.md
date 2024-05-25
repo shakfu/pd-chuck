@@ -187,7 +187,7 @@ brew install cmake bison flex autoconf autogen automake flac libogg libtool libv
 On Debian Linux the requirements can be installed via:
 
 ```bash
-sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmp3lame-dev libresample1-dev librubberband-dev
+sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmpg123-dev libmp3lame-dev libresample1-dev librubberband-dev
 ```
 
 Each build option has a Makefile target as follows:

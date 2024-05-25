@@ -79,6 +79,26 @@ target_link_directories(${CHUGIN_NAME}
 )
 
 
+if (DYNAMIC_LINKING)
+target_link_libraries(${CHUGIN_NAME}
+    PUBLIC
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lFLAC>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-logg>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbis>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisenc>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisfile>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lopus>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lmpg123>
+    $<$<BOOL:${ENABLE_MP3}>:-lmp3lame>
+    -lsndfile
+    -lrubberband
+    -lsamplerate
+    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
+    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
+    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
+    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+)
+else()
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
@@ -97,6 +117,8 @@ target_link_libraries(${CHUGIN_NAME}
     "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
     "$<$<BOOL:${APPLE}>:-framework Accelerate>"
 )
+endif()
+
 
 # set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/examples")
 install(

@@ -97,7 +97,25 @@ target_link_directories(${CHUGIN_NAME}
     ${THIRDPARTY}/install/lib
 )
 
-
+if (DYNAMIC_LINKING)
+target_link_libraries(${CHUGIN_NAME}
+    PUBLIC
+    ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lFLAC>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-logg>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbis>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisenc>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisfile>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lopus>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lmpg123>
+    $<$<BOOL:${ENABLE_MP3}>:-lmp3lame>
+    -lsndfile
+    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
+    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
+    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
+    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+)
+else()
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
     ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
@@ -108,14 +126,14 @@ target_link_libraries(${CHUGIN_NAME}
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisfile.a>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libopus.a>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libmpg123.a>
-    $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>    
+    $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>
     ${LOCAL_LIB}/libsndfile.a
     "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
     "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
     "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
     "$<$<BOOL:${APPLE}>:-framework Accelerate>"
 )
-
+endif()
 
 install(
     TARGETS ${CHUGIN_NAME}

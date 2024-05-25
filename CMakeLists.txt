@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.19)
 
 project(pd_chuck)
 
+# general options
+option(DYNAMIC_LINKING "enable dynamic linking with dependencies")
+
 # linux options
 option(LINUX_ALSA "enable linux alsa build")
 option(LINUX_PULSE "enable linux pulseaudio build")
