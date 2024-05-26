@@ -14,7 +14,7 @@ FAUST_VERSION = 2.72.14
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
-		test test-audio test-faust test-warpbuf \
+		test test-audio test-faust test-warpbuf probe-chugins \
 		clean reset sign
 
 all: build
@@ -216,3 +216,6 @@ test-faust:
 
 test-warpbuf:
 	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd
+
+probe-chugins:
+	@ ./build/chuck --chugin-probe --chugin-path:chuck_tilde/examples/chugins

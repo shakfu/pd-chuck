@@ -1,6 +1,28 @@
+on ubuntu 24.04
+
+libsndfile1-dev 		1.2.2
+libflac-dev 			1.4.3
+libogg-dev 				1.3.5
+libopus-dev 			1.4
+libvorbis-dev 			1.3.7
+libmpg123-dev 			1.32.5
+
+## make full
+
 [chuck:2:SYSTEM]:  |  |  | reason: /home/sa/projects/pd-chuck/chuck_tilde/examples/chugins/Faust.chug: undefined symbol: FLAC__StreamDecoderErrorStatusString
 
 [chuck:2:SYSTEM]:  |  | [chugin] WarpBuf.chug [FAILED]...
 
 [chuck:2:SYSTEM]:  |  |  | reason: /home/sa/projects/pd-chuck/chuck_tilde/examples/chugins/WarpBuf.chug: undefined symbol: FLAC__StreamEncoderInitStatusString
 
+## make linux
+
+[chuck:8:FINER!]:  | allocated VM stack (size:16384 alloc:16912)
+
+chuck~ • Executing perform routine
+sample rate: 44100
+buffer size: 64
+[chuck:10:ALL!!]: Object constructor...
+
+pd: symbol lookup error: /home/sa/projects/pd-chuck/chuck_tilde/tests/../examples/chugins/Faust.chug: undefined symbol: _Z26createDSPFactoryFromStringRKSsS0_iPPKcS0_RSsi
+make: *** [Makefile:215: test-faust] Error 127
