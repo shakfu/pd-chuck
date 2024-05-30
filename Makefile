@@ -3,8 +3,8 @@ ARCH = $(shell uname -m)
 DIST = build/dist/pd-chuck
 THIRDPARTY = $(PWD)/build/thirdparty
 PREFIX = $(THIRDPARTY)/install
-FAUST_VERSION = 2.72.14
-#FAUST_VERSION = 2.69.3
+# FAUST_VERSION = 2.72.14
+FAUST_VERSION = 2.69.3
 
 
 .PHONY: all build \
@@ -20,7 +20,10 @@ FAUST_VERSION = 2.72.14
 all: build
 
 build:
-	@mkdir -p build && cd build && cmake .. && cmake --build . --config Release
+	@mkdir -p build && \
+		cd build && \
+		cmake .. && \
+		cmake --build . --config Release
 
 faust:
 	@mkdir -p $(PREFIX)/include && \
@@ -56,7 +59,11 @@ macos: macos-adv-brew
 macos-base-native: build
 
 macos-base-universal:
-	@mkdir -p build && cd build && cmake .. -DBUILD_UNIVERSAL=ON && cmake --build . --config Release
+	@mkdir -p build && \
+		cd build && \
+		cmake .. \
+			-DBUILD_UNIVERSAL=ON && \
+		cmake --build . --config Release
 
 macos-adv-brew: faust
 	@mkdir -p build && \
@@ -218,4 +225,4 @@ test-warpbuf:
 	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd
 
 probe-chugins:
-	@ ./build/chuck --chugin-probe --chugin-path:chuck_tilde/examples/chugins
+	@./build/chuck --chugin-probe --chugin-path:chuck_tilde/examples/chugins

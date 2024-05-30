@@ -1,4 +1,4 @@
-#N canvas 581 54 676 550 12;
+#N canvas 1445 178 1573 1432 12;
 #X obj 231 166 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X msg 87 92 reset;
 #X msg 416 103 remove;
@@ -18,7 +18,6 @@
 #X msg 37 247 run warpbuf/test.ck;
 #X msg 39 286 loglevel 5;
 #X msg 148 165 status;
-#X msg 39 215 add fauck/test.ck;
 #X msg 38 187 + test/sine.ck;
 #X msg 413 66 replace 1 stk/honkeytonk-algo1.ck;
 #X msg 117 123 reset id;
@@ -32,6 +31,7 @@
 #X msg 275 194 docs;
 #X msg 185 220 vm;
 #X msg 473 212 - 1 2;
+#X msg 39 215 add fauck/fau.ck;
 #X connect 0 0 15 0;
 #X connect 1 0 15 0;
 #X connect 2 0 15 0;
@@ -44,8 +44,8 @@
 #X connect 11 0 9 0;
 #X connect 12 0 11 0;
 #X connect 13 0 10 0;
-#X connect 15 0 28 0;
-#X connect 15 1 28 1;
+#X connect 15 0 27 0;
+#X connect 15 1 27 1;
 #X connect 16 0 15 0;
 #X connect 17 0 15 0;
 #X connect 18 0 15 0;
@@ -57,7 +57,7 @@
 #X connect 24 0 15 0;
 #X connect 25 0 15 0;
 #X connect 26 0 15 0;
-#X connect 27 0 15 0;
+#X connect 28 0 15 0;
 #X connect 29 0 15 0;
 #X connect 30 0 15 0;
 #X connect 31 0 15 0;

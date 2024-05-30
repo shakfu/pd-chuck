@@ -51,13 +51,13 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_compile_options(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     -fPIC
     $<IF:$<CONFIG:Debug>,-g,-O3>
 )
 
 target_compile_definitions(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     FAUCK_VERSION=\"v${VERSION}\"
     # FAUCK_EXPORTS    
     $<$<BOOL:${APPLE}>:__APPLE__>
@@ -71,7 +71,7 @@ target_compile_definitions(${CHUGIN_NAME}
 
 
 target_include_directories(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     ${LOCAL_INCLUDE}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${THIRDPARTY}/install/include
@@ -82,7 +82,7 @@ target_include_directories(${CHUGIN_NAME}
 )
 
 target_link_options(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     $<$<CONFIG:RELEASE>:-s>
     -shared
     $<$<PLATFORM_ID:Darwin>:-lc++>
@@ -91,7 +91,7 @@ target_link_options(${CHUGIN_NAME}
 
 
 target_link_directories(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     ${LOCAL_LIB}
     ${LIBFAUST_DIR}/lib
     ${THIRDPARTY}/install/lib
@@ -99,17 +99,22 @@ target_link_directories(${CHUGIN_NAME}
 
 if (DYNAMIC_LINKING)
 target_link_libraries(${CHUGIN_NAME}
-    PUBLIC
-    ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
+    PRIVATE
+
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lFLAC>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-logg>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbis>
+
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisenc>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisfile>
+    -lsndfile
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lopus>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lmpg123>
+
     $<$<BOOL:${ENABLE_MP3}>:-lmp3lame>
-    -lsndfile
+
+    ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
+    # ${LIBFAUST_DIR}/lib/libfaust.a
     "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
     "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
     "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
@@ -117,7 +122,7 @@ target_link_libraries(${CHUGIN_NAME}
 )
 else()
 target_link_libraries(${CHUGIN_NAME}
-    PUBLIC
+    PRIVATE
     ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libogg.a>
