@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Updated chuck code base to `1.5.2.6-dev (chai)`
+
+- Fixed `Faust.chug` bug due to faust stdlib not being stored due to `.gitignore` misconfig.
+
 - Changed `remove` method, it can now remove multiple space separated shred_ids
 
 - Added improved build system via additional build scripts to handle corner cases.

@@ -53,7 +53,7 @@ build
 *.lai
 *.la
 *.a
-*.lib
+#*.lib
 
 # Executables
 *.exe
