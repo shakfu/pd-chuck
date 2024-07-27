@@ -2,7 +2,7 @@
 
 Embeds the [ChucK](https://chuck.stanford.edu) audio engine in a puredata external.
 
-The `chuck~` external has the following features and limitations:
+The `chuck~` external works on MacOS and Linux and uses a bleeding edge ChucK version: `1.5.2.6-dev (chai)`. It has the following features:
 
 - Generate and process audio by running chuck files and evaluating chuck code with `global` parameters controlled and adjusted in realtime by pd messages.
 
@@ -14,7 +14,7 @@ The `chuck~` external has the following features and limitations:
 
 - Includes support for callbacks and events via the `signal` and `broadcast` messages.
 
-see `chuck_tilde/help-chuck.pd` for a basic overview of current features, and `chuck_tilde/test` for feature-specitic test patches.
+see `chuck_tilde/help-chuck.pd` for a basic overview of current features, and `chuck_tilde/test` for feature-specific test patches.
 
 Also included are the following:
 
@@ -29,8 +29,6 @@ Also included are the following:
 *For the impatient*: download the `pd-chuck` package with pre-compiled externals and chugins from the the project's [Releases](https://github.com/shakfu/pd-chuck/releases) section and check out the [cheatsheat](https://github.com/shakfu/chuck-max/blob/main/media/chuck-max-cheatsheat.pdf).
 
 Note that `pd-chuck` has a sibling in the [chuck-max](https://github.com/shakfu/chuck-max) project.
-
-The current ChucK version used is `1.5.2.5-dev (chai)`
 
 
 ## Usage
