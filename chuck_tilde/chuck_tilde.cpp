@@ -213,13 +213,15 @@ static void *ck_new(t_symbol *s)
 	    x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir->s_name);
         x->chuck->setParam(CHUCK_PARAM_VM_HALT, (t_CKINT) 0);
         x->chuck->setParam(CHUCK_PARAM_DUMP_INSTRUCTIONS, (t_CKINT) 0);
+        // enable chugins
+        x->chuck->setParam(CHUCK_PARAM_CHUGIN_ENABLE, (t_CKINT)1);        
         // directory for compiled code
         x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, examples_dir);
         std::list<std::string> chugin_search;
         std::string chugins_dir = examples_dir + "/chugins";
         x->chugins_dir = gensym(chugins_dir.c_str());
         chugin_search.push_back(chugins_dir);
-        x->chuck->setParam( CHUCK_PARAM_USER_CHUGIN_DIRECTORIES, chugin_search);
+        x->chuck->setParam( CHUCK_PARAM_IMPORT_PATH_SYSTEM, chugin_search);
         x->chuck->setStdoutCallback(ck_stdout_print);
         x->chuck->setStderrCallback(ck_stderr_print);
         x->oid = ++CK_INSTANCE_COUNT;

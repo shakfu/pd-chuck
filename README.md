@@ -2,7 +2,7 @@
 
 Embeds the [ChucK](https://chuck.stanford.edu) audio engine in a puredata external.
 
-The `chuck~` external works on MacOS and Linux and uses a bleeding edge ChucK version: `1.5.3.2-dev (chai)`. It has the following features:
+The `chuck~` external works on MacOS and Linux and uses a bleeding edge ChucK version: `1.5.4.2-dev (chai)`. It has the following features:
 
 - Generate and process audio by running chuck files and evaluating chuck code with `global` parameters controlled and adjusted in realtime by pd messages.
 

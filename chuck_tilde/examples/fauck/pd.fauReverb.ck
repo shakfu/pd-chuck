@@ -1,6 +1,6 @@
 
-// name: mx.fauReverb.ck
-// desc: demo of Faust chugin running in chuck~ within Max in action!
+// name: pd.fauReverb.ck
+// desc: demo of Faust chugin running in chuck~ Pd external!
 
 global float freq_low; // default 200
 global float freq_high; // default 800
