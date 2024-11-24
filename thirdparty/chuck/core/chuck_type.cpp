@@ -101,6 +101,10 @@ t_CKBOOL type_engine_check_func_def( Chuck_Env * env, a_Func_Def func_def );
 t_CKBOOL type_engine_check_class_def( Chuck_Env * env, a_Class_Def class_def );
 
 // helpers
+void type_engine_init_op_overload_builtin( Chuck_Env * env );
+// update builtin durs according to sample rate
+t_CKBOOL type_engine_update_builtin_durs( Chuck_Env * env, t_CKUINT srate );
+// check for const
 Chuck_Value * type_engine_check_const( Chuck_Env * env, a_Exp exp );
 // convert dot member expression to string for printing
 string type_engine_print_exp_dot_member( Chuck_Env * env, a_Exp_Dot_Member member );
@@ -320,9 +324,7 @@ void Chuck_Env::reset()
     // TODO: release stack items?
     nspc_stack.clear();
     // push global namespace
-    nspc_stack.push_back( this->global() );
-    // push user namespace
-    if( user_nspc != NULL ) nspc_stack.push_back( this->user_nspc );
+    nspc_stack.push_back( global_nspc );
     // TODO: release stack items?
     class_stack.clear(); class_stack.push_back( NULL );
     // should be at top level
@@ -331,8 +333,8 @@ void Chuck_Env::reset()
     // release curr? class_def? func?
     // 1.5.0.1 (ge) don't think these need ref counts; they are used as temporary variables
 
-    // assign
-    curr = (user_nspc != NULL) ? this->user() : this->global();
+    // current namesapce
+    curr = (user_nspc != NULL) ? user_nspc : global_nspc;
     // clear
     class_def = NULL; func = NULL;
 
@@ -353,11 +355,9 @@ void Chuck_Env::reset()
 void Chuck_Env::load_user_namespace()
 {
     // user namespace
-    user_nspc = new Chuck_Namespace;
-    user_nspc->name = "[user]";
-    user_nspc->parent = global_nspc;
-    CK_SAFE_ADD_REF(global_nspc);
-    CK_SAFE_ADD_REF(user_nspc);
+    user_nspc = new Chuck_Namespace; CK_SAFE_ADD_REF(user_nspc);
+    user_nspc->name = "@[user]";
+    user_nspc->parent = global_nspc; CK_SAFE_ADD_REF(global_nspc);
 }
 
 
@@ -490,6 +490,86 @@ t_CKBOOL type_engine_init_special( Chuck_Env * env, Chuck_Type * objT )
 
 
 
+//-----------------------------------------------------------------------------
+// name: type_engine_update_builtin_dur()
+// desc: update a specific base duration value
+//-----------------------------------------------------------------------------
+t_CKBOOL type_engine_update_builtin_dur( Chuck_Env * env,
+                                         const string & name, t_CKDUR value )
+{
+    // lookup the value
+    Chuck_Value * v = env->global()->value.lookup( name );
+    // check if we found a value
+    if( !v )
+    {
+        EM_error2( 0, "(internal error) cannot find base dur value '%s' in update_builtin_dur()", name.c_str() );
+        return FALSE;
+    }
+    // check if the value is a dur
+    if( !equals( v->type, env->ckt_dur ) )
+    {
+        EM_error2( 0, "(internal error) type mismatch for '%s' in update_builtin_dur()", name.c_str() );
+        return FALSE;
+    }
+    // cast out the dur
+    t_CKDUR * pDur = (t_CKDUR *)v->addr;
+    // check the addr
+    if( pDur == NULL )
+    {
+        EM_error2( 0, "(internal error) NULL address for '%s' in update_builtin_dur()", name.c_str() );
+        return FALSE;
+    }
+    // update it to the new value
+    *pDur = value;
+    // done
+    return TRUE;
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// callback from VM
+//-----------------------------------------------------------------------------
+void type_engine_on_srate_update_cb( t_CKUINT srate, void * userdata )
+{ type_engine_update_builtin_durs( (Chuck_Env *)userdata, srate ); }
+//-----------------------------------------------------------------------------
+// name: type_engine_update_builtin_durs()
+// desc: update built-in durations, given a sample rate
+//       NOTE: this should be called whenever the system sample rate changes
+//-----------------------------------------------------------------------------
+t_CKBOOL type_engine_update_builtin_durs( Chuck_Env * env, t_CKUINT srate )
+{
+    // dur value
+    t_CKDUR samp = 1.0;
+    // TODO:
+    t_CKDUR second = srate * samp;
+    // t_CKDUR second = 44100 * samp;
+    t_CKDUR ms = second / 1000.0;
+    t_CKDUR minute = second * 60.0;
+    t_CKDUR hour = minute * 60.0;
+    t_CKDUR day = hour * 24.0;
+    t_CKDUR week = day * 7.0;
+    // one billion years, a very long time
+    // length of a sidereal year; https://en.wikipedia.org/wiki/Year
+    t_CKDUR eon = day * 365.256363004 * 1000000000.0;
+
+    // update
+    if( !type_engine_update_builtin_dur( env, "samp", samp ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "ms", ms ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "second", second ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "minute", minute ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "hour", hour ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "day", day ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "week", week ) ) return FALSE;
+    if( !type_engine_update_builtin_dur( env, "eon", eon ) ) return FALSE;
+
+    // done
+    return TRUE;
+}
+
+
+
 
 //-----------------------------------------------------------------------------
 // name: type_engine_init()
@@ -547,23 +627,16 @@ t_CKBOOL type_engine_init( Chuck_Carrier * carrier )
     env->global()->type.add( env->ckt_cherr->base_name, env->ckt_cherr );        env->ckt_cherr->lock();
     // env->global()->type.add( env->ckt_thread->base_name, env->ckt_thread );   env->ckt_thread->lock();
 
-    // dur value
-    t_CKDUR samp = 1.0;
-    // TODO:
-    t_CKDUR second = carrier->vm->srate() * samp;
-    // t_CKDUR second = 44100 * samp;
-    t_CKDUR ms = second / 1000.0;
-    t_CKDUR minute = second * 60.0;
-    t_CKDUR hour = minute * 60.0;
-    t_CKDUR day = hour * 24.0;
-    t_CKDUR week = day * 7.0;
-    // one billion years, a very long time
-    // length of a sidereal year; https://en.wikipedia.org/wiki/Year
-    t_CKDUR eon = day * 365.256363004 * 1000000000.0;
-
     // add internal classes
     EM_log( CK_LOG_HERALD, "adding base classes..." );
     EM_pushlog();
+
+    // initialize operator overloading (part 1)
+    // 1.5.4.2 (ge) broken up into two parts; moved part 1 to here:
+    // before initializing builtin types -- since some types,
+    // e.g., string, now overload operators
+    // (also see: type_engine_init_op_overload_builtin())
+    if( !type_engine_init_op_overload( env ) ) return FALSE;
 
     //-------------------------
     // initialize internal classes; for now these are assumed to not error out
@@ -611,19 +684,19 @@ t_CKBOOL type_engine_init( Chuck_Carrier * carrier )
     // pop indent
     EM_poplog();
 
-    // default global values
+    // default global values (except for the durs, which will be updated shortly hereafter)
     env->global()->value.add( "null", new Chuck_Value( env->ckt_null, "null", new void *(NULL), TRUE ) );
     env->global()->value.add( "NULL", new Chuck_Value( env->ckt_null, "NULL", new void *(NULL), TRUE ) );
     env->global()->value.add( "t_zero", new Chuck_Value( env->ckt_time, "time_zero", new t_CKDUR(0.0), TRUE ) );
     env->global()->value.add( "d_zero", new Chuck_Value( env->ckt_dur, "dur_zero", new t_CKDUR(0.0), TRUE ) );
-    env->global()->value.add( "samp", new Chuck_Value( env->ckt_dur, "samp", new t_CKDUR(samp), TRUE ) );
-    env->global()->value.add( "ms", new Chuck_Value( env->ckt_dur, "ms", new t_CKDUR(ms), TRUE ) );
-    env->global()->value.add( "second", new Chuck_Value( env->ckt_dur, "second", new t_CKDUR(second), TRUE ) );
-    env->global()->value.add( "minute", new Chuck_Value( env->ckt_dur, "minute", new t_CKDUR(minute), TRUE ) );
-    env->global()->value.add( "hour", new Chuck_Value( env->ckt_dur, "hour", new t_CKDUR(hour), TRUE ) );
-    env->global()->value.add( "day", new Chuck_Value( env->ckt_dur, "day", new t_CKDUR(day), TRUE ) );
-    env->global()->value.add( "week", new Chuck_Value( env->ckt_dur, "week", new t_CKDUR(week), TRUE ) );
-    env->global()->value.add( "eon", new Chuck_Value( env->ckt_dur, "eon", new t_CKDUR(eon), TRUE ) );
+    env->global()->value.add( "samp", new Chuck_Value( env->ckt_dur, "samp", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "ms", new Chuck_Value( env->ckt_dur, "ms", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "second", new Chuck_Value( env->ckt_dur, "second", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "minute", new Chuck_Value( env->ckt_dur, "minute", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "hour", new Chuck_Value( env->ckt_dur, "hour", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "day", new Chuck_Value( env->ckt_dur, "day", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "week", new Chuck_Value( env->ckt_dur, "week", new t_CKDUR(0.0), TRUE ) );
+    env->global()->value.add( "eon", new Chuck_Value( env->ckt_dur, "eon", new t_CKDUR(0.0), TRUE ) );
     env->global()->value.add( "true", new Chuck_Value( env->ckt_int, "true", new t_CKINT(1), TRUE ) );
     env->global()->value.add( "false", new Chuck_Value( env->ckt_int, "false", new t_CKINT(0), TRUE ) );
     env->global()->value.add( "maybe", new Chuck_Value( env->ckt_int, "maybe", new t_CKFLOAT(.5), FALSE ) );
@@ -631,6 +704,11 @@ t_CKBOOL type_engine_init( Chuck_Carrier * carrier )
     env->global()->value.add( "global", new Chuck_Value( env->ckt_class, "global", env->global(), TRUE ) );
     env->global()->value.add( "chout", new Chuck_Value( env->ckt_io, "chout", new Chuck_IO_Chout( carrier ), TRUE ) );
     env->global()->value.add( "cherr", new Chuck_Value( env->ckt_io, "cherr", new Chuck_IO_Cherr( carrier ), TRUE ) );
+
+    // update the base dur values, according to initial sample rate | 1.5.4.2 (ge) re-factored to support run-time sample rate updates
+    type_engine_update_builtin_durs( env, carrier->vm->srate() );
+    // register a callback to be notified when sample rate changes | 1.5.4.2 (ge) added
+    carrier->vm->register_callback_on_srate_update( type_engine_on_srate_update_cb, env );
 
     // TODO: can't use the following now is local to shred
     // env->global()->value.add( "now", new Chuck_Value( env->ckt_time, "now", &(vm->shreduler()->now_system), TRUE ) );
@@ -721,8 +799,15 @@ t_CKBOOL type_engine_init( Chuck_Carrier * carrier )
     // commit the global namespace
     env->global()->commit();
 
-    // initialize operator mappings
-    if( !type_engine_init_op_overload( env ) ) return FALSE;
+    // initialize operator overloas (part 2: reserve builtin overloads)
+    // 1.5.4.2 (ge) this was broken up into two parts due to the need to
+    // initialize op overloads in general before initializing the builtin
+    // types like string, which now overload operators instead of hard-coding
+    // string operations; (also see type_engine_init_op_overload())
+    type_engine_init_op_overload_builtin( env );
+
+    // important: preserve all entries (or they will be cleared on next reset)
+    env->op_registry.preserve();
 
     // clear/create/reset [user] namespace | 1.5.4.0 (ge) added/moved here
     // subsequent definitions (e.g., public classes) would be added
@@ -2009,6 +2094,7 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
                 left = lhs->cast_to = env->ckt_string;
             }
         case ae_op_minus:
+            // vectors implicit conversions
             CK_LR( te_vec3, te_vec4 ) left = lhs->cast_to = env->ckt_vec4;
             else CK_LR( te_vec4, te_vec3 ) right = rhs->cast_to = env->ckt_vec4;
             else CK_LR( te_vec2, te_vec4 ) left = lhs->cast_to = env->ckt_vec4;
@@ -2051,6 +2137,13 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
             if( isa( left, env->ckt_object ) && isa( right, env->ckt_string ) && !isa( left, env->ckt_string ) )
                 left = lhs->cast_to = env->ckt_string;
         case ae_op_minus_chuck:
+            // vec implicit conversions | 1.5.4.2 (ge) added
+            CK_LR( te_vec3, te_vec4 ) left = lhs->cast_to = env->ckt_vec4;
+            else CK_LR( te_vec4, te_vec3 ) right = rhs->cast_to = env->ckt_vec4;
+            else CK_LR( te_vec2, te_vec4 ) left = lhs->cast_to = env->ckt_vec4;
+            else CK_LR( te_vec4, te_vec2 ) right = rhs->cast_to = env->ckt_vec4;
+            else CK_LR( te_vec2, te_vec3 ) left = lhs->cast_to = env->ckt_vec3;
+            else CK_LR( te_vec3, te_vec2 ) right = rhs->cast_to = env->ckt_vec3;
         case ae_op_times_chuck:
         case ae_op_divide_chuck:
         case ae_op_percent_chuck:
@@ -2131,14 +2224,14 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
     switch( op )
     {
     case ae_op_plus:
-        // string + int/float
-        if( isa( left, env->ckt_string ) )
-        {
-            // right is string or int/float
-            if( isa( right, env->ckt_string ) || isa( right, env->ckt_int )
-                || isa( right, env->ckt_float ) )
-                break;
-        }
+//        // string + int/float
+//        if( isa( left, env->ckt_string ) )
+//        {
+//            // right is string or int/float
+//            if( isa( right, env->ckt_string ) || isa( right, env->ckt_int )
+//                || isa( right, env->ckt_float ) )
+//                break;
+//        }
     case ae_op_plus_chuck:
         // int/float + string
         if( isa( left, env->ckt_string ) || isa( left, env->ckt_int ) || isa( left, env->ckt_float ) )
@@ -2293,11 +2386,11 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
         CK_COMMUTE( te_vec2, te_vec4 ) return env->ckt_vec4; // 1.5.1.7
         CK_COMMUTE( te_vec3, te_vec4 ) return env->ckt_vec4; // 1.3.5.3
         CK_COMMUTE( te_dur, te_time ) return env->ckt_time;
-        if( isa( left, env->ckt_string ) && isa( right, env->ckt_string ) ) return env->ckt_string;
-        if( isa( left, env->ckt_string ) && isa( right, env->ckt_int ) ) return env->ckt_string;
-        if( isa( left, env->ckt_string ) && isa( right, env->ckt_float ) ) return env->ckt_string;
-        if( isa( left, env->ckt_int ) && isa( right, env->ckt_string ) ) return env->ckt_string;
-        if( isa( left, env->ckt_float ) && isa( right, env->ckt_string ) ) return env->ckt_string;
+//        if( isa( left, env->ckt_string ) && isa( right, env->ckt_string ) ) return env->ckt_string;
+//        if( isa( left, env->ckt_string ) && isa( right, env->ckt_int ) ) return env->ckt_string;
+//        if( isa( left, env->ckt_string ) && isa( right, env->ckt_float ) ) return env->ckt_string;
+//        if( isa( left, env->ckt_int ) && isa( right, env->ckt_string ) ) return env->ckt_string;
+//        if( isa( left, env->ckt_float ) && isa( right, env->ckt_string ) ) return env->ckt_string;
     break;
 
     case ae_op_minus:
@@ -2392,7 +2485,6 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
         CK_LR( te_vec2, te_vec2 ) return env->ckt_int; // 1.5.1.7
         CK_LR( te_vec3, te_vec3 ) return env->ckt_int; // 1.3.5.3
         CK_LR( te_vec4, te_vec4 ) return env->ckt_int; // 1.3.5.3
-        if( isa( left, env->ckt_object ) && isa( right, env->ckt_object ) ) return env->ckt_int;
     case ae_op_lt:
     case ae_op_le:
     {
@@ -2483,6 +2575,14 @@ t_CKTYPE type_engine_check_op( Chuck_Env * env, ae_Operator op, a_Exp lhs, a_Exp
     Chuck_Type * ret = type_engine_check_op_overload_binary( env, op, left, right, binary );
     // if we have a hit
     if( ret ) return ret;
+
+    // if no match, catch reference compare | 1.5.4.2 (ge) moved to after op overload check
+    if( op == ae_op_eq || op == ae_op_neq )
+    {
+        // if both are Object references
+        // NB string == string is overloaded by default
+        if( isa( left, env->ckt_object ) && isa( right, env->ckt_object ) ) return env->ckt_int;
+    }
 
     // no match
     EM_error2( binary->where,
@@ -4665,7 +4765,7 @@ t_CKTYPE type_engine_check_exp_func_call( Chuck_Env * env, a_Exp exp_func, a_Exp
         }
         else if( exp_func->s_type == ae_exp_dot_member )
         {
-            EM_error2( exp_func->where,
+            EM_error2( exp_func->dot_member.where,
                 "argument type(s) do not match...\n...for function '%s(...)'...",
                 type_engine_print_exp_dot_member( env, &exp_func->dot_member ).c_str() );
         }
@@ -4837,10 +4937,8 @@ t_CKTYPE type_engine_check_exp_dot_member_special( Chuck_Env * env, a_Exp_Dot_Me
         }
         else
         {
-            // not valid
-            EM_error2( member->where,
-                      "type '%s' has no member named '%s'", member->t_base->c_name(), str.c_str() );
-            return NULL;
+            // check function | 1.5.4.1 (ge) changed from error
+            goto check_func;
         }
     }
     else if( member->t_base->xid == te_vec3 || member->t_base->xid == te_vec4 )
@@ -4907,11 +5005,16 @@ check_func:
     // check base; 1.3.5.3
     if( member->base->s_meta == ae_meta_value ) // is literal
     {
+        // mark as special primitive member function call from literal
+        // 1.5.4.2 (ge) added #special-primitive-member-func-from-literal
+        member->isSpecialPrimitiveFunc = TRUE;
+
         // error
-        EM_error2( member->base->where,
-                  "cannot call function from literal %s value",
-                  member->t_base->c_name() );
-        return NULL;
+        // 1.5.4.2 (ge) commented out #special-primitive-member-func-from-literal
+        // EM_error2( member->base->where,
+        //            "cannot call function from literal %s value",
+        //            member->t_base->c_name() );
+        // return NULL;
     }
 
     // find the value
@@ -7423,9 +7526,6 @@ void type_engine_init_op_overload_builtin( Chuck_Env * env )
     registry->reserve( env->ckt_vec2, ae_op_plus, env->ckt_vec3, TRUE ); // commute | 1.5.1.7
     registry->reserve( env->ckt_vec2, ae_op_plus, env->ckt_vec4, TRUE ); // commute | 1.5.1.7
     registry->reserve( env->ckt_vec3, ae_op_plus, env->ckt_vec4, TRUE ); // commute
-    registry->reserve( env->ckt_object, ae_op_plus, env->ckt_string ); // object +=> string
-    registry->reserve( env->ckt_int, ae_op_plus, env->ckt_string, TRUE ); // int/float +=> string
-    registry->reserve( env->ckt_float, ae_op_plus, env->ckt_string, TRUE ); // string +=> int/float
     // -
     registry->reserve( env->ckt_time, ae_op_minus, env->ckt_time );
     registry->reserve( env->ckt_time, ae_op_minus, env->ckt_dur );
@@ -7742,8 +7842,9 @@ t_CKBOOL type_engine_init_op_overload( Chuck_Env * env )
     registry->add( ae_op_ungruck_right )->configure( TRUE, false, false );
     registry->add( ae_op_ungruck_left )->configure( TRUE, false, false );
 
-    // mark built-in overload
-    type_engine_init_op_overload_builtin( env );
+    // mark built-in op overloads
+    // 1.5.4.2 (ge) moved to later ("part 2")
+    // type_engine_init_op_overload_builtin( env );
 
     // pop log
     EM_poplog();

@@ -64,7 +64,7 @@ char g_default_path_system[] = "/usr/local/lib/chuck:/Library/Application Suppor
 char g_default_path_packages[] = "~/.chuck/packages";
 char g_default_path_user[] = "~/Library/Application Support/ChucK/chugins:~/.chuck/lib";
 #elif defined(__PLATFORM_WINDOWS__)
-char g_default_path_system[] = "C:\\Windows\\system32\\ChucK;C:\\Program Files\\ChucK\\chugins;C:\\Program Files (x86)\\ChucK\\chugins;";
+char g_default_path_system[] = "C:\\Windows\\system32\\ChucK;C:\\Program Files\\ChucK\\chugins;C:\\Program Files (x86)\\ChucK\\chugins";
 char g_default_path_packages[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\packages";
 char g_default_path_user[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\chugins";
 #else // Linux / Cygwin
@@ -860,6 +860,16 @@ void CK_DLL_CALL ck_register_callback_on_shutdown( Chuck_DL_Query * query, f_cal
 }
 
 //-----------------------------------------------------------------------------
+// name: ck_register_callback_on_srate_update() | 1.5.4.2 (ge) added
+// desc: register a callback function to be called on sample rate change
+//-----------------------------------------------------------------------------
+void CK_DLL_CALL ck_register_callback_on_srate_update( Chuck_DL_Query * query, f_callback_on_srate_update cb, void * bindle )
+{
+    // register
+    query->vm()->register_callback_on_srate_update( cb, bindle );
+}
+
+//-----------------------------------------------------------------------------
 // name: ck_register_shreds_watcher()
 // desc: register a callback function to receive notifications
 //       from the VM about shreds (add, remove, etc.)
@@ -951,6 +961,40 @@ Chuck_DL_Value * CK_DLL_CALL make_new_mvar( const char * t, const char * n, t_CK
 {   return new Chuck_DL_Value( t, n, c ); }
 Chuck_DL_Value * CK_DLL_CALL make_new_svar( const char * t, const char * n, t_CKBOOL c, void * a )
 {   return new Chuck_DL_Value( t, n, c, a ); }
+Chuck_DL_Func * make_new_op_binary( const char * t, ae_Operator op, f_gfun gfun )
+{
+    // allocate
+    Chuck_DL_Func * f = new Chuck_DL_Func( t, (string("@operator")+op2str(op)).c_str(), (t_CKUINT)gfun, ae_fp_gfun );
+    // set operator overload kind
+    f->opOverloadKind = ckte_op_overload_BINARY;
+    // set the op
+    f->op2overload = op;
+    // return
+    return f;
+}
+Chuck_DL_Func * make_new_op_prefix( const char * t, ae_Operator op, f_gfun gfun )
+{
+    // allocate
+    Chuck_DL_Func * f = new Chuck_DL_Func( t, (string("@operator")+op2str(op)).c_str(), (t_CKUINT)gfun, ae_fp_gfun );
+    // set operator overload kind
+    f->opOverloadKind = ckte_op_overload_UNARY_PRE;
+    // set the op
+    f->op2overload = op;
+    // return
+    return f;
+}
+Chuck_DL_Func * make_new_op_postfix( const char * t, ae_Operator op, f_gfun gfun )
+{
+    // allocate
+    Chuck_DL_Func * f = new Chuck_DL_Func( t, (string("@operator")+op2str(op)).c_str(), (t_CKUINT)gfun, ae_fp_gfun );
+    // set operator overload kind
+    f->opOverloadKind = ckte_op_overload_UNARY_POST;
+    // set the op
+    f->op2overload = op;
+    // return
+    return f;
+}
+
 
 
 
@@ -1401,6 +1445,7 @@ Chuck_DL_Query::Chuck_DL_Query( Chuck_Carrier * carrier, Chuck_DLL * dll )
     register_shreds_watcher = ck_register_shreds_watcher; // 1.5.1.5 (ge & andrew)
     unregister_shreds_watcher = ck_unregister_shreds_watcher; // 1.5.1.5 (ge & andrew)
     register_callback_on_shutdown = ck_register_callback_on_shutdown; // 1.5.2.5 (ge)
+    register_callback_on_srate_update = ck_register_callback_on_srate_update; // 1.5.4.2 (ge)
     m_carrier = carrier;
     dll_ref = dll; // 1.5.1.3 (ge) added
 
@@ -1413,13 +1458,13 @@ Chuck_DL_Query::Chuck_DL_Query( Chuck_Carrier * carrier, Chuck_DLL * dll )
     if( m_carrier != NULL )
     {
         // get the actual runtime sample rate
-        srate = m_carrier->vm->srate();
+        m_srate = m_carrier->vm->srate();
     }
     else
     {
         // set to something invalid...
         // (instead of default sample rate, which could be harder to notice / debug)
-        srate = 0;
+        m_srate = 0;
     }
     // get DL API reference | 1.5.1.5
     m_api = Chuck_DL_Api::instance();
@@ -1449,6 +1494,19 @@ void Chuck_DL_Query::clear()
     classes.clear();
     op_overloads.clear();
 }
+
+
+
+
+//-----------------------------------------------------------------------------
+// name: srate()
+// desc: get sample rate (to be called by host only; chugins use API->vm->srate)
+//-----------------------------------------------------------------------------
+t_CKUINT Chuck_DL_Query::srate()
+{
+    return m_srate;
+}
+
 
 
 
@@ -3037,6 +3095,10 @@ void * dlopen( const char * path, int mode )
     std::replace( platformPath.begin(), platformPath.end(), '/', '\\' );
     // the dll search path to add
     string dll_path = extract_filepath_dir( platformPath );
+    // if empty string, use current directory
+    if( dll_path == "" ) dll_path = ".\\";
+    // AddDllDirectory expects only fullpaths
+    dll_path = get_full_path( dll_path, TRUE );
     // the relateive _deps directory
     string dll_deps_path = dll_path + "_deps\\";
     // convert to wchar

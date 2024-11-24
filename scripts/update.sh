@@ -59,6 +59,7 @@ function update_chugins() {
 	update_new_chugin AmbPan && \
 	update_new_chugin Binaural && \
 	update_new_chugin Bitcrusher && \
+	update_new_chugin ConvRev && \
 	update_new_chugin Elliptic && \
 	update_new_chugin ExpDelay && \
 	update_new_chugin ExpEnv && \
@@ -66,6 +67,7 @@ function update_chugins() {
 	update_new_chugin FoldbackSaturator && \
 	update_new_chugin GVerb && \
 	update_new_chugin KasFilter && \
+	update_new_chugin Line && \
 	update_new_chugin MagicSine && \
 	update_new_chugin Mesh2D && \
 	update_new_chugin MIAP && \

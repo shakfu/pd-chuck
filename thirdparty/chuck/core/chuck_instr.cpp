@@ -1965,54 +1965,56 @@ void Chuck_Instr_vec4_Divide_float_Assign::execute( Chuck_VM * vm, Chuck_VM_Shre
 
 
 
+
 #pragma mark === String Arithmetic ===
 
 
 //-----------------------------------------------------------------------------
 // name: execute()
 // desc: string + string
+//       (no longer used; string concat now handled by op overloading)
 //-----------------------------------------------------------------------------
-void Chuck_Instr_Add_string::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
-{
-    t_CKUINT *& reg_sp = (t_CKUINT *&)shred->reg->sp;
-    Chuck_String * lhs = NULL;
-    Chuck_String * rhs = NULL;
-    Chuck_String * result = NULL;
-
-    // pop word from reg stack
-    pop_( reg_sp, 2 );
-    // left
-    lhs = (Chuck_String *)(*(reg_sp));
-    // right
-    rhs = (Chuck_String *)(*(reg_sp+1));
-
-    // make sure no null
-    if( !rhs || !lhs ) goto null_pointer;
-
-    // make new string
-    result = (Chuck_String *)instantiate_and_initialize_object( vm->env()->ckt_string, shred );
-
-    // concat
-    // result->str = lhs->str + rhs->str;
-    result->set( lhs->str() + rhs->str() );
-
-    // push the reference value to reg stack
-    push_( reg_sp, (t_CKUINT)(result) );
-
-    return;
-
-null_pointer:
-    // we have a problem
-    EM_exception(
-        "NullPointer: (string + string) on line[%lu] in shred[id=%lu:%s]",
-        m_linepos, shred->xid, shred->name.c_str() ); // , shred->pc );
-    goto done;
-
-done:
-    // do something!
-    shred->is_running = FALSE;
-    shred->is_done = TRUE;
-}
+//void Chuck_Instr_Add_string::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
+//{
+//    t_CKUINT *& reg_sp = (t_CKUINT *&)shred->reg->sp;
+//    Chuck_String * lhs = NULL;
+//    Chuck_String * rhs = NULL;
+//    Chuck_String * result = NULL;
+//
+//    // pop word from reg stack
+//    pop_( reg_sp, 2 );
+//    // left
+//    lhs = (Chuck_String *)(*(reg_sp));
+//    // right
+//    rhs = (Chuck_String *)(*(reg_sp+1));
+//
+//    // make sure no null
+//    if( !rhs || !lhs ) goto null_pointer;
+//
+//    // make new string
+//    result = (Chuck_String *)instantiate_and_initialize_object( vm->env()->ckt_string, shred );
+//
+//    // concat
+//    // result->str = lhs->str + rhs->str;
+//    result->set( lhs->str() + rhs->str() );
+//
+//    // push the reference value to reg stack
+//    push_( reg_sp, (t_CKUINT)(result) );
+//
+//    return;
+//
+//null_pointer:
+//    // we have a problem
+//    EM_exception(
+//        "NullPointer: (string + string) on line[%lu] in shred[id=%lu:%s]",
+//        m_linepos, shred->xid, shred->name.c_str() ); // , shred->pc );
+//    goto done;
+//
+//done:
+//    // do something!
+//    shred->is_running = FALSE;
+//    shred->is_done = TRUE;
+//}
 
 
 
@@ -2473,17 +2475,41 @@ void Chuck_Instr_Reg_Dup_Last2::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
 
 
 //-----------------------------------------------------------------------------
-// name: execute()
-// desc: ...
+// allocate memory in special-primitive storage; used for vec2/3/4 member function calls
+// 1.5.4.2 (ge) added as part of #special-primitive-member-func-from-literal
 //-----------------------------------------------------------------------------
-void Chuck_Instr_Reg_Dup_Last_As_Pointer::execute(
-     Chuck_VM * vm, Chuck_VM_Shred * shred )
+static t_CKBYTE * special_primitive_alloc( const t_CKBYTE * copyFrom, t_CKUINT numBytes )
 {
-    t_CKUINT *& reg_sp = (t_CKUINT *&)shred->reg->sp;
-    t_CKBYTE * where = (t_CKBYTE *)shred->reg->sp;
-
+    t_CKBYTE * copy = new t_CKBYTE[numBytes];
+    memcpy( copy, copyFrom, numBytes );
+    return copy;
+}
+//-----------------------------------------------------------------------------
+// reclaim memory in special-primitive storage; used for vec2/3/4 member function calls
+// 1.5.4.2 (ge) added as part of #special-primitive-member-func-from-literal
+//-----------------------------------------------------------------------------
+static void special_primitive_cleanup( t_CKBYTE * reclaimMe )
+{
+    CK_SAFE_DELETE_ARRAY( reclaimMe );
+}
+//-----------------------------------------------------------------------------
+// name: execute() | 1.5.4.2 (ge) added
+// desc: assume a (primitive, e.g., vec2/3/4) value on reg stack, pop from stack,
+//       put into special-primitive storage, push its address to reg
+//       stack for a potential function call #special-primitive-member-func-from-literal
+//-----------------------------------------------------------------------------
+void Chuck_Instr_Reg_Transmute_Value_To_Pointer::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
+{
+    // stack pointer
+    t_CKBYTE *& reg_sp = (t_CKBYTE *&)shred->reg->sp;
+    // pop the specified number of bytes
+    pop_( reg_sp, m_val );
+    // allocate
+    t_CKBYTE * ptr = special_primitive_alloc( reg_sp, m_val );
+    // get as uint pointer so the push_() pointer arithmetic works correctly
+    t_CKUINT *& the_sp = (t_CKUINT *&)reg_sp;
     // push pointer into reg stack
-    push_( reg_sp, (t_CKUINT)(where-(m_val*sz_WORD)) );
+    push_( the_sp, (t_CKUINT)ptr );
 }
 
 
@@ -4381,7 +4407,8 @@ t_CKBOOL initialize_object( Chuck_Object * object, Chuck_Type * type, Chuck_VM_S
     // REFACTOR-2017: added | 1.5.1.5 (ge & andrew) moved here from instantiate_...
     object->setOriginVM( vm );
     // set origin shred for non-ugens | 1.5.1.5 (ge & andrew) moved here from instantiate_...
-    if( !type->ugen_info && setShredOrigin ) object->setOriginShred( shred );
+    // change logic: if ugen OR setShredOrigin==TRUE | 1.5.4.2 (ge) part of #ugen-refs
+    if( type->ugen_info || setShredOrigin ) object->setOriginShred( shred );
 
     // allocate virtual table
     object->vtable = new Chuck_VTable;
@@ -4410,15 +4437,24 @@ t_CKBOOL initialize_object( Chuck_Object * object, Chuck_Type * type, Chuck_VM_S
     {
         // ugen
         Chuck_UGen * ugen = (Chuck_UGen *)object;
+        //---------------------------------------
         // UGens: needs shred for auto-disconnect when shred is removed
         // 1.5.1.5 (ge & andrew) moved from instantiate_and_initialize_object()
+        //---------------------------------------
+        // 1.5.4.2 (ge) revisiting the above mechanism, part of #ugen-refs
+        // now UGens are not ref-counted by shred, is subject to the normal GC,
+        // and when refcount goes to 0, will remove it self from UGen graph
+        //---------------------------------------
         if( shred )
         {
-            // add ugen to shred (ref-counted)
+            // register ugen with originShred; if the shred is preemptively removed
+            // (e.g., through OTF / Machine.remove()), it will trigger a ugen_detach()
+            // to disconnect UGens that were created on it...
+            // 1.5.4.2 (ge) no longer ref-counted as part of #ugen-refs
+            // FYI the ugen's originShred should be set already (above) for UGens
             shred->add( ugen );
-            // add shred to ugen (ref-counted) | 1.5.1.5 (ge) was: ugen->shred = shred;
-            object->setOriginShred( shred );
         }
+        //---------------------------------------
         // set tick
         if( type->ugen_info->tick ) ugen->tick = type->ugen_info->tick;
         // added 1.3.0.0 -- tickf for multi-channel tick
@@ -4433,6 +4469,10 @@ t_CKBOOL initialize_object( Chuck_Object * object, Chuck_Type * type, Chuck_VM_S
         for( t_CKUINT i = 0; i < ugen->m_multi_chan_size; i++ )
         {
             // allocate ugen for each | REFACTOR-2017: added ugen->vm
+            // NOTE the channels currently are also detached as part of the
+            // origin shred's ugen_detach() routine when the shred
+            // is removed; as of 1.5.4.2, however, ugens are no longer
+            // reference-counted when added to their origin shreds
             Chuck_Object * obj = instantiate_and_initialize_object(
                 ugen->originVM()->env()->ckt_ugen, ugen->originShred(), ugen->originVM() );
             // cast to ugen
@@ -4495,9 +4535,11 @@ Chuck_Object * instantiate_and_initialize_object( Chuck_Type * type, Chuck_VM * 
 
 //-----------------------------------------------------------------------------
 // name: instantiate_and_initialize_object()
-// desc: you probably shouldn't call this version. call the one that takes a
-//       shred if you have a non-null shred, otherwise call the one that
-//       takes a vm
+// desc: instiate and initialize a ChucK Object of a particular Type
+//       NOTE: the returned Object will have a reference count of 0
+//       NOTE: you probably shouldn't call this version. call the one that
+//       takes a shred if you have a non-null shred, otherwise call the one
+//       that takes a vm
 //-----------------------------------------------------------------------------
 Chuck_Object * instantiate_and_initialize_object( Chuck_Type * type, Chuck_VM_Shred * shred, Chuck_VM * vm )
 {
@@ -5310,9 +5352,10 @@ error_overflow:
 const char * Chuck_Instr_Func_Call_Member::params() const
 {
     static char buffer[CK_PRINT_BUF_LENGTH];
-    snprintf( buffer, CK_PRINT_BUF_LENGTH, "%s, %s",
+    snprintf( buffer, CK_PRINT_BUF_LENGTH, "%s, %s, %s",
               m_func_ref ? m_func_ref->signature(FALSE,FALSE).c_str() : "[null]",
-              m_arg_convention == CK_FUNC_CALL_THIS_IN_BACK ? "this:back" : "this:front" );
+              m_arg_convention == CK_FUNC_CALL_THIS_IN_BACK ? "this:back" : "this:front",
+              m_special_primitive_cleanup_this ? "transmute:yes" : "transmute:no" );
     return buffer;
 }
 
@@ -5328,6 +5371,8 @@ void Chuck_Instr_Func_Call_Member::execute( Chuck_VM * vm, Chuck_VM_Shred * shre
     t_CKUINT *& mem_sp = (t_CKUINT *&)shred->mem->sp;
     t_CKUINT *& reg_sp = (t_CKUINT *&)shred->reg->sp;
     Chuck_DL_Return retval;
+    // 1.5.4.2 (ge) added; #special-primitive-member-func-from-literal
+    t_CKUINT ckTHIS = 0;
 
     // pop word
     pop_( reg_sp, 2 );
@@ -5381,6 +5426,9 @@ void Chuck_Instr_Func_Call_Member::execute( Chuck_VM * vm, Chuck_VM_Shred * shre
         for( t_CKUINT i = 0; i < stack_depth; i++ )
             *mem_sp2++ = *reg_sp2++;
     }
+
+    // remember THIS #special-primitive-member-func-from-literal
+    ckTHIS = (t_CKUINT)(*mem_sp);
 
     // check the function pointer kind: ctor or mfun?
     if( func->native_func_kind == ae_fp_ctor ) // ctor
@@ -5459,6 +5507,16 @@ void Chuck_Instr_Func_Call_Member::execute( Chuck_VM * vm, Chuck_VM_Shred * shre
         //          e.g., string Sndbuf.read(string)
         func_release_args( vm, m_func_ref->def()->arg_list, (t_CKBYTE *)(mem_sp+1) );
     }
+
+    // check if we need to do special-primitive cleanup | 1.5.4.2 (ge) added
+    // this is for special primitives that have "member" functions
+    // e.g., vec2/3/4 -- specifically, this supports calling a "member" function
+    // from a literal value (i.e., not a variable) -- e.g., @(1,0).magnitude()
+    // NOTE: this approach is cursed because it adds more special case treatment
+    // to existing special cases for special primitives; if there is any silver
+    // lining, it might be that this logic is isolated and contained
+    // (see #special-primitive-member-func-from-literal for related code)
+    if( m_special_primitive_cleanup_this ) special_primitive_cleanup( (t_CKBYTE *)ckTHIS );
 
     // pop the stack pointer
     mem_sp -= push;
@@ -8245,75 +8303,76 @@ done:
 
 //-----------------------------------------------------------------------------
 // name: execute()
-// desc: ...
+// desc: various string ops
+//       (no longer used; string ops now handled more properly by op overloads)
 //-----------------------------------------------------------------------------
-void Chuck_Instr_Op_string::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
-{
-    t_CKUINT *& sp = (t_CKUINT *&)shred->reg->sp;
-    Chuck_String * lhs = NULL;
-    Chuck_String * rhs = NULL;
-
-    // pop
-    pop_( sp, 2 );
-    // get the string references
-    lhs = (Chuck_String *)*sp;
-    rhs = (Chuck_String *)*(sp + 1);
-    // neither should be null
-    if( !lhs || !rhs ) goto null_pointer;
-
-    // look
-    switch( m_val )
-    {
-    case ae_op_eq:
-        push_( sp, lhs->str() == rhs->str() );
-    break;
-
-    case ae_op_neq:
-        push_( sp, lhs->str() != rhs->str() );
-    break;
-
-    case ae_op_lt:
-        push_( sp, lhs->str() < rhs->str() );
-    break;
-
-    case ae_op_le:
-        push_( sp, lhs->str() <= rhs->str() );
-    break;
-
-    case ae_op_gt:
-        push_( sp, lhs->str() > rhs->str() );
-    break;
-
-    case ae_op_ge:
-        push_( sp, lhs->str() >= rhs->str() );
-    break;
-
-    default:
-        goto invalid_op;
-    break;
-    }
-
-    return;
-
-null_pointer:
-    // we have a problem
-    EM_exception(
-        "NullPointer: (string op) on line[%lu] in shred[id=%lu:%s]",
-        m_linepos, shred->xid, shred->name.c_str() );
-    goto done;
-
-invalid_op:
-    // we have a problem
-    EM_exception(
-        "InvalidStringOp: '%s' on line[%lu] in shred[id=%lu:%s]",
-        op2str((ae_Operator)m_val), m_linepos, shred->xid, shred->name.c_str() );
-    goto done;
-
-done:
-    // do something!
-    shred->is_running = FALSE;
-    shred->is_done = TRUE;
-}
+//void Chuck_Instr_Op_string::execute( Chuck_VM * vm, Chuck_VM_Shred * shred )
+//{
+//    t_CKUINT *& sp = (t_CKUINT *&)shred->reg->sp;
+//    Chuck_String * lhs = NULL;
+//    Chuck_String * rhs = NULL;
+//
+//    // pop
+//    pop_( sp, 2 );
+//    // get the string references
+//    lhs = (Chuck_String *)*sp;
+//    rhs = (Chuck_String *)*(sp + 1);
+//    // neither should be null
+//    if( !lhs || !rhs ) goto null_pointer;
+//
+//    // look
+//    switch( m_val )
+//    {
+//    case ae_op_eq:
+//        push_( sp, lhs->str() == rhs->str() );
+//    break;
+//
+//    case ae_op_neq:
+//        push_( sp, lhs->str() != rhs->str() );
+//    break;
+//
+//    case ae_op_lt:
+//        push_( sp, lhs->str() < rhs->str() );
+//    break;
+//
+//    case ae_op_le:
+//        push_( sp, lhs->str() <= rhs->str() );
+//    break;
+//
+//    case ae_op_gt:
+//        push_( sp, lhs->str() > rhs->str() );
+//    break;
+//
+//    case ae_op_ge:
+//        push_( sp, lhs->str() >= rhs->str() );
+//    break;
+//
+//    default:
+//        goto invalid_op;
+//    break;
+//    }
+//
+//    return;
+//
+//null_pointer:
+//    // we have a problem
+//    EM_exception(
+//        "NullPointer: (string op) on line[%lu] in shred[id=%lu:%s]",
+//        m_linepos, shred->xid, shred->name.c_str() );
+//    goto done;
+//
+//invalid_op:
+//    // we have a problem
+//    EM_exception(
+//        "InvalidStringOp: '%s' on line[%lu] in shred[id=%lu:%s]",
+//        op2str((ae_Operator)m_val), m_linepos, shred->xid, shred->name.c_str() );
+//    goto done;
+//
+//done:
+//    // do something!
+//    shred->is_running = FALSE;
+//    shred->is_done = TRUE;
+//}
 
 
 

@@ -1249,13 +1249,14 @@ public:
 
 //-----------------------------------------------------------------------------
 // name: struct Chuck_Instr_Add_string
-// desc: ...
+// desc: string + string
+//       (no longer used; string concat now handled by op overloading)
 //-----------------------------------------------------------------------------
-struct Chuck_Instr_Add_string : public Chuck_Instr_Binary_Op
-{
-public:
-    virtual void execute( Chuck_VM * vm, Chuck_VM_Shred * shred );
-};
+//struct Chuck_Instr_Add_string : public Chuck_Instr_Binary_Op
+//{
+//public:
+//    virtual void execute( Chuck_VM * vm, Chuck_VM_Shred * shred );
+//};
 
 
 
@@ -2282,14 +2283,14 @@ public:
 
 
 //-----------------------------------------------------------------------------
-// name: struct Chuck_Instr_Reg_Dup_Last_As_Pointer
+// name: struct Chuck_Instr_Reg_Transmute_Value_To_Pointer
 // desc: duplicate last value on stack as pointer; 1.3.5.3
 //-----------------------------------------------------------------------------
-struct Chuck_Instr_Reg_Dup_Last_As_Pointer : public Chuck_Instr_Unary_Op
+struct Chuck_Instr_Reg_Transmute_Value_To_Pointer : public Chuck_Instr_Unary_Op
 {
 public:
-    Chuck_Instr_Reg_Dup_Last_As_Pointer( t_CKUINT sizeInWords )
-    { this->set( sizeInWords ); }
+    Chuck_Instr_Reg_Transmute_Value_To_Pointer( t_CKUINT sizeInBytes )
+    { this->set( sizeInBytes ); }
     virtual void execute( Chuck_VM * vm, Chuck_VM_Shred * shred );
 };
 
@@ -3331,8 +3332,10 @@ struct Chuck_Instr_Func_Call_Member : public Chuck_Instr_Unary_Op
 {
 public:
     Chuck_Instr_Func_Call_Member( t_CKUINT ret_size, Chuck_Func * func_ref,
-                                  ck_Func_Call_Arg_Convention arg_convention = CK_FUNC_CALL_THIS_IN_BACK )
-    { this->set( ret_size ); m_func_ref = func_ref; m_arg_convention = arg_convention; }
+                                  ck_Func_Call_Arg_Convention arg_convention = CK_FUNC_CALL_THIS_IN_BACK,
+                                  t_CKBOOL special_primitive_cleanup_this = FALSE )
+    { this->set( ret_size ); m_func_ref = func_ref; m_arg_convention = arg_convention;
+      m_special_primitive_cleanup_this = special_primitive_cleanup_this; }
 
 public:
     // for carrying out instruction
@@ -3341,11 +3344,14 @@ public:
     virtual const char * params() const;
 
 public:
-    // 1.5.0.0 (ge) | added for arg list cleanup
+    // 1.5.0.0 (ge) added for arg list cleanup
     Chuck_Func * m_func_ref;
     // when applicable, this flag indicates whether this/type is at the
     // beginning or at the end of the argument block on the reg stack
     ck_Func_Call_Arg_Convention m_arg_convention;
+    // 1.5.4.2 (ge) added only for special primitives that have "member" functions (vec2/3/4)
+    // #special-primitive-member-func-from-literal
+    t_CKBOOL m_special_primitive_cleanup_this;
 };
 
 
@@ -4392,16 +4398,17 @@ protected:
 
 //-----------------------------------------------------------------------------
 // name: struct Chuck_Instr_Op_string
-// desc: ...
+// desc: // desc: various string ops
+//       (no longer used; string ops now handled more properly by op overloads)
 //-----------------------------------------------------------------------------
-struct Chuck_Instr_Op_string : public Chuck_Instr_Unary_Op
-{
-public:
-    Chuck_Instr_Op_string( t_CKUINT v ) { this->set( v ); }
-
-public:
-    virtual void execute( Chuck_VM * vm, Chuck_VM_Shred * shred );
-};
+//struct Chuck_Instr_Op_string : public Chuck_Instr_Unary_Op
+//{
+//public:
+//    Chuck_Instr_Op_string( t_CKUINT v ) { this->set( v ); }
+//
+//public:
+//    virtual void execute( Chuck_VM * vm, Chuck_VM_Shred * shred );
+//};
 
 
 
