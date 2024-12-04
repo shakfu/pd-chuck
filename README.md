@@ -30,7 +30,6 @@ Also included are the following:
 
 Note that `pd-chuck` has a sibling in the [chuck-max](https://github.com/shakfu/chuck-max) project.
 
-
 ## Usage
 
 The `pd-chuck` package consists of the following folders:
@@ -61,12 +60,9 @@ pd-chuck
     └── chugins
 ```
 
-Start with the `chuck~.maxhelp` file in the `help` folder for an overview of the external's features. The `media` folder also has a [pdf cheatsheet](https://github.com/shakfu/chuck-max/blob/main/media/chuck-max-cheatsheat.pdf) of available `chuck~` methods.
+Start with the `help-chuck.pd` file in the `chuck_tilde` folder for an overview of the external's features.
 
-The `examples` directory contains all chuck examples from the chuck repo, and some additional folders: `chugins` containing chugin binaries, `fauck`, containing `faust.chug` examples, `faust`, containing the faust stdlib, `max` chuck files which are used by the max patchers, and `test`, chuck files used by max patcher test files.
-
-In the `patchers` section, there are quite a few patchers demonstrating one feature or other in the `tests` folder, and the `contrib` folder contains excellents advanced examples of uses by `chuck-max` contributors.
-
+The `examples` directory in the same folder contains all chuck examples from the chuck repo, and some additional folders: `chugins` containing chugin binaries, `fauck`, containing `faust.chug` examples, `faust`, containing the faust stdlib, `pd` chuck files which are used by pd patches. There are also quite a few patches demonstrating one feature or other in the `tests` folder,
 
 ## Overview
 
@@ -133,7 +129,7 @@ You change a global variable by sending a `<variable-name> <value>` message to a
 
 *Note*: You can't use the ChucK types of `dur` or `time` in pd. Also, while in the above case, the pd msg seems untyped, it must match the type of the chuck global variable. So if you connect a pd number or flownum object to a message box, it needs to match the type of the global variable (int/float).
 
-See `help/chuck~.maxhelp` and patchers in the `patchers/tests` directory for a demonstration of current features.
+See `chuck_tilde/help-chuck.pd` and patchers in the `tests` directory for a demonstration of current features.
 
 ### Parameter Messages using Callbacks (Advanced Usage)
 
@@ -165,7 +161,6 @@ In addition to the typical way of changing parameters there is also an extensive
 | Set int associative array value   | global variable    | `set int[k] <name> <key> <value>`    |
 | Set float associative array value | global variable    | `set float[k] <name> <key> <value>`  |
 
-
 ## Building
 
 pd-chuck is currently developed and tested on macOS and Linux. For both of these platforms, it provides a make-based frontend and uses `cmake` as the backend build system.
@@ -190,7 +185,6 @@ sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev
 
 Each build option has a Makefile target as follows:
 
-
 | Makefile target        | alias        | external | chugins | faust | warpbuf | .wav   | .mp3    | .others |
 | :--------------------- | :----------- | :----: | :-------: | :---: | :-----: | :----: | :-----: | :-----: |
 | `full`                 |              | x      | x         | x     | x       | x      | x       | x       |
@@ -213,17 +207,15 @@ Note: *.others* includes support for .flac, .ogg, .opus, and .vorbis formats
 To get a sense of build times, the following table (for macOS builds on an M1 Macbook Air) should be illustrative:
 
 | build command                | build time (secs)  |
-| :--------------------------- | :----------------- | 
-| `make macos-base-native`     | 55.074             |   
-| `make macos-adv-brew `       | 1:29.24            |   
-| `make macos-base-universal ` | 1:44.31            |   
-| `make macos-adv-light`       | 2:27.28            |   
-| `make macos-adv-nomp3`       | 2:50.15            |   
-| `make macos-adv-full`        | 3:14.91            |   
-
+| :--------------------------- | :----------------- |
+| `make macos-base-native`     | 55.074             |
+| `make macos-adv-brew`        | 1:29.24            |
+| `make macos-base-universal`  | 1:44.31            |
+| `make macos-adv-light`       | 2:27.28            |
+| `make macos-adv-nomp3`       | 2:50.15            |
+| `make macos-adv-full`        | 3:14.91            |
 
 If you'd rather use the more verbose `cmake` build instructions directly, feel free to look at the `Makefile` which is quite minimal.
-
 
 ### A. The Base System
 
@@ -251,7 +243,6 @@ The complete list of base build options are:
 
 - `make linux-base-all`: builds the external on Linux with support for ALSA, PULSE and JACK audio drivers.
 
-
 ### B. The Advanced System
 
 The advanced system consists of the base system + two advanced chugins, `Faust.chug` and `WarpBuf.chug`:
@@ -277,7 +268,6 @@ If you have installed the prerequisites above, it should be possible the advance
 - `make linux-adv-jack`: builds the external on Linux with advanced options using the JACK audio driver.
 
 - `make linux-adv-all`: builds the external on Linux with advanced options and support for ALSA, PULSE and JACK audio drivers.
-
 
 ## Credits
 
