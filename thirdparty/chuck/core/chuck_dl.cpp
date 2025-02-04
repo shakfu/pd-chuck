@@ -60,7 +60,7 @@ using namespace std;
 //   (=v ChuMP =v ChucK Manager of Packages)
 //-----------------------------------------------------------------------------
 #if defined(__PLATFORM_APPLE__)
-char g_default_path_system[] = "/usr/local/lib/chuck:/Library/Application Support/ChucK/chugins";
+char g_default_path_system[] = "/usr/lib/chuck:/usr/local/lib/chuck:/Library/Application Support/ChucK/chugins";
 char g_default_path_packages[] = "~/.chuck/packages";
 char g_default_path_user[] = "~/Library/Application Support/ChucK/chugins:~/.chuck/lib";
 #elif defined(__PLATFORM_WINDOWS__)
@@ -68,7 +68,7 @@ char g_default_path_system[] = "C:\\Windows\\system32\\ChucK;C:\\Program Files\\
 char g_default_path_packages[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\packages";
 char g_default_path_user[] = "C:\\Users\\%USERNAME%\\Documents\\ChucK\\chugins";
 #else // Linux / Cygwin
-char g_default_path_system[] = "/usr/local/lib/chuck";
+char g_default_path_system[] = "/usr/lib/chuck:/usr/local/lib/chuck";
 char g_default_path_packages[] = "~/.chuck/packages";
 char g_default_path_user[] = "~/.chuck/lib";
 #endif
@@ -1935,7 +1935,7 @@ static t_CKBOOL CK_DLL_CALL ck_get_mvar(Chuck_DL_Api::Object o, const char * nam
         // see if name is correct type
         if (value->type->xid != basic_type) continue;
         // see if var is a member var
-        if (!value->is_member) continue;
+        if (!value->is_instance_member) continue;
 
         // ladies and gentlemen, we've got it
         var = value;
@@ -3071,6 +3071,8 @@ Chuck_VM_Shred * CK_DLL_CALL ck_shred_parent( Chuck_VM_Shred * shred )
 //-----------------------------------------------------------------------------
 #if defined(__PLATFORM_WINDOWS__)
 #include <system_error> // std::system_category() | 1.5.1.5
+#include <algorithm> // std::replace() | 1.5.4.5
+
 extern "C"
 {
 

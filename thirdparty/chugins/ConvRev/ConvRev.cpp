@@ -20,10 +20,10 @@
 #endif
 
 // general includes
-#include <thread>
 #include <iostream>
 #include <mutex>
 #include <string>
+#include <thread>
 
 #if __EMSCRIPTEN__
 #include <thread>

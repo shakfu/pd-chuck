@@ -663,6 +663,8 @@ public: // running the machine
     // get currently executing shred | 1.5.1.8 (ge) now in VM, in addition to shreduler
     // NOTE this can only be non-NULL during a Chuck_VM::compute() cycle
     Chuck_VM_Shred * get_current_shred() const;
+    // remove all shreds asap (thread-safe) | 1.5.4.4 (ge) added
+    void remove_all_shreds();
 
 public: // invoke functions
     t_CKBOOL invoke_static( Chuck_VM_Shred * shred );
@@ -770,6 +772,10 @@ protected:
     void dump_shred( Chuck_VM_Shred * shred );
     void release_dump();
 
+    // special flag to remove all shreds in the VM...
+    // as soon as safely possible | 1.5.4.4 (ge) added
+    t_CKBOOL m_asap_remove_all_shreds;
+
 protected:
     t_CKBOOL m_init;
     std::string m_last_error;
@@ -791,6 +797,12 @@ protected:
 
     // TODO: vector? (added 1.3.0.0 to fix uber-crash)
     std::list<CBufferSimple *> m_event_buffers;
+
+protected:
+    // 1.5.4.3 (ge) added static initializer run queue
+    // types that need static init are added to this by the emitter
+    // this queue is checked and run in immediate mode (and on a dedicated shred)
+    std::list<Chuck_Type *> m_static_init_queue;
 
 protected:
     // 1.4.1.0 (jack): manager for global variables
@@ -965,7 +977,7 @@ public:
 public:
     // set up the invoker; needed before invoke()
     t_CKBOOL setup( Chuck_Func * func, Chuck_VM * vm );
-    // invoke the member function
+    // invoke the dtor
     void invoke( Chuck_Object * obj, Chuck_VM_Shred * parent_shred = NULL );
     // clean up
     void cleanup();
@@ -975,6 +987,38 @@ public:
     Chuck_VM_Shred * invoker_shred;
     // instruction to update on invoke: pushing this pointer
     Chuck_Instr_Reg_Push_Imm * instr_pushThis;
+};
+
+
+
+
+//-----------------------------------------------------------------------------
+// name: struct Chuck_VM_SInitInvoker | 1.5.4.3 (ge) added #2024-static-init
+// desc: aparatus for calling chuck-defined class static initialization
+//-----------------------------------------------------------------------------
+struct Chuck_VM_SInitInvoker
+{
+public:
+    // constructor
+    Chuck_VM_SInitInvoker();
+    // destructor
+    ~Chuck_VM_SInitInvoker();
+
+public:
+    // set up the invoker; needed before invoke()
+    t_CKBOOL setup( Chuck_Type * type, Chuck_VM_Code * static_init_code, Chuck_VM * vm );
+    // invoke the static function
+    void invoke( Chuck_VM_Shred * parent_shred = NULL );
+    // clean up
+    void cleanup();
+
+public:
+    // dedicated shred to call the static on, since this could be running "outside of chuck time"
+    Chuck_VM_Shred * invoker_shred;
+    // the code to run
+    Chuck_VM_Code * the_code;
+    // the class
+    Chuck_Type * the_class;
 };
 
 
