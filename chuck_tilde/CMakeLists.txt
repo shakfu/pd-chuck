@@ -79,7 +79,7 @@ target_link_libraries(${PROJECT_NAME}
     "$<$<PLATFORM_ID:Darwin>:-framework Foundation>"
     "$<$<PLATFORM_ID:Darwin>:-F/System/Library/PrivateFrameworks>"
     "$<$<PLATFORM_ID:Darwin>:-weak_framework MultitouchSupport>"
-    $<$<PLATFORM_ID:Darwin>:-lc++>
+    # $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
     $<$<PLATFORM_ID:Linux>:-lc>
     $<$<PLATFORM_ID:Linux,Darwin>:-lm>

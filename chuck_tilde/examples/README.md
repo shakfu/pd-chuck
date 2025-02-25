@@ -19,8 +19,7 @@ Many other things ChucK
     https://chuck.cs.princeton.edu/
 
 
-
-Based on chuck version `1.5.4.2-dev` standard examples with the following changes:
+For `chuck-max`, the following changes was made to the chuck examples directory:
 
 - removed
     
@@ -28,11 +27,39 @@ Based on chuck version `1.5.4.2-dev` standard examples with the following change
 
 - added:
     
-    - `pd`, for pd specific chuck files
+    - `pd`, for purepdata specific chuck files
 
-    - `test`, for tests related to `pd`
+    - `test`, for extra tests related to `pd-chuck`
 
     - `util`, for misc utilities such as `help.ck` and `status.ck`
 
     - `chugins`, for additional package-level chugins
+
+    - `data`, added `amen.wav`
+    
+    - `midid/data`, added `africa.mid`, and `yiruma.mid`
+    
+    - `stk/honkeytonk-algo3.ck`
+    
+    - `tests` folder with external specific tests.
+    
+- changed:
+
+    - `effects/autotune.ck` to generout output file in `/tmp/` instead of locally
+
+        ```c++
+        {
+            dac => WvOut2 record => blackhole;
+            // output file name
+            //"./autotuned-obama.wav" => string outfile;
+            "/tmp/autotuned-obama.wav" => string outfile;
+            "./autotuned-obama.wav" => string outfile;
+            // print
+            cherr <= "recording to file: '" <= outfile <= "'..." <= IO.nl();
+            // set output file name
+            //me.dir() + outfile => record.wavFilename;
+            outfile => record.wavFilename;
+            me.dir() + outfile => record.wavFilename;
+        }
+        ```
 

@@ -85,7 +85,7 @@ target_link_options(${CHUGIN_NAME}
     PRIVATE
     $<$<CONFIG:RELEASE>:-s>
     -shared
-    $<$<PLATFORM_ID:Darwin>:-lc++>
+    # $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
 )
 
