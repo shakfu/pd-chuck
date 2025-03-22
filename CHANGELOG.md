@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Updated chuck code base to `1.5.5.1-dev (chai)`
+
 - Updated chuck code base to `1.5.4.5-dev (chai)`
 
 - Updated chuck code base to `1.5.4.3-dev (chai)`
