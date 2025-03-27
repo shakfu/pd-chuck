@@ -8,11 +8,11 @@ FAUST_VERSION = 2.69.3
 
 
 .PHONY: all build \
-		full light nomp3 \
+		full light nomp3 build_fs \
 		macos macos-base-native macos-base-universal macos-adv-brew  \
 		linux linux-base-alsa linux-base-pulse linux-base-jack linux-base-all \
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
-		faust rubberband libsndfile_formats \
+		faust rubberband libsndfile_formats install_sf2 \
 		all_deps light_deps nomp3_deps \
 		test test-audio test-faust test-warpbuf probe-chugins \
 		clean reset sign
@@ -23,6 +23,17 @@ build:
 	@mkdir -p build && \
 		cd build && \
 		cmake .. && \
+		cmake --build . --config Release
+
+build_fs: install_sf2
+	@mkdir -p build && \
+		cd build && \
+		cmake .. \
+			-DENABLE_HOMEBREW=ON \
+			-DENABLE_FLUIDSYNTH=ON \
+			-DENABLE_EXTRA_FORMATS=ON \
+			-DENABLE_MP3=ON \
+			&& \
 		cmake --build . --config Release
 
 faust:
@@ -53,6 +64,9 @@ light_deps: faust rubberband
 nomp3_deps: faust rubberband libsndfile_formats
 	@./scripts/deps/install_libmpg123_gyp.sh && \
 	./scripts/deps/install_libsndfile_nomp3.sh
+
+install_sf2:
+	@./scripts/download_sf2.sh
 
 macos: macos-adv-brew
 

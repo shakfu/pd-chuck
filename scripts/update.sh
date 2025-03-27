@@ -64,6 +64,7 @@ function update_chugins() {
 	update_new_chugin ExpDelay && \
 	update_new_chugin ExpEnv && \
 	update_new_chugin FIR && \
+	update_new_chugin FluidSynth && \
 	update_new_chugin FoldbackSaturator && \
 	update_new_chugin GVerb && \
 	update_new_chugin KasFilter && \

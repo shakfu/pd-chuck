@@ -14,9 +14,9 @@
 #X obj 196 64 hsl 50 19 0 0.5 0 0 empty empty empty -2 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 276 64 hsl 50 19 0 20 0 0 empty empty empty -2 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X text 227 146 run;
-#X obj 230 313 chuck~ pd/test.ck;
+#X obj 259 320 chuck~ pd/test.ck;
 #X msg 37 247 run warpbuf/test.ck;
-#X msg 39 286 loglevel 5;
+#X msg 23 318 loglevel 5;
 #X msg 148 165 status;
 #X msg 38 187 + test/sine.ck;
 #X msg 413 66 replace 1 stk/honkeytonk-algo1.ck;
@@ -26,12 +26,13 @@
 #X msg 413 42 = 1 stk/honkeytonk-algo3.ck;
 #X msg 419 212 - 1;
 #X msg 165 192 chugins;
-#X obj 232 398 output~;
+#X obj 261 405 output~;
 #X msg 272 164 globals;
 #X msg 275 194 docs;
 #X msg 185 220 vm;
 #X msg 473 212 - 1 2;
 #X msg 39 215 add fauck/fau.ck;
+#X msg 16 286 + fluidsynth/fluidsynth-test.ck;
 #X connect 0 0 15 0;
 #X connect 1 0 15 0;
 #X connect 2 0 15 0;
@@ -62,3 +63,4 @@
 #X connect 30 0 15 0;
 #X connect 31 0 15 0;
 #X connect 32 0 15 0;
+#X connect 33 0 15 0;
