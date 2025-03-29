@@ -20,7 +20,7 @@ Also included are the following:
 
 - The complete set of current chuck examples
 
-- Most of the [base CCRMA chugins](https://github.com/ccrma/chugins) including `WarpBuf`, `Fauck` or `Faust` and `FluidSynth` except for `Ladspa`.
+- All of the [CCRMA chugins](https://github.com/ccrma/chugins) including `WarpBuf`, `Fauck` (`Faust`) and `FluidSynth`.
 
 - Many `pd` patches to test and demonstrate usage.
 
