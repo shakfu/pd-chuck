@@ -92,6 +92,7 @@ function update_chugins() {
 	update_new_chugin WPKorg35 && \
 	update_new_chugin Wavetable && \
 	update_new_chugin WinFuncEnv && \
+	update_new_chugin XML && \
 	rm -rf thirdparty/chugins-new/RegEx/RegEx.vcxproj.filters && \
 	rm -rf thirdparty/chugins-new/chuginate && \
 	mv thirdparty/chugins thirdparty/chugins-old && \
