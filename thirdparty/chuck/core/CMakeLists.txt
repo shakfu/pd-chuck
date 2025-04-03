@@ -89,10 +89,6 @@ add_library(chuck_lib
 	${LO_C_CORE}
 )
 
-
-
-
-
 target_compile_options(chuck_lib
 	PUBLIC
 	$<$<PLATFORM_ID:Darwin>:-stdlib=libc++>

@@ -37,8 +37,8 @@ target_compile_options(${CHUGIN_NAME}
 
 target_compile_definitions(${CHUGIN_NAME}
 	PUBLIC
-	__MACOSX_CORE__
 	HAVE_CONFIG_H
+	$<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
 	$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
 )
 
