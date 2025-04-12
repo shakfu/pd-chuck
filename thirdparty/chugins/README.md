@@ -1,6 +1,16 @@
 # Repository for Officially Supported ChuGins
-[![Build CI](https://github.com/ccrma/chugins/actions/workflows/build.yml/badge.svg)](https://github.com/ccrma/chugins/actions/workflows/build.yml) 
 
+## Note about chugins
+
+most chugins have a standard cmake script except for:
+
+- Fauck
+- Fluidsynth
+- Spectacle
+- WarpBuf
+
+
+## Overview
 A _chugin_ (or ChuGin) is a plug-in for the [ChucK audio programming language](https://github.com/ccrma/chuck). 
 Chugins are loaded at runtime by [ChucK](https://github.com/ccrma/chuck) or [miniAudicle](https://github.com/ccrma/miniAudicle) and are fundmental to extending the capabilities of the language by adding class libraries and audio Unit Generators (UGens) and Unit Analyzers (UAnae). This repository contains a number of chugins maintained for all supported platforms (macOS, Linux, Windows) by the ChucK Team in collaboration with their respective authors (see list below). The ChucK Team invites developers to envision and create new chugins, and to help maintain and evolve existing ones. Join us! [ChucK Discord Server](https://discord.gg/ENr3nurrx8) | [ChucK Community](https://chuck.stanford.edu/community/).
 

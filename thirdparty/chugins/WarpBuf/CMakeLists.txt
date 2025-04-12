@@ -47,7 +47,6 @@ target_compile_options(${CHUGIN_NAME}
 
 target_compile_definitions(${CHUGIN_NAME}
     PUBLIC
-    $<$<PLATFORM_ID:Darwin>:__APPLE__>
     $<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
     $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
     HAVE_CONFIG_H
@@ -68,7 +67,6 @@ target_include_directories(${CHUGIN_NAME}
 target_link_options(${CHUGIN_NAME}
     PUBLIC
     -shared
-    # $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
 )
 

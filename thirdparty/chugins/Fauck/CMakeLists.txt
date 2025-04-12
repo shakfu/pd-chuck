@@ -59,13 +59,12 @@ target_compile_options(${CHUGIN_NAME}
 target_compile_definitions(${CHUGIN_NAME}
     PRIVATE
     FAUCK_VERSION=\"v${VERSION}\"
-    # FAUCK_EXPORTS    
-    $<$<BOOL:${APPLE}>:__APPLE__>
-    $<$<BOOL:${APPLE}>:__MACOSX_CORE__>
-    $<$<BOOL:${APPLE}>:__PLATFORM_APPLE__>
-    $<$<BOOL:${APPLE}>:NOBUNDLE>
-    $<$<BOOL:${LINUX}>:__PLATFORM_LINUX__>
-    $<$<BOOL:${LINUX}>:_GLIBCXX_USE_CXX11_ABI=0>
+    # FAUCK_EXPORTS
+    $<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
+    $<$<PLATFORM_ID:Darwin>:__PLATFORM_APPLE__>
+    $<$<PLATFORM_ID:Darwin>:NOBUNDLE>
+    $<$<PLATFORM_ID:Linux>:__PLATFORM_LINUX__>
+    $<$<PLATFORM_ID:Linux>:_GLIBCXX_USE_CXX11_ABI=0>
     $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__CK_DLL_STATIC__>
 )
 
@@ -85,7 +84,6 @@ target_link_options(${CHUGIN_NAME}
     PRIVATE
     $<$<CONFIG:RELEASE>:-s>
     -shared
-    # $<$<PLATFORM_ID:Darwin>:-lc++>
     $<$<PLATFORM_ID:Linux>:-lstdc++>
 )
 
@@ -115,10 +113,10 @@ target_link_libraries(${CHUGIN_NAME}
 
     ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
     # ${LIBFAUST_DIR}/lib/libfaust.a
-    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
-    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
-    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
-    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 else()
 target_link_libraries(${CHUGIN_NAME}
@@ -133,10 +131,10 @@ target_link_libraries(${CHUGIN_NAME}
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libmpg123.a>
     $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>
     ${LOCAL_LIB}/libsndfile.a
-    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
-    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
-    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
-    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 endif()
 

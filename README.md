@@ -169,18 +169,18 @@ This project provides for building two general variants depending on the need of
 
 1. The *base system* consists of the `chuck~` external and the base CCRMA chugins. This is already more than sufficient for more than 80% of users. The base system is relatively easy to build and only needs a c++ compiler, `cmake`, `make`, `bison` and `flex`.
 
-2. The *advanced system* consists of the base system above plus two chugins which are relatively more challenging to build and use: `Faust.chug` and `WarpBuf.chug`. The specific needs of these chugins requires the installation of `libfaust`, `libsndfile`, `librubberband` and `libsamplerate`, and makes building this variant more involved.
+2. The *advanced system* consists of the base system above plus three chugins which are relatively more challenging to build and use: `Faust.chug`, `WarpBuf.chug` and `FluidSynth.chug`.
 
-On macOS full requirements for both variants these can be installed using [Homebrew](https://brew.sh) as follows:
+On macOS requirements for the variants can be installed using [Homebrew](https://brew.sh) as follows:
 
 ```bash
-brew install cmake bison flex autoconf autogen automake flac libogg libtool libvorbis opus mpg123 lame rubberband libsamplerate
+brew install cmake bison flex fluidsynth automake autogen libtool rubberband libsamplerate
 ```
 
-On Debian Linux the requirements can be installed via:
+On Debian Linux, requirements can be installed via:
 
 ```bash
-sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmpg123-dev libmp3lame-dev libresample1-dev librubberband-dev
+sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmpg123-dev libmp3lame-dev libresample1-dev librubberband-dev libfluidsynth-dev
 ```
 
 Each build option has a Makefile target as follows:
@@ -250,6 +250,8 @@ The advanced system consists of the base system + two advanced chugins, `Faust.c
 1. The [Fauck](https://github.com/ccrma/fauck) chugin contains the full llvm-based [faust](https://faust.grame.fr) engine and dsp platform which makes it quite powerful and also quite large compared to other chugins (at around 45 MB stripped down). It requires at least 2 output channels to work properly. It also uses the [libsndfile](https://github.com/libsndfile/libsndfile) library.
 
 2. The [WarpBuf](https://github.com/ccrma/chugins/tree/main/WarpBuf) chugin makes it possible to time-stretch and independently transpose the pitch of an audio file. It uses the [rubberband](https://github.com/breakfastquay/rubberband), [libsndfile](https://github.com/libsndfile/libsndfile), and [libsamplerate](https://github.com/libsndfile/libsamplerate) libraries.
+
+3. The [FluidSynth](https://www.fluidsynth.org) chugin, enables a real-time software synthesizer based on the SoundFont 2 specifications, (see above for requirements).
 
 If you have installed the prerequisites above, it should be possible the advanced system with one of the following options:
 
