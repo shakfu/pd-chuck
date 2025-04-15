@@ -91,16 +91,13 @@ target_link_libraries(${CHUGIN_NAME}
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libmpg123.a>
     $<$<BOOL:${ENABLE_MP3}>:${local_prefix}/lib/libmp3lame.a>
     ${local_prefix}/lib/libsndfile.a
-    ${local_prefix}/lib/librubberband.a
-    ${local_prefix}/lib/libsamplerate.a
-    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
-    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
-    "$<$<BOOL:${APPLE}>:-framework CoreServices>"
-    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
-    "$<$<BOOL:${APPLE}>:-framework AudioUnit>"
-    "$<$<BOOL:${APPLE}>:-framework AudioToolbox>"
-    "$<$<BOOL:${APPLE}>:-framework AppKit>"
-    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework AudioUnit>"
+    "$<$<PLATFORM_ID:Darwin>:-framework AudioToolbox>"
+    "$<$<PLATFORM_ID:Darwin>:-framework AppKit>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 
 
