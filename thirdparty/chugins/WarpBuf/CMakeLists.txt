@@ -91,10 +91,10 @@ target_link_libraries(${CHUGIN_NAME}
     -lsndfile
     -lrubberband
     -lsamplerate
-    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
-    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
-    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
-    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 else()
 target_link_libraries(${CHUGIN_NAME}
@@ -110,10 +110,10 @@ target_link_libraries(${CHUGIN_NAME}
     ${LOCAL_LIB}/libsndfile.a
     ${LOCAL_LIB}/librubberband.a
     ${LOCAL_LIB}/libsamplerate.a
-    "$<$<BOOL:${APPLE}>:-framework CoreFoundation>"
-    "$<$<BOOL:${APPLE}>:-framework CoreMIDI>"
-    "$<$<BOOL:${APPLE}>:-framework CoreAudio>"
-    "$<$<BOOL:${APPLE}>:-framework Accelerate>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 endif()
 
