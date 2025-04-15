@@ -7,6 +7,7 @@ set(BUILD_SHARED_LIBS ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/chuck_tilde/examples/chugins)
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/chugins)
 
+include(${CMAKE_SOURCE_DIR}/scripts/cmake/fn_add_chugin.cmake)
 
 add_subdirectory(ABSaturator)
 add_subdirectory(AmbPan)

@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added cmake function `add_chugin()` 
+
 - Added support for `XML.chug`
 
 - Added support for `Ladspa.chug`
