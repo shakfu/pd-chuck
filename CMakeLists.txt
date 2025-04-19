@@ -22,7 +22,7 @@ option(ENABLE_MP3 "Enable MP3 support for libsndfile")
 option(ENABLE_EXTRA_FORMATS "Enable extra file formats for libsndfile")
 
 # dev options
-option(DEV_WARNINGS "use additional warning settings durine development")
+option(DEV_WARNINGS "use additional warning settings during development")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
@@ -52,8 +52,11 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "LINUX_PULSE ENABLED: ${LINUX_PULSE}")
 	message(STATUS "LINUX_JACK ENABLED: ${LINUX_JACK}")
 
-    #execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-    #message(STATUS "Architecture: ${ARCHITECTURE}" )
+    # execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+    # message(STATUS "Architecture: ${ARCHITECTURE}" )
+
+    string(REPLACE ":" ";" LINUX_LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
+
 
     # if(DEFINED ARCHITECTURE)
     #     set(LOCAL_LIB /usr/lib/${ARCHITECTURE}-linux-gnu)
@@ -87,6 +90,10 @@ if (APPLE)
         set(LOCAL_LIB ${local_prefix}/lib)
         set(LOCAL_INCLUDE ${local_prefix}/include)
 endif()
+
+
+
+
 message(STATUS "LOCAL_LIB: ${LOCAL_LIB}")
 message(STATUS "LOCAL_INCLUDE: ${LOCAL_INCLUDE}")
 
