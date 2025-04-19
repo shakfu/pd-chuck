@@ -55,7 +55,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     # execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
     # message(STATUS "Architecture: ${ARCHITECTURE}" )
 
-    string(REPLACE ":" ";" LINUX_LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
+    # string(REPLACE ":" ";" LINUX_LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
 
 
     # if(DEFINED ARCHITECTURE)
