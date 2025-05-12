@@ -15,7 +15,7 @@ FAUST_VERSION = 2.69.3
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
 		test test-audio test-faust test-warpbuf probe-chugins \
-		clean reset sign
+		clean reset sign linux-base-fs
 
 all: build
 
@@ -45,6 +45,9 @@ faust:
 rubberband:
 	@./scripts/deps/install_rubberband.sh && \
 	./scripts/deps/install_libsamplerate.sh
+
+libsndfile: libsndfile_formats
+	@./scripts/deps/install_libsndfile.sh
 
 libsndfile_formats:
 	@./scripts/deps/install_libflac.sh && \
@@ -125,28 +128,36 @@ linux-base-alsa:
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
-			-DLINUX_ALSA=ON && \
+			-DLINUX_ALSA=ON \
+			-DENABLE_FLUIDSYNTH=ON \
+			&& \
 		cmake --build . --config Release
 
 linux-base-pulse:
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
-			-DLINUX_PULSE=ON && \
+			-DLINUX_PULSE=ON \
+			-DENABLE_FLUIDSYNTH=ON \
+			&& \
 		cmake --build . --config Release
 
 linux-base-jack:
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
-			-DLINUX_JACK=ON && \
+			-DLINUX_JACK=ON \
+			-DENABLE_FLUIDSYNTH=ON \
+			&& \
 		cmake --build . --config Release
 
 linux-base-all:
 	@mkdir -p build && \
 		cd build && \
 		cmake .. \
-			-DLINUX_ALL=ON && \
+			-DLINUX_ALL=ON \
+			-DENABLE_FLUIDSYNTH=ON \
+			&& \
 		cmake --build . --config Release
 
 linux-adv-alsa: faust
@@ -158,6 +169,7 @@ linux-adv-alsa: faust
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
 			-DENABLE_WARPBUF=ON \
+			-DENABLE_FLUIDSYNTH=ON \
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
@@ -170,6 +182,7 @@ linux-adv-pulse: faust
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
 			-DENABLE_WARPBUF=ON \
+			-DENABLE_FLUIDSYNTH=ON \
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
@@ -182,6 +195,7 @@ linux-adv-jack: faust
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
 			-DENABLE_WARPBUF=ON \
+			-DENABLE_FLUIDSYNTH=ON \
 			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
@@ -194,6 +208,7 @@ linux-adv-all: faust
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
 			-DENABLE_WARPBUF=ON \
+			-DENABLE_FLUIDSYNTH=ON \
 			-DENABLE_FAUCK=O && \
 		cmake --build . --config Release
 

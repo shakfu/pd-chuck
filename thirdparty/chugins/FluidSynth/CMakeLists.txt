@@ -54,7 +54,6 @@ target_include_directories(${CHUGIN_NAME}
     # ${THIRDPARTY}/install/include
     ${local_prefix}/include
     ${CK_SRC_PATH}
-    # /opt/homebrew/opt/fluid-synth/include
 )
 
 target_link_options(${CHUGIN_NAME}
@@ -62,35 +61,44 @@ target_link_options(${CHUGIN_NAME}
     -shared
 )
 
+#string(REPLACE ":" ";" LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
+
+
 target_link_directories(${CHUGIN_NAME}
     PUBLIC
-    # ${THIRDPARTY}/install/lib
-    ${local_prefix}/lib
+    $<$<PLATFORM_ID:Darwin>:${local_prefix}/lib>
+    $<$<PLATFORM_ID:Linux>:${LIBRARY_DIRS}>
 )
 
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
-    -liconv
-    -lreadline
+    $<$<PLATFORM_ID:Linux>:-lfluidsynth>
+    # -liconv
+    
+    # -lreadline
+    # -lportaudio
+    # -lglib-2.0
+    # -lgthread-2.0
+    # -lsndfile
 
     # ${THIRDPARTY}/install/lib/libfluidsynth.a
-    ${local_prefix}/lib/libfluidsynth.a
-    ${local_prefix}/lib/libportaudio.a
-    ${local_prefix}/lib/libportaudiocpp.a
-    ${local_prefix}/lib/libglib-2.0.a
-    ${local_prefix}/lib/libgthread-2.0.a
-    ${local_prefix}/lib/libintl.a
+    # ${local_prefix}/lib/libfluidsynth.a
+    # ${local_prefix}/lib/libportaudio.a
+    # ${local_prefix}/lib/libportaudiocpp.a
+    # ${local_prefix}/lib/libglib-2.0.a
+    # ${local_prefix}/lib/libgthread-2.0.a
+    # ${local_prefix}/lib/libintl.a
     # ${local_prefix}/lib/libgettextlib.a
 
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libFLAC.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libogg.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbis.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisenc.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisfile.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libopus.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libmpg123.a>
-    $<$<BOOL:${ENABLE_MP3}>:${local_prefix}/lib/libmp3lame.a>
-    ${local_prefix}/lib/libsndfile.a
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libFLAC.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libogg.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbis.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisenc.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libvorbisfile.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libopus.a>
+    # $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${local_prefix}/lib/libmpg123.a>
+    # $<$<BOOL:${ENABLE_MP3}>:${local_prefix}/lib/libmp3lame.a>
+    # ${local_prefix}/lib/libsndfile.a
     "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
