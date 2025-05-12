@@ -73,6 +73,7 @@ target_link_directories(${CHUGIN_NAME}
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
     $<$<PLATFORM_ID:Linux>:-lfluidsynth>
+    $<$<PLATFORM_ID:Darwin>:-lfluidsynth>
     # -liconv
     
     # -lreadline
