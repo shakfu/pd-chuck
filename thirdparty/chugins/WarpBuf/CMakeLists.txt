@@ -77,26 +77,7 @@ target_link_directories(${CHUGIN_NAME}
 )
 
 
-if (DYNAMIC_LINKING)
-target_link_libraries(${CHUGIN_NAME}
-    PUBLIC
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lFLAC>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-logg>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbis>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisenc>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisfile>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lopus>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lmpg123>
-    $<$<BOOL:${ENABLE_MP3}>:-lmp3lame>
-    -lsndfile
-    -lrubberband
-    -lsamplerate
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
-    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
-)
-else()
+if (STATIC)
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
     $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
@@ -110,6 +91,25 @@ target_link_libraries(${CHUGIN_NAME}
     ${LOCAL_LIB}/libsndfile.a
     ${LOCAL_LIB}/librubberband.a
     ${LOCAL_LIB}/libsamplerate.a
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
+)
+else()
+target_link_libraries(${CHUGIN_NAME}
+    PUBLIC
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lFLAC>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-logg>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbis>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisenc>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lvorbisfile>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lopus>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:-lmpg123>
+    $<$<BOOL:${ENABLE_MP3}>:-lmp3lame>
+    -lsndfile
+    -lrubberband
+    -lsamplerate
     "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"

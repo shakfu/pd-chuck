@@ -95,7 +95,25 @@ target_link_directories(${CHUGIN_NAME}
     ${THIRDPARTY}/install/lib
 )
 
-if (DYNAMIC_LINKING)
+if (STATIC)
+target_link_libraries(${CHUGIN_NAME}
+    PRIVATE
+    ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libogg.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbis.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisenc.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisfile.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libopus.a>
+    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libmpg123.a>
+    $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>
+    ${LOCAL_LIB}/libsndfile.a
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
+    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
+    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
+)
+else()
 target_link_libraries(${CHUGIN_NAME}
     PRIVATE
 
@@ -113,24 +131,6 @@ target_link_libraries(${CHUGIN_NAME}
 
     ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
     # ${LIBFAUST_DIR}/lib/libfaust.a
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
-    "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
-    "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
-)
-else()
-target_link_libraries(${CHUGIN_NAME}
-    PRIVATE
-    ${LIBFAUST_DIR}/lib/libfaustwithllvm.a
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libFLAC.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libogg.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbis.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisenc.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libvorbisfile.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libopus.a>
-    $<$<BOOL:${ENABLE_EXTRA_FORMATS}>:${LOCAL_LIB}/libmpg123.a>
-    $<$<BOOL:${ENABLE_MP3}>:${LOCAL_LIB}/libmp3lame.a>
-    ${LOCAL_LIB}/libsndfile.a
     "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreMIDI>"
     "$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"

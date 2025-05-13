@@ -70,10 +70,12 @@ target_link_directories(${CHUGIN_NAME}
     $<$<PLATFORM_ID:Linux>:${LIBRARY_DIRS}>
 )
 
+debug_genexps(${CHUGIN_NAME})
+
 target_link_libraries(${CHUGIN_NAME}
     PUBLIC
-    $<$<PLATFORM_ID:Linux>:-lfluidsynth>
-    $<$<PLATFORM_ID:Darwin>:-lfluidsynth>
+    $<$<AND:${is_unix},${is_shared}>:-lfluidsynth>
+    # $<${is_unix_shared}:-lfluidsynth>
     # -liconv
     
     # -lreadline

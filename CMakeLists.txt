@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.19)
 project(pd_chuck)
 
 # general options
-option(DYNAMIC_LINKING "enable dynamic linking with dependencies")
+option(STATIC "enable static linking of dependencies")
 
 # linux options
 option(LINUX_ALSA "enable linux alsa build")
@@ -18,6 +18,9 @@ option(BUILD_UNIVERSAL "Build Universal Binaries")
 # chugin options
 option(ENABLE_WARPBUF "build WarpBuf chugin")
 option(ENABLE_FAUCK "build Faust chugin")
+option(ENABLE_FLUIDSYNTH "build FluidSynth chugin")
+
+# sndfile options
 option(ENABLE_MP3 "Enable MP3 support for libsndfile")
 option(ENABLE_EXTRA_FORMATS "Enable extra file formats for libsndfile")
 
@@ -26,6 +29,7 @@ option(DEV_WARNINGS "use additional warning settings during development")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
+# set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
@@ -52,21 +56,14 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "LINUX_PULSE ENABLED: ${LINUX_PULSE}")
 	message(STATUS "LINUX_JACK ENABLED: ${LINUX_JACK}")
 
-    # execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-    # message(STATUS "Architecture: ${ARCHITECTURE}" )
-
     string(REPLACE ":" ";" LINUX_LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
 
-    # if(DEFINED ARCHITECTURE)
-    #     set(LOCAL_LIB /usr/lib/${ARCHITECTURE}-linux-gnu)
-    #     set(LOCAL_INCLUDE /usr/include/${ARCHITECTURE}-linux-gnu)
-    # endif()
     set(local_prefix ${CMAKE_SOURCE_DIR}/build/thirdparty/install)
     set(LOCAL_LIB ${local_prefix}/lib)
     set(LOCAL_INCLUDE ${local_prefix}/include)
 endif()
 
-if (APPLE)
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     if (NOT CMAKE_OSX_ARCHITECTURES)
         if(BUILD_UNIVERSAL)
             set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "macOS architecture" FORCE)
@@ -91,7 +88,7 @@ if (APPLE)
 endif()
 
 
-
+include(${CMAKE_SOURCE_DIR}/scripts/cmake/genexps.cmake)
 
 message(STATUS "LOCAL_LIB: ${LOCAL_LIB}")
 message(STATUS "LOCAL_INCLUDE: ${LOCAL_INCLUDE}")

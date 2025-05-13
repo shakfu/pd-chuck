@@ -23,6 +23,7 @@ function install_libvorbis {
 		mkdir -p ${BUILD} && \
 		cd ${BUILD} && \
 		cmake .. \
+			-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 			-DCMAKE_VERBOSE_MAKEFILE=ON \
 			-DCMAKE_C_FLAGS="-fPIC" \
 			-DCMAKE_CXX_FLAGS="-fPIC" \
