@@ -27,9 +27,9 @@ For `chuck-max`, the following changes was made to the chuck examples directory:
 
 - added:
     
-    - `pd`, for purepdata specific chuck files
+    - `max`, for max specific chuck files
 
-    - `test`, for extra tests related to `pd-chuck`
+    - `test`, for tests related to `chuck-max`
 
     - `util`, for misc utilities such as `help.ck` and `status.ck`
 
@@ -47,19 +47,19 @@ For `chuck-max`, the following changes was made to the chuck examples directory:
 
     - `effects/autotune.ck` to generout output file in `/tmp/` instead of locally
 
-        ```c++
-        {
-            dac => WvOut2 record => blackhole;
-            // output file name
-            //"./autotuned-obama.wav" => string outfile;
-            "/tmp/autotuned-obama.wav" => string outfile;
-            "./autotuned-obama.wav" => string outfile;
-            // print
-            cherr <= "recording to file: '" <= outfile <= "'..." <= IO.nl();
-            // set output file name
-            //me.dir() + outfile => record.wavFilename;
-            outfile => record.wavFilename;
-            me.dir() + outfile => record.wavFilename;
-        }
-        ```
+```c++
+{
+    dac => WvOut2 record => blackhole;
+    // output file name
+    //"./autotuned-obama.wav" => string outfile;
+    "/tmp/autotuned-obama.wav" => string outfile;
+    "./autotuned-obama.wav" => string outfile;
+    // print
+    cherr <= "recording to file: '" <= outfile <= "'..." <= IO.nl();
+    // set output file name
+    //me.dir() + outfile => record.wavFilename;
+    outfile => record.wavFilename;
+    me.dir() + outfile => record.wavFilename;
+}
+```
 
