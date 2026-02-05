@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added AbletonLink chugin with auto-fetch of Link SDK from GitHub (requires `-DENABLE_ABLETONLINK=ON`)
+
+- Added AudioUnit chugin for hosting Audio Unit plugins (macOS only, built automatically)
+
+- Added CLAP chugin for hosting CLAP plugins (requires `-DENABLE_CLAP=ON`)
+
+- Added VST3 chugin for hosting VST3 plugins with auto-fetch of VST3 SDK from GitHub (requires `-DENABLE_VST3=ON`)
+
 - Added configurable I/O channels: `[chuck~ channels]` or `[chuck~ channels tap_channels]`
 
 - Added tap infrastructure for reading global UGen samples via tap outlets

@@ -22,6 +22,8 @@ Also included are the following:
 
 - All of the [CCRMA chugins](https://github.com/ccrma/chugins) including `WarpBuf`, `Fauck` (`Faust`) and `FluidSynth`.
 
+- Optional plugin-hosting chugins: `AbletonLink`, `AudioUnit` (macOS), `CLAP`, and `VST3`.
+
 - Many `pd` patches to test and demonstrate usage.
 
 - Contributed patchers and code examples.
@@ -321,6 +323,27 @@ If you have installed the prerequisites above, it should be possible the advance
 - `make linux-adv-jack`: builds the external on Linux with advanced options using the JACK audio driver.
 
 - `make linux-adv-all`: builds the external on Linux with advanced options and support for ALSA, PULSE and JACK audio drivers.
+
+### C. Plugin-Hosting Chugins (Optional)
+
+pd-chuck includes optional chugins for hosting audio plugins within ChucK. These require additional CMake flags to enable:
+
+| Chugin | Platform | CMake Flag | SDK Source |
+| :----- | :------- | :--------- | :--------- |
+| AbletonLink | All | `-DENABLE_ABLETONLINK=ON` | Auto-fetched from GitHub |
+| AudioUnit | macOS only | (built automatically) | macOS frameworks |
+| CLAP | All | `-DENABLE_CLAP=ON` | Headers included |
+| VST3 | All | `-DENABLE_VST3=ON` | Auto-fetched from GitHub |
+
+To build with all plugin-hosting chugins enabled:
+
+```bash
+cd build
+cmake .. -DENABLE_ABLETONLINK=ON -DENABLE_CLAP=ON -DENABLE_VST3=ON
+cmake --build . --config Release
+```
+
+The AbletonLink and VST3 SDKs are automatically cloned from GitHub during configuration if not already present. This may take additional time on the first build.
 
 ## Credits
 

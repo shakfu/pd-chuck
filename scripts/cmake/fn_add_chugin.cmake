@@ -2,11 +2,13 @@ function(add_chugin)
     set(options
         DEBUG
     )
-    set(oneValueArgs 
+    set(oneValueArgs
         PROJECT_NAME
     )
     set(multiValueArgs
         PROJECT_SOURCE
+        SOURCES
+        OTHER_SOURCES
         INCLUDE_DIRS
         LINK_LIBS
         LINK_DIRS
@@ -29,14 +31,22 @@ function(add_chugin)
     set(CK_SRC_PATH "${CMAKE_SOURCE_DIR}/thirdparty/chugins/chuck/include")
     set(DEPS_DIR "${CMAKE_SOURCE_DIR}/build/install")
 
+    # Support both PROJECT_SOURCE (old) and SOURCES (new) parameters
     if(CHUGIN_PROJECT_SOURCE)
         set(PROJECT_SRC ${CHUGIN_PROJECT_SOURCE})
+    elseif(CHUGIN_SOURCES)
+        set(PROJECT_SRC ${CHUGIN_SOURCES})
     else()
         file(GLOB PROJECT_SRC
             "*.h"
             "*.c"
             "*.cpp"
         )
+    endif()
+
+    # Add OTHER_SOURCES if provided
+    if(CHUGIN_OTHER_SOURCES)
+        list(APPEND PROJECT_SRC ${CHUGIN_OTHER_SOURCES})
     endif()
 
     message(STATUS "CHUGIN_NAME: ${CHUGIN_NAME}")

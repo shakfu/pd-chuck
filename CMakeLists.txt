@@ -19,6 +19,9 @@ option(BUILD_UNIVERSAL "Build Universal Binaries")
 option(ENABLE_WARPBUF "build WarpBuf chugin")
 option(ENABLE_FAUCK "build Faust chugin")
 option(ENABLE_FLUIDSYNTH "build FluidSynth chugin")
+option(ENABLE_ABLETONLINK "build AbletonLink chugin")
+option(ENABLE_CLAP "build CLAP plugin host chugin")
+option(ENABLE_VST3 "build VST3 plugin host chugin")
 
 # sndfile options
 option(ENABLE_MP3 "Enable MP3 support for libsndfile")
