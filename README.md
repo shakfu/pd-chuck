@@ -66,8 +66,14 @@ The `examples` directory in the same folder contains all chuck examples from the
 
 ## Overview
 
-- The `chuck~` object has two signal channels in and two channels out by default. It can take an optional filename argument `[chuck~ <filename>]`.
-  
+The `chuck~` object supports configurable I/O channels and optional tap outlets for reading global UGen samples:
+
+- `[chuck~]` - 2 I/O channels (default), 0 tap outlets
+- `[chuck~ 4]` - 4 I/O channels, 0 tap outlets
+- `[chuck~ 2 4]` - 2 I/O channels, 4 tap outlets
+- `[chuck~ filename.ck]` - 2 I/O channels, runs file on load (backward compatible)
+- `[chuck~ 4 2 filename.ck]` - 4 I/O channels, 2 tap outlets, runs file on load
+
 If a `<filename>` argument is given it will be searched for according to the following rules:
 
 1. Assume it's an absolute path, use it if it exists.
@@ -88,8 +94,10 @@ As of the current version, `chuck~` implements the core Chuck vm messages as pur
 | Remove shred                      | `remove <shredID>`           | `- <shredID>`                |
 | Remove last shred                 | `remove last`                |                              |
 | Remove all shreds                 | `remove all`                 |                              |
+| Remove all shreds (keep VM state) | `removeall`                  |                              |
 | Replace shred                     | `replace <shredID> <file>`   | `= <shredID> <file>`         |
 | List running shreds               | `status`                     |                              |
+| Shred introspection               | `shreds [subcommand]`        |                              |
 | Clear vm                          | `clear vm`                   | `reset`                      |
 | Clear globals                     | `clear globals`              |                              |
 | Reset id                          | `reset id`                   |                              |
@@ -113,6 +121,9 @@ The core set of chuck vm messesages is also extended in `pd-chuck` with the foll
 | Get/set loglevel (0-10)                 | `loglevel` & `loglevel <n>`  |
 | Get state of chuck vm                   | `vm`                         |
 | Launch chuck docs in a browser          | `docs`                       |
+| Get/set adaptive mode                   | `adaptive` & `adaptive <n>`  |
+| Get/set VM parameters                   | `param [name] [value]`       |
+| Tap global UGen samples                 | `tap [outlet] [ugen_name]`   |
 
 ### Parameter Messages
 
@@ -130,6 +141,46 @@ You change a global variable by sending a `<variable-name> <value>` message to a
 *Note*: You can't use the ChucK types of `dur` or `time` in pd. Also, while in the above case, the pd msg seems untyped, it must match the type of the chuck global variable. So if you connect a pd number or flownum object to a message box, it needs to match the type of the global variable (int/float).
 
 See `chuck_tilde/help-chuck.pd` and patchers in the `tests` directory for a demonstration of current features.
+
+### Shred Introspection
+
+The `shreds` message provides detailed information about running shreds:
+
+| Action                      | Puredata msg          |
+| :-------------------------- | :-------------------- |
+| List all shreds             | `shreds`              |
+| List all shred IDs          | `shreds all`          |
+| List ready shreds           | `shreds ready`        |
+| List blocked shreds         | `shreds blocked`      |
+| Get shred count             | `shreds count`        |
+| Get highest shred ID        | `shreds highest`      |
+| Get last shred ID           | `shreds last`         |
+| Get next shred ID           | `shreds next`         |
+| Get info about specific ID  | `shreds <id>`         |
+
+### Tap Outlets
+
+Tap outlets allow you to read samples directly from global UGens in your ChucK code. This is useful for analysis, visualization, or routing specific UGen outputs separately from the main mix.
+
+To use tap outlets, create the object with tap channels: `[chuck~ 2 4]` creates 2 I/O channels and 4 tap outlets.
+
+| Action                           | Puredata msg              |
+| :------------------------------- | :------------------------ |
+| Clear all tap outlets            | `tap`                     |
+| Set all outlets to same UGen     | `tap <ugen_name>`         |
+| Clear specific outlet (1-based)  | `tap <outlet>`            |
+| Set specific outlet to UGen      | `tap <outlet> <ugen_name>`|
+
+Example ChucK code with a global UGen to tap:
+
+```chuck
+SinOsc s => dac;
+s => Gain myGain => blackhole;  // myGain is global, can be tapped
+440 => s.freq;
+while(true) 1::second => now;
+```
+
+Then in Pd: `tap 1 myGain` routes the output of `myGain` to tap outlet 1.
 
 ### Parameter Messages using Callbacks (Advanced Usage)
 

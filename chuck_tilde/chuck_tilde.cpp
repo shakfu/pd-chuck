@@ -4,65 +4,62 @@
 #include "chuck_globals.h"
 
 #include <algorithm>
+#include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <libgen.h>
 #include <unistd.h>
+#ifdef __APPLE__
+#include <sys/wait.h>
+#endif
 
 // clang-format off
 
 // globals defs
 #define LOG_LEVEL CK_LOG_SYSTEM // chuck log levels 0-10 (default: 2)
-#define N_IN_CHANNELS 2
-#define N_OUT_CHANNELS 2
-
-
-enum DSP {
-    PERFORM,
-    OBJECT,
-    INPUT_VECTOR_L,
-    INPUT_VECTOR_R,
-    OUTPUT_VECTOR_L,
-    OUTPUT_VECTOR_R,
-    VECTOR_SIZE,
-    NEXT
-};
-
-
-// typedefs
-
+#define MAX_TAP_CHANNELS 16
 
 // object struct
 typedef struct _ck {
-	t_object obj;
-	t_float x_f;
+    t_object obj;
+    t_float x_f;
 
     int oid;                    // object id
     int srate;                  // sample rate
     int loglevel;               // loglevel
 
-	// chuck
-	int buffer_size;  			// buffer size for for both input and output
+    // chuck
+    int buffer_size;            // buffer size for for both input and output
     float *in_chuck_buffer;     // intermediate chuck input buffer
     float *out_chuck_buffer;    // intermediate chuck output buffer
     t_symbol *patcher_dir;      // directory containing the current patch
     t_symbol *external_dir;     // directory containing this external
     t_symbol *examples_dir;     // directory containing the `examples` dir
-    t_symbol *chugins_dir;      // directory containing chugins (compiled chuck plugins)  
+    t_symbol *chugins_dir;      // directory containing chugins (compiled chuck plugins)
     t_symbol* editor;           // external text editor for chuck code
     t_symbol* edit_file;        // path of file to edit by external editor
-	t_symbol *filename;         // last chuck file run
- 	long current_shred_id;      // current shred ID
+    t_symbol *filename;         // last chuck file run
+    long current_shred_id;      // current shred ID
     ChucK *chuck;               // chuck instance
 
     // switches
     int run_needs_audio;
 
-	// inlets & outlets (default inlet is inL)
-	t_inlet *x_inR;
-	t_outlet*x_outL;
-	t_outlet*x_outR;
+    // configurable channels (replaces fixed N_IN/OUT_CHANNELS)
+    int channels;               // number of I/O channels (default: 2)
+    t_sample** in_vectors;      // input vector pointers (set in ck_dsp)
+    t_sample** out_vectors;     // output vector pointers (main + tap)
+
+    // tap infrastructure (for reading global UGen samples)
+    int tap_channels;           // number of tap outlet channels (0 = disabled)
+    t_symbol* tap_ugens[MAX_TAP_CHANNELS]; // names of global UGens to tap (one per outlet)
+    float* tap_buffer;          // buffer for tapped samples
+
+    // dynamic inlets/outlets
+    t_inlet** extra_inlets;     // extra signal inlets beyond the default one
+    t_outlet** signal_outlets;  // all signal outlets (main + tap)
 } t_ck;
 
 
@@ -70,7 +67,7 @@ typedef struct _ck {
 static int CK_INSTANCE_COUNT = 0;
 
 // core
-static void *ck_new(t_symbol *s);
+static void *ck_new(t_symbol *s, int argc, t_atom *argv);
 static void ck_free(t_ck *x);
 extern "C" void chuck_tilde_setup(void);
 
@@ -94,11 +91,16 @@ static void ck_add(t_ck* x, t_symbol* s, long argc, t_atom* argv); // add shred 
 static void ck_run(t_ck* x, t_symbol* s); // alias of add, run chuck file
 static void ck_eval(t_ck* x, t_symbol* s, long argc, t_atom* argv);    // evaluation chuck code
 static void ck_remove(t_ck* x, t_symbol* s, long argc, t_atom* argv);  // remove shreds (all, last, by #)
-static void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv); // replace shreds 
+static void ck_removeall(t_ck* x);                                     // remove all shreds (keeps VM state)
+static void ck_replace(t_ck* x, t_symbol* s, long argc, t_atom* argv); // replace shreds
 static void ck_clear(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, clear_globals
 static void ck_reset(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // clear_vm, reset_id
 static void ck_status(t_ck* x); // get info about running shreds
 static void ck_time(t_ck* x);
+static void ck_adaptive(t_ck* x, t_symbol* s, long argc, t_atom* argv); // get/set adaptive mode
+static void ck_param(t_ck* x, t_symbol* s, long argc, t_atom* argv);    // get/set chuck params
+static void ck_shreds(t_ck* x, t_symbol* s, long argc, t_atom* argv);   // shred introspection
+static void ck_tap(t_ck* x, t_symbol* s, long argc, t_atom* argv);      // set global UGen to tap
 
 
 // external editor message handlers
@@ -161,29 +163,70 @@ static t_class *ck_class;
 // initialization / destruction
 
 
-static void *ck_new(t_symbol *s)
+static void *ck_new(t_symbol *s, int argc, t_atom *argv)
 {
-	/* Instantiate a new object */
-	t_ck *x = (t_ck *) pd_new(ck_class);
+    /* Instantiate a new object */
+    t_ck *x = (t_ck *) pd_new(ck_class);
 
-	if (x) {
+    if (x) {
+        // Parse arguments: [channels] [tap_channels] [filename]
+        // Numeric args come first, symbol (filename) can be at end
+        int channels = 2;       // default
+        int tap_channels = 0;   // default
+        t_symbol* filename = gensym("");
 
-		/* Create signal inlets */		
-		// Pd creates one by default				   		// Input Left
-		x->x_inR = signalinlet_new((t_object *)x, 0); 		// Input Right
-		
-		/* Create signal outlets */
-        x->x_outL = outlet_new((t_object *)x, &s_signal); 	// Output Left
-        x->x_outR = outlet_new((t_object *)x, &s_signal); 	// Output Right
+        int num_idx = 0;
+        for (int i = 0; i < argc; i++) {
+            if (argv[i].a_type == A_FLOAT) {
+                int val = (int)atom_getfloat(&argv[i]);
+                if (num_idx == 0) {
+                    channels = (val > 0 && val <= 16) ? val : 2;
+                } else if (num_idx == 1) {
+                    tap_channels = (val >= 0 && val <= MAX_TAP_CHANNELS) ? val : 0;
+                }
+                num_idx++;
+            } else if (argv[i].a_type == A_SYMBOL) {
+                filename = atom_getsymbol(&argv[i]);
+            }
+        }
 
-		// initial inits
+        x->channels = channels;
+        x->tap_channels = tap_channels;
+
+        // Initialize tap UGens to empty
+        for (int i = 0; i < MAX_TAP_CHANNELS; i++) {
+            x->tap_ugens[i] = gensym("");
+        }
+        x->tap_buffer = NULL;
+
+        // Create signal inlets (first one created by CLASS_MAINSIGNALIN)
+        x->extra_inlets = NULL;
+        if (x->channels > 1) {
+            x->extra_inlets = (t_inlet**)getbytes(sizeof(t_inlet*) * (x->channels - 1));
+            for (int i = 0; i < x->channels - 1; i++) {
+                x->extra_inlets[i] = signalinlet_new((t_object *)x, 0);
+            }
+        }
+
+        // Create signal outlets (main + tap)
+        int total_outlets = x->channels + x->tap_channels;
+        x->signal_outlets = (t_outlet**)getbytes(sizeof(t_outlet*) * total_outlets);
+        for (int i = 0; i < total_outlets; i++) {
+            x->signal_outlets[i] = outlet_new((t_object *)x, &s_signal);
+        }
+
+        // Initialize vector pointers (will be set in ck_dsp)
+        x->in_vectors = NULL;
+        x->out_vectors = NULL;
+
+        // initial inits
         x->patcher_dir = canvas_getcurrentdir();
         const char* external_dir = class_gethelpdir(ck_class);
         x->external_dir = gensym(external_dir);
         char examples_dir_cstr[MAXPDSTRING];
         snprintf(examples_dir_cstr, MAXPDSTRING, "%s/examples", x->external_dir->s_name);
         x->examples_dir = gensym(examples_dir_cstr);
-        std::string examples_dir = std::string(x->examples_dir->s_name);
+        std::string examples_dir_str = std::string(x->examples_dir->s_name);
 
         // get external editor
         if (const char* editor = std::getenv("EDITOR")) {
@@ -194,31 +237,30 @@ static void *ck_new(t_symbol *s)
         }
         x->edit_file = gensym("");
 
-		x->filename = ck_check_file(x, s);
+        x->filename = ck_check_file(x, filename);
         x->current_shred_id = 0;
         x->run_needs_audio = 0;
-		// x->x_f = 0.0;
 
-		// chuck-related inits
-	    x->in_chuck_buffer = NULL;
-	    x->out_chuck_buffer = NULL;
+        // chuck-related inits
+        x->in_chuck_buffer = NULL;
+        x->out_chuck_buffer = NULL;
 
-	    x->chuck = new ChucK();
-	    // set sample rate and number of in/out channels on our chuck
+        x->chuck = new ChucK();
+        // set sample rate and number of in/out channels on our chuck
         x->srate = sys_getsr();
-        
-	    x->chuck->setParam(CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) x->srate);
-        x->chuck->setParam(CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) N_IN_CHANNELS);
-	    x->chuck->setParam(CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) N_OUT_CHANNELS);
-	    x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir->s_name);
+
+        x->chuck->setParam(CHUCK_PARAM_SAMPLE_RATE, (t_CKINT) x->srate);
+        x->chuck->setParam(CHUCK_PARAM_INPUT_CHANNELS, (t_CKINT) x->channels);
+        x->chuck->setParam(CHUCK_PARAM_OUTPUT_CHANNELS, (t_CKINT) x->channels);
+        x->chuck->setParam(CHUCK_PARAM_WORKING_DIRECTORY, x->examples_dir->s_name);
         x->chuck->setParam(CHUCK_PARAM_VM_HALT, (t_CKINT) 0);
         x->chuck->setParam(CHUCK_PARAM_DUMP_INSTRUCTIONS, (t_CKINT) 0);
         // enable chugins
-        x->chuck->setParam(CHUCK_PARAM_CHUGIN_ENABLE, (t_CKINT)1);        
+        x->chuck->setParam(CHUCK_PARAM_CHUGIN_ENABLE, (t_CKINT)1);
         // directory for compiled code
-        x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, examples_dir);
+        x->chuck->setParam( CHUCK_PARAM_WORKING_DIRECTORY, examples_dir_str);
         std::list<std::string> chugin_search;
-        std::string chugins_dir = examples_dir + "/chugins";
+        std::string chugins_dir = examples_dir_str + "/chugins";
         x->chugins_dir = gensym(chugins_dir.c_str());
         chugin_search.push_back(chugins_dir);
         x->chuck->setParam( CHUCK_PARAM_IMPORT_PATH_SYSTEM, chugin_search);
@@ -227,22 +269,23 @@ static void *ck_new(t_symbol *s)
         x->oid = ++CK_INSTANCE_COUNT;
         x->loglevel = LOG_LEVEL;
 
-	    // initialize our chuck
-	    x->chuck->init();
-	    x->chuck->start();
+        // initialize our chuck
+        x->chuck->init();
+        x->chuck->start();
 
         // set chuck log level
         ChucK::setLogLevel(x->loglevel);
 
-		/* Print message to Max window */
-		post("ChucK %s", x->chuck->version());
-		post("chuck~ • Object was created");
+        /* Print message to Max window */
+        post("ChucK %s", x->chuck->version());
+        post("chuck~ - Object was created (%d channels, %d tap outlets)",
+             x->channels, x->tap_channels);
         post("patcher_dir: %s", x->patcher_dir->s_name);
         post("external_dir: %s", x->external_dir->s_name);
         post("examples_dir: %s", x->examples_dir->s_name);
         post("chugins_dir: %s", x->chugins_dir->s_name);
-	}
-	return (void *)x;
+    }
+    return (void *)x;
 }
 
 
@@ -250,44 +293,71 @@ static void ck_free(t_ck *x)
 {
     delete[] x->in_chuck_buffer;
     delete[] x->out_chuck_buffer;
-	delete x->chuck;
-	/* free inlet resources */
-	inlet_free(x->x_inR);
+    delete x->chuck;
 
-	/* free any resources associated with the given outlet */
- 	outlet_free(x->x_outL);
- 	outlet_free(x->x_outR);
+    // free tap buffer
+    if (x->tap_buffer) {
+        delete[] x->tap_buffer;
+    }
 
-	post("chuck~ • Memory was freed");
+    // free vector pointer arrays
+    if (x->in_vectors) {
+        freebytes(x->in_vectors, sizeof(t_sample*) * x->channels);
+    }
+    if (x->out_vectors) {
+        freebytes(x->out_vectors, sizeof(t_sample*) * (x->channels + x->tap_channels));
+    }
+
+    // free extra inlet resources
+    if (x->extra_inlets) {
+        for (int i = 0; i < x->channels - 1; i++) {
+            inlet_free(x->extra_inlets[i]);
+        }
+        freebytes(x->extra_inlets, sizeof(t_inlet*) * (x->channels - 1));
+    }
+
+    // free signal outlets
+    int total_outlets = x->channels + x->tap_channels;
+    for (int i = 0; i < total_outlets; i++) {
+        outlet_free(x->signal_outlets[i]);
+    }
+    freebytes(x->signal_outlets, sizeof(t_outlet*) * total_outlets);
+
+    post("chuck~ - Memory was freed");
 }
 
 
 extern "C" void chuck_tilde_setup(void)
 {
-	/* Initialize the class */
-	ck_class = class_new(gensym("chuck~"),
-		(t_newmethod)ck_new,
-		(t_method)ck_free,
-		sizeof(t_ck),
-		CLASS_DEFAULT,
-		A_DEFSYMBOL,
-		A_NULL);
+    /* Initialize the class with A_GIMME for variable arguments */
+    ck_class = class_new(gensym("chuck~"),
+        (t_newmethod)ck_new,
+        (t_method)ck_free,
+        sizeof(t_ck),
+        CLASS_DEFAULT,
+        A_GIMME,
+        A_NULL);
 
-	/* Specify signal input, with automatic float to signal conversion */
-	CLASS_MAINSIGNALIN(ck_class, t_ck, x_f);
-	
-	/* Bind the DSP method, which is called when the DACs are turned on */
-	class_addmethod(ck_class, (t_method)ck_dsp, 	   gensym("dsp"),        A_CANT,      A_NULL);
+    /* Specify signal input, with automatic float to signal conversion */
+    CLASS_MAINSIGNALIN(ck_class, t_ck, x_f);
+
+    /* Bind the DSP method, which is called when the DACs are turned on */
+    class_addmethod(ck_class, (t_method)ck_dsp,        gensym("dsp"),        A_CANT,      A_NULL);
 
     class_addmethod(ck_class, (t_method)ck_add,        gensym("add"),        A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_run,        gensym("run"),        A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_eval,       gensym("eval"),       A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_remove,     gensym("remove"),     A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_removeall,  gensym("removeall"),               A_NULL);
     class_addmethod(ck_class, (t_method)ck_replace,    gensym("replace"),    A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_clear,      gensym("clear"),      A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_reset,      gensym("reset"),      A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_status,     gensym("status"),                  A_NULL);
     class_addmethod(ck_class, (t_method)ck_time,       gensym("time"),                    A_NULL);
+    class_addmethod(ck_class, (t_method)ck_adaptive,   gensym("adaptive"),   A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_param,      gensym("param"),      A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_shreds,     gensym("shreds"),     A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_tap,        gensym("tap"),        A_GIMME,     A_NULL);
 
     class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),        A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"),  A_SYMBOL,    A_NULL);
@@ -354,9 +424,42 @@ static bool path_exists(const char* name)
 }
 #endif
 
+static bool is_safe_path(const char* path)
+{
+    if (!path) return false;
+
+    std::string p(path);
+
+    // Check for directory traversal attempts
+    if (p.find("..") != std::string::npos) return false;
+
+    // Check for absolute paths on Unix-like systems
+    if (p.length() > 0 && p[0] == '/') return false;
+
+    // Check for Windows absolute paths
+    if (p.length() > 2 && p[1] == ':') return false;
+
+    // Check for Windows UNC paths
+    if (p.length() > 1 && p[0] == '\\' && p[1] == '\\') return false;
+
+    // Check for null bytes (can be used to bypass checks)
+    if (p.find('\0') != std::string::npos) return false;
+
+    return true;
+}
+
 static t_symbol* ck_check_file(t_ck* x, t_symbol* name)
 {
-    // 1. check if file exists
+    // validate path safety for relative paths
+    if (!is_safe_path(name->s_name)) {
+        // only allow if it's an existing absolute path (for backward compatibility)
+        if (path_exists(name->s_name)) {
+            return name;
+        }
+        return gensym("");
+    }
+
+    // 1. check if file exists as given
     if (path_exists(name->s_name)) {
         return name;
     }
@@ -494,11 +597,28 @@ static void ck_edit(t_ck* x, t_symbol* s)
     if (s != gensym("")) {
         x->edit_file = ck_check_file(x, s);
         if (x->edit_file != gensym("")) {
-            std::string cmd;
             post("edit: %s", x->edit_file->s_name);
-            cmd = std::string(x->editor->s_name) + " "
-                + std::string(x->edit_file->s_name);
+            // use fork/exec for safer command execution on Unix
+#ifdef __APPLE__
+            pid_t pid = fork();
+            if (pid == 0) {
+                // child process
+                execl(x->editor->s_name, x->editor->s_name,
+                      x->edit_file->s_name, (char*)NULL);
+                _exit(1);  // exec failed
+            } else if (pid < 0) {
+                pd_error(x, "ck_edit: fork failed");
+            }
+            // parent continues
+#else
+            // fallback for other platforms - use quoted paths
+            std::string cmd = "\"";
+            cmd += x->editor->s_name;
+            cmd += "\" \"";
+            cmd += x->edit_file->s_name;
+            cmd += "\"";
             std::system(cmd.c_str());
+#endif
             return;
         }
     }
@@ -958,6 +1078,411 @@ static void ck_status(t_ck* x)
 static void ck_time(t_ck* x) { return ck_send_chuck_vm_msg(x, CK_MSG_TIME); }
 
 
+static void ck_removeall(t_ck* x)
+{
+    Chuck_Msg* msg = new Chuck_Msg;
+    msg->type = CK_MSG_REMOVEALL;
+    msg->reply_cb = (ck_msg_func)0;
+    x->chuck->vm()->queue_msg(msg, 1);
+    post("removeall: removed all shreds");
+}
+
+
+static void ck_adaptive(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+
+    // no args: get current adaptive mode status
+    if (argc == 0) {
+        t_CKBOOL adaptive = shreduler->m_adaptive;
+        t_CKUINT max_block = shreduler->m_max_block_size;
+
+        if (adaptive) {
+            post("adaptive: ON (max block size: %d samples)", (int)max_block);
+        } else {
+            post("adaptive: OFF");
+        }
+        return;
+    }
+
+    // one arg: set adaptive mode
+    if (argc == 1 && argv->a_type == A_FLOAT) {
+        t_CKUINT size = (t_CKUINT)atom_getint(argv);
+        shreduler->set_adaptive(size);
+
+        if (size > 1) {
+            post("adaptive: enabled with max block size %d samples", (int)size);
+        } else {
+            post("adaptive: disabled");
+        }
+        return;
+    }
+
+    pd_error(x, "adaptive: expected no args (get) or integer (set)");
+}
+
+
+static void ck_param(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    // list of known int params
+    const char* int_params[] = {
+        CHUCK_PARAM_SAMPLE_RATE,
+        CHUCK_PARAM_INPUT_CHANNELS,
+        CHUCK_PARAM_OUTPUT_CHANNELS,
+        CHUCK_PARAM_VM_ADAPTIVE,
+        CHUCK_PARAM_VM_HALT,
+        CHUCK_PARAM_OTF_ENABLE,
+        CHUCK_PARAM_OTF_PORT,
+        CHUCK_PARAM_DUMP_INSTRUCTIONS,
+        CHUCK_PARAM_AUTO_DEPEND,
+        CHUCK_PARAM_DEPRECATE_LEVEL,
+        CHUCK_PARAM_CHUGIN_ENABLE,
+        CHUCK_PARAM_IS_REALTIME_AUDIO_HINT,
+        CHUCK_PARAM_COMPILER_HIGHLIGHT_ON_ERROR,
+        CHUCK_PARAM_TTY_COLOR,
+        CHUCK_PARAM_TTY_WIDTH_HINT,
+        NULL
+    };
+
+    // list of known string params
+    const char* string_params[] = {
+        CHUCK_PARAM_VERSION,
+        CHUCK_PARAM_WORKING_DIRECTORY,
+        NULL
+    };
+
+    // list of known string list params
+    const char* string_list_params[] = {
+        CHUCK_PARAM_USER_CHUGINS,
+        CHUCK_PARAM_IMPORT_PATH_SYSTEM,
+        CHUCK_PARAM_IMPORT_PATH_PACKAGES,
+        CHUCK_PARAM_IMPORT_PATH_USER,
+        NULL
+    };
+
+    // helper lambdas to check param type
+    auto is_int_param = [&](const std::string& name) {
+        for (int i = 0; int_params[i] != NULL; i++) {
+            if (name == int_params[i]) return true;
+        }
+        return false;
+    };
+    auto is_string_param = [&](const std::string& name) {
+        for (int i = 0; string_params[i] != NULL; i++) {
+            if (name == string_params[i]) return true;
+        }
+        return false;
+    };
+    auto is_string_list_param = [&](const std::string& name) {
+        for (int i = 0; string_list_params[i] != NULL; i++) {
+            if (name == string_list_params[i]) return true;
+        }
+        return false;
+    };
+
+    // no args: list all available params
+    if (argc == 0) {
+        post("ChucK VM Parameters:");
+        post("  Integer parameters:");
+        for (int i = 0; int_params[i] != NULL; i++) {
+            t_CKINT val = x->chuck->getParamInt(int_params[i]);
+            post("    %s = %lld", int_params[i], (long long)val);
+        }
+        post("  String parameters:");
+        for (int i = 0; string_params[i] != NULL; i++) {
+            std::string val = x->chuck->getParamString(string_params[i]);
+            post("    %s = %s", string_params[i], val.c_str());
+        }
+        post("  String list parameters:");
+        for (int i = 0; string_list_params[i] != NULL; i++) {
+            std::list<std::string> val = x->chuck->getParamStringList(string_list_params[i]);
+            post("    %s (%d items):", string_list_params[i], (int)val.size());
+            for (const auto& item : val) {
+                post("      - %s", item.c_str());
+            }
+        }
+        return;
+    }
+
+    // get param name
+    if (argv->a_type != A_SYMBOL) {
+        pd_error(x, "param: first argument must be parameter name");
+        return;
+    }
+    t_symbol* param_name = atom_getsymbol(argv);
+    std::string name = std::string(param_name->s_name);
+
+    // one arg: get param value
+    if (argc == 1) {
+        if (is_int_param(name)) {
+            t_CKINT val = x->chuck->getParamInt(name);
+            post("param %s = %lld", name.c_str(), (long long)val);
+        } else if (is_string_param(name)) {
+            std::string val = x->chuck->getParamString(name);
+            post("param %s = %s", name.c_str(), val.c_str());
+        } else if (is_string_list_param(name)) {
+            std::list<std::string> val = x->chuck->getParamStringList(name);
+            post("param %s (%d items):", name.c_str(), (int)val.size());
+            for (const auto& item : val) {
+                post("  - %s", item.c_str());
+            }
+        } else {
+            pd_error(x, "param: unknown parameter '%s'", name.c_str());
+        }
+        return;
+    }
+
+    // two+ args: set param value
+    if (argc >= 2) {
+        if (is_int_param(name)) {
+            if ((argv + 1)->a_type != A_FLOAT) {
+                pd_error(x, "param: %s requires an integer value", name.c_str());
+                return;
+            }
+            t_CKINT val = (t_CKINT)atom_getint(argv + 1);
+            x->chuck->setParam(name, val);
+            post("param %s set to %lld", name.c_str(), (long long)val);
+        } else if (is_string_param(name)) {
+            if ((argv + 1)->a_type != A_SYMBOL) {
+                pd_error(x, "param: %s requires a string value", name.c_str());
+                return;
+            }
+            std::string val = std::string(atom_getsymbol(argv + 1)->s_name);
+            x->chuck->setParam(name, val);
+            post("param %s set to %s", name.c_str(), val.c_str());
+        } else if (is_string_list_param(name)) {
+            // build list from remaining args
+            std::list<std::string> val;
+            for (int i = 1; i < argc; i++) {
+                if ((argv + i)->a_type == A_SYMBOL) {
+                    val.push_back(std::string(atom_getsymbol(argv + i)->s_name));
+                }
+            }
+            x->chuck->setParam(name, val);
+            post("param %s set to %d items", name.c_str(), (int)val.size());
+        } else {
+            pd_error(x, "param: unknown parameter '%s'", name.c_str());
+        }
+        return;
+    }
+}
+
+
+// helper functions for shred introspection
+static std::vector<t_CKUINT> ck_get_ready_shred_ids(t_ck* x)
+{
+    std::vector<t_CKUINT> shred_ids;
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+    shreduler->get_ready_shred_ids(shred_ids);
+    return shred_ids;
+}
+
+static std::vector<t_CKUINT> ck_get_blocked_shred_ids(t_ck* x)
+{
+    std::vector<t_CKUINT> shred_ids;
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+    shreduler->get_blocked_shred_ids(shred_ids);
+    return shred_ids;
+}
+
+static std::vector<t_CKUINT> ck_get_all_shred_ids(t_ck* x)
+{
+    std::vector<t_CKUINT> shred_ids;
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+    shreduler->get_all_shred_ids(shred_ids);
+    return shred_ids;
+}
+
+static long ck_spork_highest_id(t_ck* x)
+{
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+    return shreduler->highest();
+}
+
+
+static void ck_shreds(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    Chuck_VM_Shreduler* shreduler = x->chuck->vm()->shreduler();
+
+    // no args: list all shreds
+    if (argc == 0) {
+        std::vector<Chuck_VM_Shred*> shreds;
+        shreduler->get_all_shreds(shreds);
+
+        if (shreds.empty()) {
+            post("shreds: no shreds running");
+        } else {
+            post("shreds: %d running", (int)shreds.size());
+            for (const Chuck_VM_Shred* shred : shreds) {
+                const char* state = shred->is_running ? "running" :
+                                   (shred->event ? "blocked" : "ready");
+                post("  [%d] %s (%s)", shred->xid, shred->name.c_str(), state);
+            }
+        }
+        return;
+    }
+
+    // handle subcommands
+    if (argv->a_type == A_SYMBOL) {
+        t_symbol* cmd = atom_getsymbol(argv);
+
+        if (cmd == gensym("all")) {
+            std::vector<t_CKUINT> ids = ck_get_all_shred_ids(x);
+            post("shreds all: %d shreds", (int)ids.size());
+            for (t_CKUINT id : ids) {
+                Chuck_VM_Shred* shred = shreduler->lookup(id);
+                if (shred) {
+                    post("  [%d] %s", shred->xid, shred->name.c_str());
+                }
+            }
+            return;
+        }
+
+        if (cmd == gensym("ready")) {
+            std::vector<t_CKUINT> ids = ck_get_ready_shred_ids(x);
+            post("shreds ready: %d shreds", (int)ids.size());
+            for (t_CKUINT id : ids) {
+                Chuck_VM_Shred* shred = shreduler->lookup(id);
+                if (shred) {
+                    post("  [%d] %s", shred->xid, shred->name.c_str());
+                }
+            }
+            return;
+        }
+
+        if (cmd == gensym("blocked")) {
+            std::vector<t_CKUINT> ids = ck_get_blocked_shred_ids(x);
+            post("shreds blocked: %d shreds", (int)ids.size());
+            for (t_CKUINT id : ids) {
+                Chuck_VM_Shred* shred = shreduler->lookup(id);
+                if (shred) {
+                    post("  [%d] %s", shred->xid, shred->name.c_str());
+                }
+            }
+            return;
+        }
+
+        if (cmd == gensym("highest")) {
+            long id = ck_spork_highest_id(x);
+            post("shreds highest: %ld", id);
+            return;
+        }
+
+        if (cmd == gensym("last")) {
+            long id = x->chuck->vm()->last_id();
+            post("shreds last: %ld", id);
+            return;
+        }
+
+        if (cmd == gensym("next")) {
+            long id = x->chuck->vm()->next_id();
+            post("shreds next: %ld", id);
+            return;
+        }
+
+        if (cmd == gensym("count")) {
+            std::vector<t_CKUINT> ids = ck_get_all_shred_ids(x);
+            post("shreds count: %d", (int)ids.size());
+            return;
+        }
+
+        pd_error(x, "shreds: unknown subcommand '%s'", cmd->s_name);
+        return;
+    }
+
+    // numeric arg: get info about specific shred
+    if (argv->a_type == A_FLOAT) {
+        t_CKUINT id = (t_CKUINT)atom_getint(argv);
+        Chuck_VM_Shred* shred = shreduler->lookup(id);
+
+        if (!shred) {
+            pd_error(x, "shreds: shred %d not found", (int)id);
+            return;
+        }
+
+        post("shred [%d]:", shred->xid);
+        post("  name: %s", shred->name.c_str());
+        post("  running: %s", shred->is_running ? "yes" : "no");
+        post("  done: %s", shred->is_done ? "yes" : "no");
+        post("  blocked: %s", shred->event ? "yes (waiting on event)" : "no");
+        post("  wake_time: %.2f samples", shred->wake_time);
+        post("  start: %.2f samples", shred->start);
+
+        if (!shred->args.empty()) {
+            post("  args:");
+            for (const auto& arg : shred->args) {
+                post("    - %s", arg.c_str());
+            }
+        }
+        return;
+    }
+
+    pd_error(x, "shreds: invalid argument");
+}
+
+
+static void ck_tap(t_ck* x, t_symbol* s, long argc, t_atom* argv)
+{
+    if (x->tap_channels == 0) {
+        pd_error(x, "tap: no tap outlets configured (use [chuck~ channels tap_outlets])");
+        return;
+    }
+
+    if (argc == 0) {
+        // tap (no args): clear all taps
+        for (int i = 0; i < x->tap_channels; i++) {
+            x->tap_ugens[i] = gensym("");
+        }
+        post("tap: cleared all");
+    }
+    else if (argc == 1) {
+        if (argv[0].a_type == A_SYMBOL) {
+            // tap ugen_name: set all outlets to tap the same UGen
+            t_symbol* ugen_name = atom_getsymbol(&argv[0]);
+            for (int i = 0; i < x->tap_channels; i++) {
+                x->tap_ugens[i] = ugen_name;
+            }
+            post("tap: all outlets set to '%s'", ugen_name->s_name);
+        }
+        else if (argv[0].a_type == A_FLOAT) {
+            // tap outlet_index: clear specific outlet
+            long outlet = (long)atom_getfloat(&argv[0]);
+            if (outlet < 1 || outlet > x->tap_channels) {
+                pd_error(x, "tap: outlet %ld out of range (1-%d)", outlet, x->tap_channels);
+                return;
+            }
+            x->tap_ugens[outlet - 1] = gensym("");
+            post("tap: outlet %ld cleared", outlet);
+        }
+        else {
+            pd_error(x, "tap: invalid argument type");
+        }
+    }
+    else if (argc == 2) {
+        // tap outlet_index ugen_name: set specific outlet
+        if (argv[0].a_type != A_FLOAT) {
+            pd_error(x, "tap: first argument must be outlet number (1-%d)", x->tap_channels);
+            return;
+        }
+        long outlet = (long)atom_getfloat(&argv[0]);
+        if (outlet < 1 || outlet > x->tap_channels) {
+            pd_error(x, "tap: outlet %ld out of range (1-%d)", outlet, x->tap_channels);
+            return;
+        }
+        if (argv[1].a_type != A_SYMBOL) {
+            pd_error(x, "tap: second argument must be UGen name");
+            return;
+        }
+        t_symbol* ugen_name = atom_getsymbol(&argv[1]);
+        x->tap_ugens[outlet - 1] = ugen_name;
+        post("tap: outlet %ld set to '%s'", outlet, ugen_name->s_name);
+    }
+    else {
+        pd_error(x, "tap: too many arguments");
+    }
+}
+
+
 static void ck_signal(t_ck* x, t_symbol* s)
 {
     if (!x->chuck->vm()->globals_manager()->signalGlobalEvent(s->s_name))
@@ -1259,66 +1784,109 @@ static void ck_dsp(t_ck* x, t_signal** sp)
 
     x->buffer_size = sp[0]->s_n;
 
-    x->in_chuck_buffer = new float[x->buffer_size * N_IN_CHANNELS];
-    x->out_chuck_buffer = new float[x->buffer_size * N_OUT_CHANNELS];
+    // allocate chuck buffers based on configurable channel count
+    x->in_chuck_buffer = new float[x->buffer_size * x->channels];
+    x->out_chuck_buffer = new float[x->buffer_size * x->channels];
 
     memset(x->in_chuck_buffer, 0.f,
-           sizeof(float) * x->buffer_size * N_IN_CHANNELS);
+           sizeof(float) * x->buffer_size * x->channels);
     memset(x->out_chuck_buffer, 0.f,
-           sizeof(float) * x->buffer_size * N_OUT_CHANNELS);
+           sizeof(float) * x->buffer_size * x->channels);
 
-    /* Attach the object to the DSP chain */
-    dsp_add(ck_perform, NEXT - 1, x, sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec,
-            sp[3]->s_vec, sp[0]->s_n);
+    // allocate tap buffer if tap is enabled
+    if (x->tap_channels > 0) {
+        delete[] x->tap_buffer;
+        x->tap_buffer = new float[x->buffer_size];
+        memset(x->tap_buffer, 0.f, sizeof(float) * x->buffer_size);
+    }
 
-    /* Print message to Max window */
-    post("chuck~ • Executing perform routine");
+    // store vector pointers in the struct
+    // free old ones first
+    if (x->in_vectors) {
+        freebytes(x->in_vectors, sizeof(t_sample*) * x->channels);
+    }
+    if (x->out_vectors) {
+        freebytes(x->out_vectors, sizeof(t_sample*) * (x->channels + x->tap_channels));
+    }
+
+    x->in_vectors = (t_sample**)getbytes(sizeof(t_sample*) * x->channels);
+    x->out_vectors = (t_sample**)getbytes(sizeof(t_sample*) * (x->channels + x->tap_channels));
+
+    // sp layout: [in0, in1, ..., inN-1, out0, out1, ..., outN-1, tap0, tap1, ...]
+    for (int i = 0; i < x->channels; i++) {
+        x->in_vectors[i] = sp[i]->s_vec;
+        x->out_vectors[i] = sp[x->channels + i]->s_vec;
+    }
+    // tap outlets come after main outputs
+    for (int i = 0; i < x->tap_channels; i++) {
+        x->out_vectors[x->channels + i] = sp[x->channels * 2 + i]->s_vec;
+    }
+
+    /* Attach the object to the DSP chain - just pass object and vector size */
+    dsp_add(ck_perform, 2, x, sp[0]->s_n);
+
+    /* Print message to Pd window */
+    post("chuck~ - Executing perform routine");
     post("sample rate: %d", x->srate);
     post("buffer size: %i", x->buffer_size);
+    post("channels: %d (+ %d tap outlets)", x->channels, x->tap_channels);
 }
 
 static t_int* ck_perform(t_int* w)
 {
-    // Thanks to Professor GE Wang for the fix!
-    int i;
-    t_ck* x = (t_ck*)(w[OBJECT]);
-    float* in1 = (float*)(w[INPUT_VECTOR_L]);
-    float* in2 = (float*)(w[INPUT_VECTOR_R]);
-    float* out1 = (float*)(w[OUTPUT_VECTOR_L]);
-    float* out2 = (float*)(w[OUTPUT_VECTOR_R]);
-    int n = (int)(w[VECTOR_SIZE]);
+    t_ck* x = (t_ck*)(w[1]);
+    int n = (int)(w[2]);
 
     float* in_ptr = x->in_chuck_buffer;
-    float* out_ptr = x->out_chuck_buffer;
 
-    // interleave
-    for (i = 0; i < n; i++) {
-        *in_ptr = in1[i];
-        in_ptr += N_IN_CHANNELS;
-    }
-    // set in_ptr to input with offset
-    in_ptr = x->in_chuck_buffer + 1;
-    for (i = 0; i < n; i++) {
-        *in_ptr = in2[i];
-        in_ptr += N_IN_CHANNELS;
+    // interleave input: convert from Pd's non-interleaved to ChucK's interleaved
+    for (int i = 0; i < n; i++) {
+        for (int chan = 0; chan < x->channels; chan++) {
+            in_ptr[i * x->channels + chan] = x->in_vectors[chan][i];
+        }
     }
 
-    // NB pd non-interleaved; chuck interleaved by default
+    // run ChucK (interleaved buffers)
     x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
 
-    // de-interleave
-    out_ptr = x->out_chuck_buffer;
-    for (i = 0; i < n; i++) {
-        out1[i] = *out_ptr;
-        out_ptr += N_OUT_CHANNELS;
+    // de-interleave output: convert from ChucK's interleaved to Pd's non-interleaved
+    float* out_ptr = x->out_chuck_buffer;
+    for (int i = 0; i < n; i++) {
+        for (int chan = 0; chan < x->channels; chan++) {
+            x->out_vectors[chan][i] = out_ptr[i * x->channels + chan];
+        }
     }
-    // set out_ptr to output with offset
-    out_ptr = x->out_chuck_buffer + 1;
-    for (i = 0; i < n; i++) {
-        out2[i] = *out_ptr;
-        out_ptr += N_OUT_CHANNELS;
+
+    // tap global UGen samples if enabled (each outlet taps independently)
+    if (x->tap_channels > 0 && x->tap_buffer) {
+        for (int chan = 0; chan < x->tap_channels; chan++) {
+            t_symbol* ugen_name = x->tap_ugens[chan];
+            int tap_outlet = x->channels + chan;
+
+            if (ugen_name != gensym("")) {
+                // tap this outlet's UGen (mono)
+                t_CKBOOL success = x->chuck->vm()->globals_manager()->getGlobalUGenSamples(
+                    ugen_name->s_name, x->tap_buffer, n);
+
+                if (success) {
+                    for (int i = 0; i < n; i++) {
+                        x->out_vectors[tap_outlet][i] = x->tap_buffer[i];
+                    }
+                } else {
+                    // UGen not found or not ready - output silence
+                    for (int i = 0; i < n; i++) {
+                        x->out_vectors[tap_outlet][i] = 0.0f;
+                    }
+                }
+            } else {
+                // no UGen assigned to this outlet - output silence
+                for (int i = 0; i < n; i++) {
+                    x->out_vectors[tap_outlet][i] = 0.0f;
+                }
+            }
+        }
     }
 
     /* Return the next address in the DSP chain */
-    return w + NEXT;
+    return w + 3;
 }

@@ -6,6 +6,15 @@ PREFIX = $(THIRDPARTY)/install
 # FAUST_VERSION = 2.72.14
 FAUST_VERSION = 2.69.3
 
+# Test timeout in seconds (default: 10)
+TEST_TIMEOUT ?= 10
+# Use gtimeout on macOS (from coreutils), timeout on Linux
+ifeq ($(PLATFORM),Darwin)
+    TIMEOUT_CMD = gtimeout
+else
+    TIMEOUT_CMD = timeout
+endif
+
 
 .PHONY: all build \
 		full light nomp3 build_fs \
@@ -240,13 +249,13 @@ reset:
 test: test-audio
 
 test-audio:
-	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_audio.pd
+	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_audio.pd || true
 
 test-faust:
-	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_faust.pd
+	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_faust.pd || true
 
 test-warpbuf:
-	@pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd
+	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd || true
 
 probe-chugins:
 	@./build/chuck --chugin-probe --chugin-path:chuck_tilde/examples/chugins

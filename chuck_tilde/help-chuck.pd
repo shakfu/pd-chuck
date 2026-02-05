@@ -33,6 +33,7 @@
 #X msg 473 212 - 1 2;
 #X msg 39 215 add fauck/fau.ck;
 #X msg 16 286 + fluidsynth/fluidsynth-test.ck;
+#X msg 28 349 shreds;
 #X connect 0 0 15 0;
 #X connect 1 0 15 0;
 #X connect 2 0 15 0;
@@ -64,3 +65,4 @@
 #X connect 31 0 15 0;
 #X connect 32 0 15 0;
 #X connect 33 0 15 0;
+#X connect 34 0 15 0;

@@ -15,6 +15,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added configurable I/O channels: `[chuck~ channels]` or `[chuck~ channels tap_channels]`
+
+- Added tap infrastructure for reading global UGen samples via tap outlets
+
+- Added `tap` message for setting global UGens to tap (reads samples from named UGens)
+
+- Added `removeall` message to remove all shreds while keeping VM state
+
+- Added `adaptive` message to get/set adaptive mode for the VM shreduler
+
+- Added `param` message to get/set ChucK VM parameters
+
+- Added `shreds` message for shred introspection (subcommands: all, ready, blocked, count, highest, last, next, or query by ID)
+
+- Added `is_safe_path()` security function to validate paths against traversal attacks
+
+- Changed `ck_edit()` to use fork/exec on macOS for safer command execution
+
 - Updated chuck code base to `1.5.5.8-dev (chai)`
 
 - Added cmake function `add_chugin()` 
