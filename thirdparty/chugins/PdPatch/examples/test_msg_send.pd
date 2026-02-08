@@ -1,0 +1,14 @@
+#N canvas 484 243 450 300 12;
+#X obj 207 219 print;
+#X obj 120 91 + 1;
+#X obj 120 60 r myfloat;
+#X obj 283 59 r mylist;
+#X obj 45 58 r mybang;
+#X obj 198 60 r mysymbol;
+#X obj 361 59 r mymessage;
+#X connect 1 0 0 0;
+#X connect 2 0 1 0;
+#X connect 3 0 0 0;
+#X connect 4 0 0 0;
+#X connect 5 0 0 0;
+#X connect 6 0 0 0;

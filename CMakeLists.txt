@@ -22,6 +22,7 @@ option(ENABLE_FLUIDSYNTH "build FluidSynth chugin")
 option(ENABLE_ABLETONLINK "build AbletonLink chugin")
 option(ENABLE_CLAP "build CLAP plugin host chugin")
 option(ENABLE_VST3 "build VST3 plugin host chugin")
+option(ENABLE_PDPATCH "build PdPatch chugin")
 
 # sndfile options
 option(ENABLE_MP3 "Enable MP3 support for libsndfile")

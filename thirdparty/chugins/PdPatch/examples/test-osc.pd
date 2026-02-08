@@ -1,0 +1,14 @@
+#N canvas 0 0 450 300 12;
+#X obj 50 50 r freq;
+#X obj 50 100 osc~;
+#X obj 50 150 *~ 0.3;
+#X obj 50 200 dac~;
+#X obj 50 250 loadbang;
+#X obj 50 280 f 440;
+#X obj 50 310 s freq;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 0 3 1;
+#X connect 4 0 5 0;
+#X connect 5 0 6 0;

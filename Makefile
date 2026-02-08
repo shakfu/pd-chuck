@@ -17,13 +17,13 @@ endif
 
 
 .PHONY: all build \
-		full light nomp3 build_fs \
+		full light nomp3 build_fs build_pd \
 		macos macos-base-native macos-base-universal macos-adv-brew  \
 		linux linux-base-alsa linux-base-pulse linux-base-jack linux-base-all \
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
-		test test-audio test-faust test-warpbuf probe-chugins \
+		test test-audio test-faust test-warpbuf test-pdpatch probe-chugins \
 		clean reset sign linux-base-fs
 
 all: build
@@ -42,6 +42,14 @@ build_fs:
 			-DENABLE_FLUIDSYNTH=ON \
 			-DENABLE_EXTRA_FORMATS=ON \
 			-DENABLE_MP3=ON \
+			&& \
+		cmake --build . --config Release
+
+build_pd:
+	@mkdir -p build && \
+		cd build && \
+		cmake .. \
+			-DENABLE_PDPATCH=ON \
 			&& \
 		cmake --build . --config Release
 
@@ -256,6 +264,9 @@ test-faust:
 
 test-warpbuf:
 	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_warpbuf.pd || true
+
+test-pdpatch:
+	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) ./build/chuck --silent --chugin:chuck_tilde/examples/chugins/PdPatch.chug thirdparty/chugins/PdPatch/examples/test-pdpatch.ck 2>&1 | tee /dev/stderr | grep -q "OK:.*tests passed"
 
 probe-chugins:
 	@./build/chuck --chugin-probe --chugin-path:chuck_tilde/examples/chugins

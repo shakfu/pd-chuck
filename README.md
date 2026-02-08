@@ -22,6 +22,8 @@ Also included are the following:
 
 - All of the [CCRMA chugins](https://github.com/ccrma/chugins) including `WarpBuf`, `Fauck` (`Faust`) and `FluidSynth`.
 
+- `PdPatch` chugin for loading and running [Pure Data](https://puredata.info/) patches inside ChucK, with bidirectional messaging, array access, and MIDI support.
+
 - Optional plugin-hosting chugins: `AbletonLink`, `AudioUnit` (macOS), `CLAP`, and `VST3`.
 
 - Many `pd` patches to test and demonstrate usage.
@@ -222,7 +224,7 @@ This project provides for building two general variants depending on the need of
 
 1. The *base system* consists of the `chuck~` external and the base CCRMA chugins. This is already more than sufficient for more than 80% of users. The base system is relatively easy to build and only needs a c++ compiler, `cmake`, `make`, `bison` and `flex`.
 
-2. The *advanced system* consists of the base system above plus three chugins which are relatively more challenging to build and use: `Faust.chug`, `WarpBuf.chug` and `FluidSynth.chug`.
+2. The *advanced system* consists of the base system above plus chugins which are relatively more challenging to build and use: `Faust.chug`, `WarpBuf.chug`, `FluidSynth.chug`, and `PdPatch.chug`.
 
 On macOS requirements for the variants can be installed using [Homebrew](https://brew.sh) as follows:
 
@@ -306,6 +308,8 @@ The advanced system consists of the base system + two advanced chugins, `Faust.c
 
 3. The [FluidSynth](https://www.fluidsynth.org) chugin, enables a real-time software synthesizer based on the SoundFont 2 specifications, (see above for requirements).
 
+4. The [PdPatch](thirdparty/chugins/PdPatch/README.md) chugin wraps [libpd](https://github.com/libpd/libpd) to load and run Pure Data patches inside ChucK, with stereo audio, bidirectional messaging, array access, and MIDI. Build with `make build_pd` or `-DENABLE_PDPATCH=ON`. No external dependencies -- libpd is fetched and built automatically.
+
 If you have installed the prerequisites above, it should be possible the advanced system with one of the following options:
 
 - `make macos-adv-brew` or `make macos`: build the external using the previously installed homebrew dependencies, as well as downloaded `faust` headers and a downloaded pre-compiled `libfaust` (`libfaustwithllvm`) library. This is the newer, faster, recommended way of getting a full chuck-max system up and running.
@@ -324,7 +328,21 @@ If you have installed the prerequisites above, it should be possible the advance
 
 - `make linux-adv-all`: builds the external on Linux with advanced options and support for ALSA, PULSE and JACK audio drivers.
 
-### C. Plugin-Hosting Chugins (Optional)
+### C. PdPatch Chugin (Optional)
+
+The `PdPatch` chugin wraps [libpd](https://github.com/libpd/libpd) to load and run Pure Data patches inside ChucK. It supports stereo audio I/O, bidirectional messaging, Pd array access, and MIDI send. libpd is automatically fetched and statically linked via CMake FetchContent -- no external dependencies required.
+
+```bash
+make build_pd
+```
+
+Or manually: `cmake .. -DENABLE_PDPATCH=ON && cmake --build . --config Release`
+
+To run the PdPatch test suite: `make test-pdpatch`
+
+See `thirdparty/chugins/PdPatch/README.md` for the full API reference.
+
+### D. Plugin-Hosting Chugins (Optional)
 
 pd-chuck includes optional chugins for hosting audio plugins within ChucK. These require additional CMake flags to enable:
 
@@ -333,17 +351,18 @@ pd-chuck includes optional chugins for hosting audio plugins within ChucK. These
 | AbletonLink | All | `-DENABLE_ABLETONLINK=ON` | Auto-fetched from GitHub |
 | AudioUnit | macOS only | (built automatically) | macOS frameworks |
 | CLAP | All | `-DENABLE_CLAP=ON` | Headers included |
+| PdPatch | All | `-DENABLE_PDPATCH=ON` | Auto-fetched from GitHub |
 | VST3 | All | `-DENABLE_VST3=ON` | Auto-fetched from GitHub |
 
 To build with all plugin-hosting chugins enabled:
 
 ```bash
 cd build
-cmake .. -DENABLE_ABLETONLINK=ON -DENABLE_CLAP=ON -DENABLE_VST3=ON
+cmake .. -DENABLE_ABLETONLINK=ON -DENABLE_CLAP=ON -DENABLE_VST3=ON -DENABLE_PDPATCH=ON
 cmake --build . --config Release
 ```
 
-The AbletonLink and VST3 SDKs are automatically cloned from GitHub during configuration if not already present. This may take additional time on the first build.
+The AbletonLink, VST3, and libpd SDKs are automatically cloned from GitHub during configuration if not already present. This may take additional time on the first build.
 
 ## Credits
 

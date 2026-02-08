@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 # [0.1.x]
 
+- Added PdPatch chugin for loading and running Pure Data patches inside ChucK (requires `-DENABLE_PDPATCH=ON`). Wraps libpd (auto-fetched via CMake FetchContent) with stereo audio I/O, bidirectional messaging (send/receive float, bang, symbol, list, typed message), Pd array read/write access, and MIDI send. Supports multiple independent Pd instances. Added `build_pd` and `test-pdpatch` make targets.
+
 - Added AbletonLink chugin with auto-fetch of Link SDK from GitHub (requires `-DENABLE_ABLETONLINK=ON`)
 
 - Added AudioUnit chugin for hosting Audio Unit plugins (macOS only, built automatically)

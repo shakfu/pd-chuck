@@ -1,0 +1,44 @@
+#N canvas 391 107 523 310 12;
+#X obj 97 93 select 1 2 3 4 5;
+#X obj 105 36 r option;
+#X floatatom 35 29 5 0 0 0 - - - 0;
+#X obj 97 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X obj 118 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 140 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 162 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 184 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 206 134 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 97 263 s dispatch;
+#X msg 110 220 1.5;
+#X msg 144 220 hello;
+#X msg 193 220 list x y s 2;
+#X msg 292 220 foo x y z 1 2 3;
+#X msg 415 221 other;
+#X obj 371 79 r dispatch;
+#X obj 371 116 print;
+#X connect 0 0 3 0;
+#X connect 0 1 4 0;
+#X connect 0 2 5 0;
+#X connect 0 3 6 0;
+#X connect 0 4 7 0;
+#X connect 0 5 8 0;
+#X connect 1 0 0 0;
+#X connect 2 0 0 0;
+#X connect 3 0 9 0;
+#X connect 4 0 10 0;
+#X connect 5 0 11 0;
+#X connect 6 0 12 0;
+#X connect 7 0 13 0;
+#X connect 8 0 14 0;
+#X connect 10 0 9 0;
+#X connect 11 0 9 0;
+#X connect 12 0 9 0;
+#X connect 13 0 9 0;
+#X connect 14 0 9 0;
+#X connect 15 0 16 0;
