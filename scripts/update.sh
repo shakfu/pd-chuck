@@ -51,8 +51,13 @@ function update_chugins() {
 	move_to_new LICENSE && \
 	move_to_new notes && \
 	move_to_new README.md && \
-	# handle Fauck and WarpBuf
+	# handle custom chugins
+	mv thirdparty/chugins/AbletonLink thirdparty/chugins-new/ && \
+	mv thirdparty/chugins/AudioUnit thirdparty/chugins-new/ && \
+	mv thirdparty/chugins/CLAP thirdparty/chugins-new/ && \
 	mv thirdparty/chugins/Fauck thirdparty/chugins-new/ && \
+	mv thirdparty/chugins/PdPatch thirdparty/chugins-new/ && \
+	mv thirdparty/chugins/VST3 thirdparty/chugins-new/ && \
 	mv thirdparty/chugins/WarpBuf thirdparty/chugins-new/ && \
 	# chugins
 	update_new_chugin ABSaturator && \
