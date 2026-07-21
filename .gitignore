@@ -59,3 +59,8 @@ build
 *.exe
 *.out
 *.app
+
+# agentic
+.claude
+CLAUDE.md
+

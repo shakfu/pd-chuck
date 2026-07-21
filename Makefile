@@ -23,7 +23,7 @@ endif
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
-		test test-audio test-faust test-warpbuf test-pdpatch probe-chugins \
+		test test-audio test-reply test-faust test-warpbuf test-pdpatch probe-chugins \
 		clean reset sign linux-base-fs
 
 all: build
@@ -258,6 +258,9 @@ test: test-audio
 
 test-audio:
 	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_audio.pd || true
+
+test-reply:
+	@$(TIMEOUT_CMD) 20 pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_reply.pd 2>&1 | grep -q "REPLY: val counter" && echo "OK: reply outlet works" || (echo "FAIL: reply outlet"; exit 1)
 
 test-faust:
 	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_faust.pd || true
