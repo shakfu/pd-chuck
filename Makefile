@@ -23,7 +23,7 @@ endif
 		linux-adv-alsa linux-adv-pulse linux-adv-jack linux-adv-all \
 		faust rubberband libsndfile_formats \
 		all_deps light_deps nomp3_deps \
-		test test-audio test-reply test-faust test-warpbuf test-pdpatch probe-chugins \
+		test test-audio test-bind test-reply test-faust test-warpbuf test-pdpatch probe-chugins \
 		clean reset sign linux-base-fs
 
 all: build
@@ -254,13 +254,43 @@ reset:
 	@rm -rf build/CMakeCache.txt build/Makefile build/CMakeFiles build/chuck_tilde build/chuck 
 	@rm -rf build/cmake_install.cmake build/thirdparty build/*.a
 
-test: test-audio
+test: test-audio test-bind
 
 test-audio:
 	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_audio.pd || true
 
 test-reply:
 	@$(TIMEOUT_CMD) 20 pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_reply.pd 2>&1 | grep -q "REPLY: val counter" && echo "OK: reply outlet works" || (echo "FAIL: reply outlet"; exit 1)
+
+# Pd, HostIn, HostBuffer and HostBufPlay; -batch runs DSP as fast as possible
+test-bind:
+	@out=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind.pd 2>&1); \
+	if echo "$$out" | grep -q "BIND-DONE: 0" && ! echo "$$out" | grep -q "BIND-FAIL" \
+		&& [ "$$(echo "$$out" | grep -c "HostBufPlay: channel 2 plays silence")" = 1 ] \
+		&& ! echo "$$out" | grep -q "HostBufPlay: channel 1"; then \
+		echo "OK: bind tests passed ($$(echo "$$out" | grep -c BIND-PASS) checks)"; \
+	else echo "$$out"; echo "FAIL: bind tests"; exit 1; fi
+	@# receivers per 'msg w': before/after removeall, rerun, after reset, rerun
+	@got=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_lifecycle.pd 2>&1 \
+		| sed -n 's/.*msg w: delivered to \([0-9]*\) HostIn/\1/p' | tr '\n' ' '); \
+	if [ "$$got" = "2 0 2 0 2 " ]; then echo "OK: HostIn lifecycle"; \
+	else echo "FAIL: HostIn lifecycle: got '$$got', want '2 0 2 0 2 '"; exit 1; fi
+	@# Host.send* without 'reply 1': each type once, then 300 floats in one block (256 fit)
+	@out=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_send.pd 2>&1); \
+	n=$$(echo "$$out" | grep -c "BIND-N:"); ok=1; \
+	for want in "BIND-SENDFLOAT: 7" "BIND-BANG: bang" "BIND-SYMBOL: symbol hello" \
+		"BIND-LIST: 1 2.5 -3" "BIND-LEMPTY: bang" "BIND-LLEN: 32" \
+		"1 lists cut to 32 elements" "44 messages dropped"; do \
+		echo "$$out" | grep -qF "$$want" || { echo "missing: $$want"; ok=0; }; \
+	done; \
+	if [ $$ok = 1 ] && [ "$$n" = 256 ]; then echo "OK: Host.send{Bang,Float,Symbol,List}"; \
+	else echo "$$out" | grep "BIND\|warning" | tail; echo "FAIL: Host.send* ($$n of 256)"; exit 1; fi
+	@# HostClock.ck driven by timed 'msg clock ...' messages
+	@out=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_clock.pd 2>&1); \
+	if echo "$$out" | grep -q "BIND-CLOCK-DONE: 0" && ! echo "$$out" | grep -q "BIND-CLOCK-FAIL" \
+		&& echo "$$out" | grep -q "HostClock: tempo must be > 0"; then \
+		echo "OK: HostClock.ck ($$(echo "$$out" | grep -c BIND-CLOCK-PASS) checks)"; \
+	else echo "$$out" | grep "BIND-CLOCK\|HostClock\|error"; echo "FAIL: HostClock.ck"; exit 1; fi
 
 test-faust:
 	@$(TIMEOUT_CMD) $(TEST_TIMEOUT) pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_faust.pd || true

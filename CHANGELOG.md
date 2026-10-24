@@ -29,11 +29,19 @@ Change groups, in order:
 
 - Added `abort` message to abort the currently-running shred.
 
+- Added ChucK classes bound into each VM with `ChucK::bind()`, ported from chuck-max: `Host.send(name, value)` emits `msg <name> <value>` from the reply outlet (needs `reply 1`); `Host.sendBang`, `Host.sendFloat`, `Host.sendSymbol` and `Host.sendList` send to every `[r <receiver>]`, without `reply 1`; `HostIn` / `HostMsg` receive the new `msg <name> <args...>` inlet message; `HostBuffer` reads and writes a Pd array; the `HostBufPlay` UGen plays one. `HostClock` is not bound, since Pd has no global transport; `examples/pd/HostClock.ck` gives the same API in ChucK, driven by `msg clock tempo|play|seek|sig` from the patch (see `docs/dev/syncing.md`). The names are host-neutral and shared with chuck-max and numchuck; `HostBuffer` and `HostBufPlay` take their channel and sample-rate members too, as a mono array at the patch rate, so one `.ck` file compiles in each host. Examples in `examples/pd/`, a `[pd classes]` help subpatch, and `make test-bind` (headless `pd -batch`, now part of `make test`). See `docs/dev/bind.md`.
+
+  `msg` is now an inlet selector, so a ChucK global named `msg` can only be set with `set`.
+
 - Added examples and tests for the new messaging: `test_reply.pd`, `test_verbose.pd`, `test_loglevel.pd`, and `reply_test.ck`, plus additional example patches (`noise-machine`, `ambisonic-encoding`, `spherical-harmonics`, `golden`, `paulstretch`).
 
 ### Changed
 
 - Updated ChucK codebase to `1.5.5.9-dev (chai)`.
+
+### Fixed
+
+- Fixed `run` posting `filename:` followed by garbage bytes: it passed the `t_symbol*` itself to `%s`, not its name.
 
 ## [1.5.5.8-dev] - 2026-01-14
 

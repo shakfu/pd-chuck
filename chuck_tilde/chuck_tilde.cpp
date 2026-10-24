@@ -3,6 +3,8 @@
 #include "chuck.h"
 #include "chuck_globals.h"
 #include "chuck_dl.h"
+#include "pdin.h"
+#include "pdarray.h"
 
 #include <algorithm>
 #include <atomic>
@@ -36,6 +38,10 @@
 #define CK_MAX_LISTENS 32
 // how often the reply queue is drained, in ms, while replies are enabled
 #define CK_REPLY_POLL_MS 20.0
+// Host.send{Bang,Float,Symbol,List} calls queued per instance between clock ticks
+#define CK_SEND_QUEUE_SIZE 256
+// Host.sendList elements kept per call; the rest are dropped with a warning
+#define CK_SEND_MAX_ATOMS 32
 
 // forward decl so the instance slot table can refer to it
 typedef struct _ck t_ck;
@@ -53,6 +59,14 @@ typedef struct _ck_reply {
     int argc;
     t_atom argv[CK_REPLY_MAX_ATOMS];
 } t_ck_reply;
+
+// a Host.send{Bang,Float,Symbol,List} call, queued in the perform routine
+typedef struct _ck_send {
+    t_symbol* receiver;
+    t_symbol* selector; // &s_bang, &s_float, &s_symbol or &s_list
+    int argc;
+    t_atom argv[CK_SEND_MAX_ATOMS];
+} t_ck_send;
 
 // pack / unpack a globals callback id: high 32 bits select the instance slot,
 // low 32 bits are a per-instance ticket identifying the request
@@ -117,6 +131,15 @@ struct _ck {
     t_symbol* pending_names[CK_PENDING_SIZE]; // variable name per in-flight get
     long pending_ticket;        // next ticket to issue
     t_symbol* listen_names[CK_MAX_LISTENS];   // event name per active listener
+
+    // host-defined ChucK classes (see docs/dev/bind.md)
+    PdInState* inbox;           // live HostIn objects
+    PdArrayState* arrays;       // Pd arrays named by HostBuffer and HostBufPlay
+    t_ck_send send_queue[CK_SEND_QUEUE_SIZE]; // Host.send*, perform -> clock
+    int send_count;
+    int send_dropped;           // calls lost to a full queue since the last tick
+    int send_truncated;         // Host.sendList calls cut to CK_SEND_MAX_ATOMS
+    t_clock* send_clock;        // delivers send_queue after the DSP tick
 };
 
 
@@ -288,6 +311,14 @@ static t_ck* ck_instance_from_id(t_CKINT id);
 static t_symbol* ck_pending_name(t_ck* x, t_CKINT id);
 static t_CKINT ck_pending_issue(t_ck* x, t_symbol* name);
 
+// host-defined ChucK classes: bound functions get the VM, not the t_ck
+static t_ck* ck_instance_from_vm(Chuck_VM* vm);
+static PdInState* ck_inbox_from_vm(Chuck_VM* vm);
+static PdArrayState* ck_arrays_from_vm(Chuck_VM* vm);
+static t_CKBOOL CK_DLL_CALL ck_pd_query(Chuck_DL_Query* QUERY);
+static void ck_msg(t_ck* x, t_symbol* s, int argc, t_atom* argv); // msg <name> <args...> -> HostIn
+static void ck_send_drain(t_ck* x);
+
 // callbacks (events); the id encodes instance slot + listener ticket
 static void cb_event(t_CKINT id);
 
@@ -322,6 +353,7 @@ static t_symbol* ps_val = NULL;      // val <name> <value...>   -- 'get' reply
 static t_symbol* ps_event = NULL;    // event <name>            -- 'listen'
 static t_symbol* ps_shred = NULL;    // shred add|remove <id>   -- vm watcher
 static t_symbol* ps_global = NULL;   // global <name> <type>    -- 'globals'
+static t_symbol* ps_msg = NULL;      // msg <name> <value>      -- Host.send()
 
 //-----------------------------------------------------------------------------------------------
 // callbacks
@@ -452,6 +484,14 @@ static void *ck_new(t_symbol *s, int argc, t_atom *argv)
         x->in_chuck_buffer = NULL;
         x->out_chuck_buffer = NULL;
 
+        // allocated before bind() so the bound classes find them
+        x->inbox = new PdInState;
+        x->arrays = new PdArrayState;
+        x->send_count = 0;
+        x->send_dropped = 0;
+        x->send_truncated = 0;
+        x->send_clock = clock_new(x, (t_method)ck_send_drain);
+
         x->chuck = new ChucK();
         // set sample rate and number of in/out channels on our chuck
         x->srate = sys_getsr();
@@ -483,6 +523,17 @@ static void *ck_new(t_symbol *s, int argc, t_atom *argv)
 
         // initialize our chuck
         x->chuck->init();
+        if (!x->chuck->bind(ck_pd_query, "Host")) {
+            ck_error(x, "could not bind the Host class");
+        }
+        if (!x->chuck->bind(pdin_query, "HostIn")) {
+            ck_error(x, "could not bind the HostIn class");
+        }
+        if (!x->chuck->bind(pdarray_query, "HostBuffer")) {
+            ck_error(x, "could not bind the HostBuffer class");
+        }
+        x->chuck->vm()->subscribe_watcher(pdin_watcher,
+                                          ckvm_shreds_watch_REMOVE, x->inbox);
         x->chuck->start();
 
         // loglevel is process-global (ChucK::setLogLevel is static). set the
@@ -549,13 +600,23 @@ static void ck_free(t_ck *x)
     if (x->reply_clock) {
         clock_unset(x->reply_clock);
     }
+    if (x->send_clock) {
+        clock_free(x->send_clock);
+        x->send_clock = NULL;
+    }
     if (x->chuck) {
         if (x->chuck->vm()) {
             x->chuck->vm()->remove_watcher(cb_shreds_watcher);
+            x->chuck->vm()->remove_watcher(pdin_watcher);
         }
         delete x->chuck;
         x->chuck = NULL;
     }
+    // after the VM: HostIn dtors still unregister from x->inbox
+    delete x->inbox;
+    x->inbox = NULL;
+    delete x->arrays;
+    x->arrays = NULL;
     // no further pushes can occur now that the VM is gone
     if (x->reply_clock) {
         clock_free(x->reply_clock);
@@ -635,6 +696,7 @@ extern "C" void chuck_tilde_setup(void)
     class_addmethod(ck_class, (t_method)ck_param,      gensym("param"),      A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_shreds,     gensym("shreds"),     A_GIMME,     A_NULL);
     class_addmethod(ck_class, (t_method)ck_tap,        gensym("tap"),        A_GIMME,     A_NULL);
+    class_addmethod(ck_class, (t_method)ck_msg,        gensym("msg"),        A_GIMME,     A_NULL);
 
     class_addmethod(ck_class, (t_method)ck_signal,     gensym("sig"),        A_SYMBOL,    A_NULL);
     class_addmethod(ck_class, (t_method)ck_broadcast,  gensym("broadcast"),  A_SYMBOL,    A_NULL);
@@ -667,6 +729,10 @@ extern "C" void chuck_tilde_setup(void)
     ps_event = gensym("event");
     ps_shred = gensym("shred");
     ps_global = gensym("global");
+    ps_msg = gensym("msg");
+
+    pdin_set_lookup(ck_inbox_from_vm);
+    pdarray_set_lookup(ck_arrays_from_vm);
 }
 // clang-format on
 
@@ -1094,7 +1160,7 @@ static void ck_run(t_ck* x, t_symbol* s)
             ck_error(x, "could not add file");
             return;
         }
-        post("filename: %s", checked_file);
+        post("filename: %s", checked_file->s_name);
         x->filename = checked_file;
         ck_run_file(x);
     }
@@ -1884,16 +1950,9 @@ static void ck_broadcast(t_ck* x, t_symbol* s)
 //-----------------------------------------------------------------------------------------------
 // reply plumbing
 //
-// NOTE on the deferral mechanism, which differs from the Max sibling of this
-// file on purpose. Max defers with qelem_set(), which is documented safe from
-// the audio thread. Pd has no equivalent: calling outlet_anything() from the
-// perform routine would be reentrant into the DSP graph currently being
-// traversed, and clock_delay() mutates the scheduler's clock list, which is
-// only safe when DSP runs on the scheduler thread -- not the case when pd runs
-// audio in callback mode, and there is no public API to detect which mode is
-// active. So the audio thread only ever does a bounded, lock-free write into
-// the ring below, and a clock running on the scheduler thread drains it. The
-// clock only runs while replies are enabled.
+// replies are queued in the ring below and a clock drains them while replies
+// are enabled: an outlet called from the perform routine could edit the DSP
+// graph mid-traversal
 
 // resolve the instance that issued a globals request from its callback id.
 // returns NULL if the object was freed while the request was in flight
@@ -1961,6 +2020,214 @@ static void ck_reply_drain(t_ck* x)
     if (x->reply_enabled.load(std::memory_order_relaxed)) {
         clock_delay(x->reply_clock, CK_REPLY_POLL_MS);
     }
+}
+
+// bound ChucK functions get the VM but no host pointer; audio-thread safe
+static t_ck* ck_instance_from_vm(Chuck_VM* vm)
+{
+    for (long i = 0; i < CK_MAX_INSTANCES; i++) {
+        t_ck* x = CK_INSTANCE_SLOTS[i].load(std::memory_order_acquire);
+        if (x && x->chuck && x->chuck->vm() == vm) {
+            return x;
+        }
+    }
+    return NULL;
+}
+
+static PdInState* ck_inbox_from_vm(Chuck_VM* vm)
+{
+    t_ck* x = ck_instance_from_vm(vm);
+    return x ? x->inbox : NULL;
+}
+
+static PdArrayState* ck_arrays_from_vm(Chuck_VM* vm)
+{
+    t_ck* x = ck_instance_from_vm(vm);
+    return x ? x->arrays : NULL;
+}
+
+// Host.send(string name, float value) -> reply outlet: msg <name> <value>.
+// runs inside the perform routine, so it queues like every other reply
+CK_DLL_SFUN(pd_send)
+{
+    Chuck_String* name = GET_NEXT_STRING(ARGS);
+    t_CKFLOAT value = GET_NEXT_FLOAT(ARGS);
+    t_ck* x = ck_instance_from_vm(VM);
+    if (x == NULL || name == NULL) {
+        return;
+    }
+    t_atom a[2];
+    SETSYMBOL(a, gensym(name->c_str()));
+    SETFLOAT(a + 1, (t_float)value);
+    ck_reply_push(x, ps_msg, 2, a);
+}
+
+// queue a message for every [r <receiver>], as [s] does. sending from the
+// perform routine could edit the DSP graph mid-traversal, so it queues;
+// clock_delay from perform is safe (env~ does it, d_ctl.c). returns the
+// queued entry with argc 0, or NULL if dropped
+static t_ck_send* ck_send_queue(Chuck_VM* vm, Chuck_String* receiver, t_symbol* selector)
+{
+    t_ck* x = ck_instance_from_vm(vm);
+    if (x == NULL || receiver == NULL || x->send_clock == NULL) {
+        return NULL;
+    }
+    if (x->send_count == CK_SEND_QUEUE_SIZE) {
+        x->send_dropped++;
+        return NULL;
+    }
+    t_ck_send* m = &x->send_queue[x->send_count++];
+    m->receiver = gensym(receiver->c_str());
+    m->selector = selector;
+    m->argc = 0;
+    clock_delay(x->send_clock, 0);
+    return m;
+}
+
+// Host.sendBang(string receiver)
+CK_DLL_SFUN(pd_send_bang)
+{
+    Chuck_String* receiver = GET_NEXT_STRING(ARGS);
+    ck_send_queue(VM, receiver, &s_bang);
+}
+
+// Host.sendFloat(string receiver, float value)
+CK_DLL_SFUN(pd_send_float)
+{
+    Chuck_String* receiver = GET_NEXT_STRING(ARGS);
+    t_CKFLOAT value = GET_NEXT_FLOAT(ARGS);
+    t_ck_send* m = ck_send_queue(VM, receiver, &s_float);
+    if (m) {
+        SETFLOAT(m->argv, (t_float)value);
+        m->argc = 1;
+    }
+}
+
+// Host.sendSymbol(string receiver, string symbol)
+CK_DLL_SFUN(pd_send_symbol)
+{
+    Chuck_String* receiver = GET_NEXT_STRING(ARGS);
+    Chuck_String* symbol = GET_NEXT_STRING(ARGS);
+    t_ck_send* m = ck_send_queue(VM, receiver, &s_symbol);
+    if (m) {
+        SETSYMBOL(m->argv, gensym(symbol ? symbol->c_str() : ""));
+        m->argc = 1;
+    }
+}
+
+// Host.sendList(string receiver, float[] values)
+CK_DLL_SFUN(pd_send_list)
+{
+    Chuck_String* receiver = GET_NEXT_STRING(ARGS);
+    Chuck_ArrayFloat* values = (Chuck_ArrayFloat*)GET_NEXT_OBJECT(ARGS);
+    t_ck_send* m = ck_send_queue(VM, receiver, &s_list);
+    if (m == NULL || values == NULL) {
+        return;
+    }
+    t_CKINT n = values->size();
+    if (n > CK_SEND_MAX_ATOMS) {
+        ck_instance_from_vm(VM)->send_truncated++;
+        n = CK_SEND_MAX_ATOMS;
+    }
+    for (t_CKINT i = 0; i < n; i++) {
+        t_CKFLOAT v = 0;
+        values->get(i, &v);
+        SETFLOAT(m->argv + i, (t_float)v);
+    }
+    m->argc = (int)n;
+}
+
+// a receiver absent at delivery time is skipped, as [s] skips it
+static void ck_send_drain(t_ck* x)
+{
+    for (int i = 0; i < x->send_count; i++) {
+        t_ck_send* m = &x->send_queue[i];
+        t_pd* r = m->receiver->s_thing;
+        if (r == NULL) {
+            continue;
+        }
+        if (m->selector == &s_bang) {
+            pd_bang(r);
+        } else if (m->selector == &s_float) {
+            pd_float(r, atom_getfloat(m->argv));
+        } else if (m->selector == &s_symbol) {
+            pd_symbol(r, atom_getsymbol(m->argv));
+        } else {
+            pd_list(r, &s_list, m->argc, m->argv);
+        }
+    }
+    x->send_count = 0;
+    if (x->send_dropped) {
+        ck_warn(x, "Host.send: queue full, %d messages dropped", x->send_dropped);
+        x->send_dropped = 0;
+    }
+    if (x->send_truncated) {
+        ck_warn(x, "Host.sendList: %d lists cut to %d elements", x->send_truncated,
+            CK_SEND_MAX_ATOMS);
+        x->send_truncated = 0;
+    }
+}
+
+// the Host class, bound into each VM by ck_new (see docs/dev/bind.md)
+static t_CKBOOL CK_DLL_CALL ck_pd_query(Chuck_DL_Query* QUERY)
+{
+    QUERY->begin_class(QUERY, "Host", "Object");
+    QUERY->doc_class(QUERY, "messages from ChucK to the chuck~ reply outlet");
+    QUERY->add_sfun(QUERY, pd_send, "void", "send");
+    QUERY->add_arg(QUERY, "string", "name");
+    QUERY->add_arg(QUERY, "float", "value");
+    QUERY->doc_func(QUERY, "send 'msg <name> <value>' out the reply outlet "
+                           "(needs 'reply 1')");
+    QUERY->add_sfun(QUERY, pd_send_bang, "void", "sendBang");
+    QUERY->add_arg(QUERY, "string", "receiver");
+    QUERY->doc_func(QUERY, "send bang to every [r <receiver>], as [s] does; "
+                           "delivered after the current DSP tick");
+    QUERY->add_sfun(QUERY, pd_send_float, "void", "sendFloat");
+    QUERY->add_arg(QUERY, "string", "receiver");
+    QUERY->add_arg(QUERY, "float", "value");
+    QUERY->doc_func(QUERY, "send value to every [r <receiver>], as [s] does; "
+                           "delivered after the current DSP tick");
+    QUERY->add_sfun(QUERY, pd_send_symbol, "void", "sendSymbol");
+    QUERY->add_arg(QUERY, "string", "receiver");
+    QUERY->add_arg(QUERY, "string", "symbol");
+    QUERY->doc_func(QUERY, "send symbol to every [r <receiver>]");
+    QUERY->add_sfun(QUERY, pd_send_list, "void", "sendList");
+    QUERY->add_arg(QUERY, "string", "receiver");
+    QUERY->add_arg(QUERY, "float[]", "values");
+    QUERY->doc_func(QUERY, "send values as a list to every [r <receiver>]; "
+                           "at most 32 elements");
+    QUERY->end_class(QUERY);
+    return TRUE;
+}
+
+// msg <name> <args...>: hand to every HostIn listening for <name>. pd runs
+// messages and the perform routine under one lock (sys_lock), so this
+// cannot overlap ChucK::run(); shreds wake at the next block
+static void ck_msg(t_ck* x, t_symbol* s, int argc, t_atom* argv)
+{
+    if (argc < 1 || argv[0].a_type != A_SYMBOL) {
+        ck_error(x, "msg: expected a name, e.g. 'msg note 60'");
+        return;
+    }
+    if (argc - 1 > PDIN_MAX_ATOMS) {
+        ck_error(x, "msg: more than %d arguments", PDIN_MAX_ATOMS);
+        return;
+    }
+    PdInAtom a[PDIN_MAX_ATOMS];
+    for (int i = 1; i < argc; i++) {
+        PdInAtom* m = &a[i - 1];
+        if (argv[i].a_type == A_FLOAT) {
+            m->type = PDIN_FLOAT;
+            m->f = atom_getfloat(argv + i);
+        } else {
+            m->type = PDIN_STRING;
+            m->s = (argv[i].a_type == A_SYMBOL) ? atom_getsymbol(argv + i)->s_name : "";
+        }
+    }
+    // symbol names live for the process, as pdin_deliver requires
+    const char* name = atom_getsymbol(argv)->s_name;
+    int n = pdin_deliver(x->inbox, name, argc - 1, a);
+    ck_debug(x, "msg %s: delivered to %d HostIn", name, n);
 }
 
 // 'reply' / 'reply 0|1': turn the data outlet on or off
@@ -2477,7 +2744,9 @@ static t_int* ck_perform(t_int* w)
     }
 
     // run ChucK (interleaved buffers)
+    pdarray_refresh(x->arrays);
     x->chuck->run(x->in_chuck_buffer, x->out_chuck_buffer, n);
+    pdarray_flush(x->arrays);
 
     // de-interleave output: convert from ChucK's interleaved to Pd's non-interleaved
     float* out_ptr = x->out_chuck_buffer;

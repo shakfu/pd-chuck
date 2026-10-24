@@ -186,6 +186,30 @@ while(true) 1::second => now;
 
 Then in Pd: `tap 1 myGain` routes the output of `myGain` to tap outlet 1.
 
+### ChucK Classes for Pd
+
+`chuck~` defines these classes in every VM. Examples are in `examples/pd/`; details in [docs/dev/bind.md](docs/dev/bind.md).
+
+| Class               | Use |
+| :------------------ | :------------------------------------------------------------------ |
+| `Host`              | `Host.send("freq", f)` emits `msg freq <f>` from the reply outlet (needs `reply 1`); `Host.sendFloat("freq", f)` sends `f` to every `[r freq]`; `sendBang`, `sendSymbol`, `sendList` likewise |
+| `HostIn`, `HostMsg` | receive `msg <name> <args...>` sent to `chuck~` |
+| `HostBuffer`        | `peek` / `poke` the points of a named Pd array |
+| `HostBufPlay`       | UGen that plays a named array, with `rate`, `loop`, `pos`, `interp` |
+| `HostClock`         | not bound: `@import "HostClock.ck"` (in `examples/pd/`) for a transport driven by `msg clock ...`; see `docs/dev/syncing.md` |
+
+```chuck
+HostIn pin;
+pin.addAddress("note");
+HostMsg m;
+while (true) {
+    pin => now;
+    while (pin.recv(m)) Host.send("got", m.getInt(0));
+}
+```
+
+In Pd: `[msg note 60(` -> `[chuck~]`, and the reply outlet -> `[route msg]` -> `[route got]`.
+
 ### Parameter Messages using Callbacks (Advanced Usage)
 
 In addition to the typical way of changing parameters there is also an extensive callback system which includes listening / stop-listening for events associated with callbacks, triggering them via `sig` and `broadcast` messages and also setting typed global variables via messages and symmetrically getting their values via typed callbacks:

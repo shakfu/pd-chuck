@@ -26,6 +26,8 @@ CHUGINS_SRC=${BUILD}/chugins-src
 CHUCK_SRC_EXAMPLES=${CHUCK_SRC}/examples
 EXAMPLES=chuck_tilde/examples
 EXAMPLES_BAK=${BUILD}/examples-local
+# local fixes to upstream chugin sources, re-applied after every chugins update
+PATCHES_DIR=scripts/patches
 
 # Directories under chuck_tilde/examples that belong to this project rather
 # than to upstream chuck. The examples tree is replaced wholesale from
@@ -261,7 +263,21 @@ function update_chugins() {
 	rm -rf ${THIRDPARTY}/chugins-new/chuginate && \
 	mv ${THIRDPARTY}/chugins ${THIRDPARTY}/chugins-old && \
 	mv ${THIRDPARTY}/chugins-new ${THIRDPARTY}/chugins && \
-	rm -rf ${THIRDPARTY}/chugins-old
+	rm -rf ${THIRDPARTY}/chugins-old && \
+	apply_patches
+}
+
+
+function apply_patches() {
+	local patch
+	for patch in ${PATCHES_DIR}/*.patch; do
+		[ -e "${patch}" ] || continue
+		echo "  applying ${patch}"
+		if ! git apply "${patch}"; then
+			echo "  error: ${patch} no longer applies; upstream changed, resolve by hand"
+			return 1
+		fi
+	done
 }
 
 
