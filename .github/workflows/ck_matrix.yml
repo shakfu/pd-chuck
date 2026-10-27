@@ -2,8 +2,9 @@ name: ck-matrix
 run-name: ck-matrix ${{ github.ref_name }}
 
 # Builds every Makefile variant on each runner that can build it.
-# Runs on manual dispatch and on version tags; a tag build also
-# assembles a draft GitHub release from the per-variant zips.
+# Runs on manual dispatch and on version tags. 'collect' bundles the
+# per-variant zips into one artifact; a tag build also assembles a draft
+# GitHub release from them.
 
 on:
   workflow_dispatch:
@@ -94,9 +95,33 @@ jobs:
           path: build/${{ steps.package.outputs.name }}.zip
           if-no-files-found: error
 
+  # one artifact holding every variant, so a run is one download
+  collect:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: pd-chuck-*
+          path: dist
+          merge-multiple: true
+
+      - name: Name the bundle
+        id: bundle
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then rev="${GITHUB_REF_NAME}"; else rev="${GITHUB_SHA::7}"; fi
+          echo "name=pd-chuck-${rev}-all" >> "$GITHUB_OUTPUT"
+          ls -l dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.bundle.outputs.name }}
+          path: dist/*.zip
+          if-no-files-found: error
+
   release:
     if: github.ref_type == 'tag'
-    needs: build
+    needs: collect
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -105,8 +130,8 @@ jobs:
 
       - uses: actions/download-artifact@v8
         with:
+          name: pd-chuck-${{ github.ref_name }}-all
           path: dist
-          merge-multiple: true
 
       - name: Create draft release
         env:
