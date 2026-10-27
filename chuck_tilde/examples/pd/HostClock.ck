@@ -64,9 +64,9 @@ public class HostClock extends Event
     }
 
     // bar at now, from 1
-    fun int bar() { return Math.floor( ticks() / barTicks() ) $ int + 1; }
+    fun int bar() { return Math.floor( ( ticks() + snap() ) / barTicks() ) $ int + 1; }
     // beat within the bar at now, from 1
-    fun int beatInBar() { return Math.floor( inBar() / beatTicks() ) $ int + 1; }
+    fun int beatInBar() { return Math.floor( ( inBar() + snap() ) / beatTicks() ) $ int + 1; }
     // ticks into the current beat
     fun float unit() { return inBar() - ( beatInBar() - 1 ) * beatTicks(); }
 
@@ -74,10 +74,14 @@ public class HostClock extends Event
     fun float tps() { return m_tempo / 60.0 * RESOLUTION * ( samp / second ); }
     fun float beatTicks() { return RESOLUTION * 4.0 / m_denom; }
     fun float barTicks() { return beatTicks() * m_num; }
+    // half a sample in ticks. a position within it of a bar or beat boundary
+    // is on the boundary: the transport cannot resolve finer, and at 44.1 kHz
+    // 'toNextBeat() => now' lands a few 1e-14 ticks short of the beat
+    fun float snap() { return 0.5 * tps(); }
     fun float inBar()
     {
         ticks() => float t;
-        return t - Math.floor( t / barTicks() ) * barTicks();
+        return t - Math.floor( ( t + snap() ) / barTicks() ) * barTicks();
     }
 
     fun float ticksAt( time t )

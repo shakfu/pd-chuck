@@ -289,7 +289,7 @@ test-bind:
 	if [ $$ok = 1 ] && [ "$$n" = 256 ]; then echo "OK: Host.send{Bang,Float,Symbol,List}"; \
 	else echo "$$out" | grep "BIND\|warning" | tail; echo "FAIL: Host.send* ($$n of 256)"; exit 1; fi
 	@# HostClock.ck driven by timed 'msg clock ...' messages
-	@out=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_clock.pd 2>&1); \
+	@out=$$($(TIMEOUT_CMD) 30 pd -r 44100 -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_clock.pd 2>&1); \
 	if echo "$$out" | grep -q "BIND-CLOCK-DONE: 0" && ! echo "$$out" | grep -q "BIND-CLOCK-FAIL" \
 		&& echo "$$out" | grep -q "HostClock: tempo must be > 0"; then \
 		echo "OK: HostClock.ck ($$(echo "$$out" | grep -c BIND-CLOCK-PASS) checks)"; \

@@ -35,13 +35,23 @@ Change groups, in order:
 
 - Added examples and tests for the new messaging: `test_reply.pd`, `test_verbose.pd`, `test_loglevel.pd`, and `reply_test.ck`, plus additional example patches (`noise-machine`, `ambisonic-encoding`, `spherical-harmonics`, `golden`, `paulstretch`).
 
+- Added the `ck-matrix` workflow: builds every Makefile variant on macOS (arm64, x86_64) and Linux (x86_64, arm64), on manual dispatch and on version tags. A tag build assembles a draft GitHub release from the per-variant zips. Replaces `ck_builder.yml`, which built one variant per run and listed retired runners.
+
 ### Changed
 
 - Updated ChucK codebase to `1.5.5.9-dev (chai)`.
 
+- The project now has its own version, set in `CMakeLists.txt` and reported at object creation as `chuck~ <version> (ChucK <version>)`. Previous sections are named after the vendored ChucK version.
+
 ### Fixed
 
 - Fixed `run` posting `filename:` followed by garbage bytes: it passed the `t_symbol*` itself to `%s`, not its name.
+
+- Fixed `make linux-adv-all` building without Faust: it passed `-DENABLE_FAUCK=O`, which CMake reads as false.
+
+- Fixed CMake configure failing on Linux when `LD_LIBRARY_PATH` is unset.
+
+- Fixed `HostClock.bar()`, `beatInBar()` and `unit()` reporting the previous beat when asked exactly on a boundary. At 44.1 kHz, `toNextBeat() => now` lands a few 1e-14 ticks short of the beat and `floor` rounded down. Positions within half a sample of a boundary now count as on it, the rule `toNext()` already used for jumps. `make test-bind` runs the clock test at 44.1 kHz so the case stays covered.
 
 ## [1.5.5.8-dev] - 2026-01-14
 

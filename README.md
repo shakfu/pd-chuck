@@ -259,7 +259,7 @@ brew install cmake bison flex fluidsynth automake autogen libtool rubberband lib
 On Debian Linux, requirements can be installed via:
 
 ```bash
-sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmpg123-dev libmp3lame-dev libresample1-dev librubberband-dev libfluidsynth-dev
+sudo apt install build-essential cmake bison flex libsndfile1-dev libasound2-dev libpulse-dev libjack-jackd2-dev libmpg123-dev libmp3lame-dev libsamplerate0-dev librubberband-dev libfluidsynth-dev
 ```
 
 Each build option has a Makefile target as follows:
@@ -290,9 +290,9 @@ To get a sense of build times, the following table (for macOS builds on an M1 Ma
 | `make macos-base-native`     | 55.074             |
 | `make macos-adv-brew`        | 1:29.24            |
 | `make macos-base-universal`  | 1:44.31            |
-| `make macos-adv-light`       | 2:27.28            |
-| `make macos-adv-nomp3`       | 2:50.15            |
-| `make macos-adv-full`        | 3:14.91            |
+| `make light`       | 2:27.28            |
+| `make nomp3`       | 2:50.15            |
+| `make full`        | 3:14.91            |
 
 If you'd rather use the more verbose `cmake` build instructions directly, feel free to look at the `Makefile` which is quite minimal.
 
@@ -338,11 +338,11 @@ If you have installed the prerequisites above, it should be possible the advance
 
 - `make macos-adv-brew` or `make macos`: build the external using the previously installed homebrew dependencies, as well as downloaded `faust` headers and a downloaded pre-compiled `libfaust` (`libfaustwithllvm`) library. This is the newer, faster, recommended way of getting a full chuck-max system up and running.
 
-- `make macos-adv-full`: build the external by manually downloading and building all of the dependencies except for `libfaust` from source. This is the previous way of building an advanced system. It is currently only for advanced developers who want maximum flexibility in their builds.
+- `make full`: build the external by manually downloading and building all of the dependencies except for `libfaust` from source. This is the previous way of building an advanced system. It is currently only for advanced developers who want maximum flexibility in their builds.
 
-- `make macos-adv-nomp3`: same as `make full` except without support for the .mp3 format. Try this variant if you are unable to build using `make full` on Intel Macs or on older macOS versions.
+- `make nomp3`: same as `make full` except without support for the .mp3 format. Try this variant if you are unable to build using `make full` on Intel Macs or on older macOS versions.
 
-- `make macos-adv-light`: Same as `make full` except for withouth `libsndfile` multi-file format support. This means that (.mp3, flac, vorbis, opus, ogg) formats are not supported in this build. Only `.wav` files can be used.
+- `make light`: Same as `make full` except for withouth `libsndfile` multi-file format support. This means that (.mp3, flac, vorbis, opus, ogg) formats are not supported in this build. Only `.wav` files can be used.
 
 - `make linux-adv-alsa` or `make linux`: builds the external on Linux using the default ALSA audio driver. This is the default advanced option for Linux.
 
