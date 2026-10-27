@@ -6,8 +6,8 @@
 0 => int failures;
 fun void check( int ok, int id )
 {
-    if( ok ) Host.send( "pass", id );
-    else { Host.send( "fail", id ); failures++; }
+    if( ok ) Host.msg( "pass", id );
+    else { Host.msg( "fail", id ); failures++; }
 }
 fun int near( float a, float b ) { return Math.fabs( a - b ) < 1e-6; }
 fun int nearDur( dur a, dur b ) { return Math.fabs( ( a - b ) / samp ) < 1e-6; }
@@ -75,4 +75,4 @@ check( clk.tempo() == 60 && !clk.running(), 19 );
 // play 1, seek, sig, tempo 60, play 0
 check( broadcasts == 5, 20 );
 
-Host.send( "done", failures );
+Host.msg( "done", failures );

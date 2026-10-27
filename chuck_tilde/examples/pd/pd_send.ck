@@ -1,4 +1,4 @@
-// Host.send(name, value) -> chuck~ reply outlet: msg <name> <value>
+// Host.msg(name, value) -> chuck~ reply outlet: msg <name> <value>
 // in Pd: send 'reply 1' to [chuck~] first, then
 // [chuck~] rightmost outlet -> [route msg] -> [route freq]
 // Host.sendBang/Float/Symbol/List(receiver, ...) -> every [r <receiver>],
@@ -10,7 +10,7 @@ SinOsc s => dac;
 while( true )
 {
     Math.random2f( 200, 800 ) => float f => s.freq;
-    Host.send( "freq", f );
+    Host.msg( "freq", f );
     Host.sendBang( "tick" );
     Host.sendFloat( "freq", f );
     Host.sendSymbol( "range", f < 500 ? "low" : "high" );

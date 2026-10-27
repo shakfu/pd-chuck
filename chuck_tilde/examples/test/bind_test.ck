@@ -5,8 +5,8 @@
 0 => int failures;
 fun void check( int ok, int id )
 {
-    if( ok ) Host.send( "pass", id );
-    else { Host.send( "fail", id ); failures++; }
+    if( ok ) Host.msg( "pass", id );
+    else { Host.msg( "fail", id ); failures++; }
 }
 fun int near( float a, float b ) { return Math.fabs( a - b ) < 1e-6; }
 
@@ -90,7 +90,7 @@ check( p.channel() == 1 && plays( [0.0, 0.0, 0.0] ), 27 );
 check( plays( [0.0, 0.5, 1.0] ), 28 );
 
 // --- arrays are re-read every block: follow a resize ----------------------
-Host.send( "resize", 16 );
+Host.msg( "resize", 16 );
 now + 1::second => time limit;
 while( a.frames() != 16 && now < limit ) 1::ms => now;
 check( a.frames() == 16 && near( a.peek( 3 ), 1.5 ), 14 );
@@ -106,7 +106,7 @@ check( m.name() == "" && m.numArgs() == 0, 15 );
 
 // the patch answers with: msg other 1, msg note 60 0.8 legato, msg note 61,
 // msg cc 7
-Host.send( "ready", 1 );
+Host.msg( "ready", 1 );
 pin => now;
 check( pin.recv( m ) && m.name() == "note" && m.numArgs() == 3, 16 );
 check( m.getInt( 0 ) == 60 && near( m.getFloat( 1 ), 0.8 )
@@ -124,4 +124,11 @@ check( pin2.recv( m ) && m.getInt( 0 ) == 61, 22 );
 check( pin2.recv( m ) && m.name() == "cc" && m.getInt( 0 ) == 7, 23 );
 check( !pin2.recv( m ), 24 );
 
-Host.send( "done", failures );
+// --- Host.msg overloads: the patch prints each as BIND-MBANG/MSYM/MLIST ----
+Host.msg( "mbang" );
+Host.msg( "msym", "hello" );
+Host.msg( "mlist", [1.0, 2.5, -3.0] );
+float mempty[0];
+Host.msg( "mempty", mempty );     // arrives as 'msg mempty', so bang
+
+Host.msg( "done", failures );

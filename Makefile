@@ -262,13 +262,15 @@ test-audio:
 test-reply:
 	@$(TIMEOUT_CMD) 20 pd -nogui -send "pd dsp 1" -open chuck_tilde/tests/test_reply.pd 2>&1 | grep -q "REPLY: val counter" && echo "OK: reply outlet works" || (echo "FAIL: reply outlet"; exit 1)
 
-# Pd, HostIn, HostBuffer and HostBufPlay; -batch runs DSP as fast as possible
+# Host.msg, HostIn, HostBuffer and HostBufPlay; -batch runs DSP as fast as possible
 test-bind:
 	@out=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind.pd 2>&1); \
 	if echo "$$out" | grep -q "BIND-DONE: 0" && ! echo "$$out" | grep -q "BIND-FAIL" \
 		&& [ "$$(echo "$$out" | grep -c "HostBufPlay: channel 2 plays silence")" = 1 ] \
-		&& ! echo "$$out" | grep -q "HostBufPlay: channel 1"; then \
-		echo "OK: bind tests passed ($$(echo "$$out" | grep -c BIND-PASS) checks)"; \
+		&& ! echo "$$out" | grep -q "HostBufPlay: channel 1" \
+		&& echo "$$out" | grep -qF "BIND-MBANG: bang" && echo "$$out" | grep -qF "BIND-MSYM: hello" \
+		&& echo "$$out" | grep -qF "BIND-MLIST: 1 2.5 -3" && echo "$$out" | grep -qF "BIND-MEMPTY: bang"; then \
+		echo "OK: bind tests passed ($$(echo "$$out" | grep -c BIND-PASS) checks, Host.msg overloads)"; \
 	else echo "$$out"; echo "FAIL: bind tests"; exit 1; fi
 	@# receivers per 'msg w': before/after removeall, rerun, after reset, rerun
 	@got=$$($(TIMEOUT_CMD) 30 pd -batch -nogui -noprefs -open chuck_tilde/tests/test_bind_lifecycle.pd 2>&1 \

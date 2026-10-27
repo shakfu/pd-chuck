@@ -12,4 +12,4 @@ for( 0 => int i; i < n; i++ )
 {
     b.poke( i, Math.sin( 2 * pi * 220 * i / sr ) * Math.exp( -4.0 * i / n ) );
 }
-Host.send( "written", n );
+Host.msg( "written", n );

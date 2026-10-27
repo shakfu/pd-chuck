@@ -4,7 +4,7 @@
 
 | Direction | Class | Delivery |
 |-|-|-|
-| ChucK to Pd | `Host.send()` | reply queue, next drain (20 ms poll) |
+| ChucK to Pd | `Host.msg()` | reply queue, next drain (20 ms poll) |
 | ChucK to Pd | `Host.sendBang/Float/Symbol/List()` | `[r <receiver>]`, after the current DSP tick |
 | Pd to ChucK | `HostIn` / `HostMsg` | next block, at its first sample |
 | ChucK reads/writes Pd | `HostBuffer` | immediate |
@@ -22,13 +22,13 @@ one `.ck` file can run in each host that binds them. They were `Pd`, `PdIn`,
 ## Host support
 
 A `.ck` file runs unchanged in each host that binds every member it uses. A
-missing class or member is a compile error. State on 2026-10-24, from each
+missing class or member is a compile error. State on 2026-10-27, from each
 repo's query functions:
 
 | Member | pd-chuck | chuck-max | numchuck |
 |-|-|-|-|
-| `Host.send` | yes | yes | yes |
-| `Host.sendBang/Float/Symbol/List` | yes | yes | no |
+| `Host.msg` | yes | yes | yes |
+| `Host.sendBang/Float/Symbol/List` | yes | yes | yes |
 | `HostIn`, `HostMsg` | yes | yes | no |
 | `HostBuffer`, `HostBufPlay` | yes, mono | yes | yes |
 | `HostClock` | `HostClock.ck` (`syncing.md`) | yes | no |
@@ -45,15 +45,25 @@ ChucK code therefore never runs concurrently with a message method. Pd's own
 externals rely on this: `tabwrite~` calls `garray_redraw` from its perform
 routine (`d_array.c`).
 
-## `Host.send`
+## `Host.msg`
 
 ```chuck
-Host.send("freq", 440.0);   // reply outlet: msg freq 440
+Host.msg("freq", 440.0);          // reply outlet: msg freq 440
+Host.msg("go");                   // msg go
+Host.msg("file", "kick.wav");     // msg file kick.wav
+Host.msg("xy", [0.2, 0.7]);       // msg xy 0.2 0.7
 ```
 
 Pd: `[chuck~]` rightmost outlet -> `[route msg]` -> `[route freq]`.
 
+`Host.msg` goes to the reply outlet; `Host.send*` goes to `[r <receiver>]`.
+It was `Host.send(name, value)` until 2026-10-27. `Host.msg` out mirrors
+`HostIn` receiving `msg <name> <args>`; `send*` keeps the `[s]`/`[r]` idiom.
+
 - Needs `reply 1`. Without it, `ck_reply_push` drops the message.
+- Four overloads: no value, `float`, `string`, `float[]`. A list keeps at
+  most 63 values (`CK_REPLY_MAX_ATOMS - 1`), cut silently; an empty list
+  sends `msg <name>`.
 - The selector is always `msg`; the name is an argument. No ChucK name can
   collide with the reply vocabulary (`val`, `event`, `shred`, `global`).
 - A full reply queue (256) drops the message silently.
@@ -67,7 +77,7 @@ Host.sendSymbol("file", "kick.wav");  // ... symbol kick.wav
 Host.sendList("xy", [0.2, 0.7]);      // ... list 0.2 0.7
 ```
 
-`Host.send` matches chuck-max and numchuck. These four are the
+`Host.msg` matches chuck-max and numchuck. These four are the
 Pd-native route; names and signatures match the PdPatch chugin.
 
 - Works without `reply 1`.
@@ -75,13 +85,25 @@ Pd-native route; names and signatures match the PdPatch chugin.
   receiver's `s_thing`. A direct call could edit the DSP graph during its
   traversal. `clock_delay` from perform is standard: `env~` does it
   (`d_ctl.c`). Latency: same logical time, after the DSP tick, versus up to
-  20 ms for `Host.send`.
+  20 ms for `Host.msg`.
 - A receiver that does not exist at delivery is skipped, as `[s]` skips it.
 - 256 calls, of all four kinds, fit between ticks. Further calls are
   dropped, and the drain posts one `Host.send: queue full, <n> messages
   dropped` warning.
 - `sendList` keeps 32 elements and warns `<n> lists cut to 32 elements`.
   An empty list arrives as bang, as it does through `[s]`.
+- Receive names are shared by the whole Pd process. Two `chuck~` objects, or
+  two copies of an abstraction, that call `sendFloat("freq", ...)` reach the
+  same `[r freq]`. `Host.msg` goes to the sending object's outlet only. Give
+  each copy its own receiver name (`$0-freq` style) when they must not
+  collide.
+- Timing: delivery is at the end of the DSP tick that queued the call, so it
+  is block-quantized (64 samples) and never sample-accurate. Unlike Max,
+  there is no thread jitter: Pd runs clocks and DSP in one thread.
+- Lists hold floats only. ChucK arrays are homogeneous, so a mixed list such
+  as `["note", 60]` has no ChucK type, and the queue entry is a fixed array
+  of 32 floats. Send a string with `sendSymbol`. A `string[]` overload of
+  `sendList` is the next step if one host needs it.
 
 ## `HostIn` / `HostMsg`
 
@@ -173,7 +195,7 @@ Implementation (`pdarray.cpp`):
 `make test-bind`, part of `make test`, runs Pd headless (`pd -batch`):
 
 - `chuck_tilde/tests/test_bind.pd` runs `examples/test/bind_test.ck`: 28
-  checks over `Host.send`, `HostBuffer` (range, sharing, missing array, resize,
+  checks over `Host.msg` (the four overloads), `HostBuffer` (range, sharing, missing array, resize,
   the channel and sample-rate members),
   exact `HostBufPlay` output (one-shot, looped half-rate interpolation,
   backward), and `HostIn` (typed arguments, truncation, mismatches, address

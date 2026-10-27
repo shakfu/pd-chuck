@@ -192,7 +192,7 @@ Then in Pd: `tap 1 myGain` routes the output of `myGain` to tap outlet 1.
 
 | Class               | Use |
 | :------------------ | :------------------------------------------------------------------ |
-| `Host`              | `Host.send("freq", f)` emits `msg freq <f>` from the reply outlet (needs `reply 1`); `Host.sendFloat("freq", f)` sends `f` to every `[r freq]`; `sendBang`, `sendSymbol`, `sendList` likewise |
+| `Host`              | `Host.msg("freq", f)` emits `msg freq <f>` from the reply outlet (needs `reply 1`); `msg` also takes no value, a string, or a `float[]`. `Host.sendFloat("freq", f)` sends `f` to every `[r freq]`; `sendBang`, `sendSymbol`, `sendList` likewise |
 | `HostIn`, `HostMsg` | receive `msg <name> <args...>` sent to `chuck~` |
 | `HostBuffer`        | `peek` / `poke` the points of a named Pd array |
 | `HostBufPlay`       | UGen that plays a named array, with `rate`, `loop`, `pos`, `interp` |
@@ -204,7 +204,7 @@ pin.addAddress("note");
 HostMsg m;
 while (true) {
     pin => now;
-    while (pin.recv(m)) Host.send("got", m.getInt(0));
+    while (pin.recv(m)) Host.msg("got", m.getInt(0));
 }
 ```
 

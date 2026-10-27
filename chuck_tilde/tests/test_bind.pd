@@ -4,7 +4,7 @@
 #X msg 30 80 reply 1 \, run test/bind_test.ck;
 #X obj 30 200 chuck~ 1;
 #X obj 60 240 route msg;
-#X obj 60 280 route pass fail ready resize done;
+#X obj 60 280 route pass fail ready resize done mbang msym mlist mempty;
 #X obj 60 330 print BIND-PASS;
 #X obj 120 370 print BIND-FAIL;
 #X msg 180 410 msg other 1 \, msg note 60 0.8 legato \, msg note 61.7 \, msg cc 7;
@@ -15,6 +15,10 @@
 #X msg 300 80 \; pd dsp 1;
 #X obj 500 80 del 60000;
 #X msg 500 120 timeout;
+#X obj 700 330 print BIND-MBANG;
+#X obj 700 370 print BIND-MSYM;
+#X obj 700 410 print BIND-MLIST;
+#X obj 700 450 print BIND-MEMPTY;
 #X connect 0 0 1 0;
 #X connect 0 0 12 0;
 #X connect 0 0 13 0;
@@ -31,3 +35,7 @@
 #X connect 13 0 14 0;
 #X connect 14 0 6 0;
 #X connect 13 0 10 0;
+#X connect 4 5 15 0;
+#X connect 4 6 16 0;
+#X connect 4 7 17 0;
+#X connect 4 8 18 0;

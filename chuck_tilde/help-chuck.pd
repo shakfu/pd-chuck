@@ -35,7 +35,7 @@
 #X msg 16 286 + fluidsynth/fluidsynth-test.ck;
 #X msg 28 349 shreds;
 #N canvas 620 80 640 520 classes 0;
-#X text 20 10 ChucK classes defined by chuck~. Turn on DSP. Send reply 1 first so Host.send replies reach the outlet. Sources: examples/pd/;
+#X text 20 10 ChucK classes defined by chuck~. Turn on DSP. Send reply 1 first so Host.msg replies reach the outlet. Sources: examples/pd/;
 #X msg 20 70 reply 1;
 #X msg 20 110 add pd/pd_send.ck;
 #X msg 20 150 add pd/pd_in.ck;
@@ -54,7 +54,7 @@
 #X obj 20 430 output~;
 #X obj 300 370 r freq;
 #X obj 300 400 print R-FREQ;
-#X text 20 270 Host.send(name value) -> msg <name> <value>. Host.sendFloat(receiver value) -> [r receiver]. Host.sendBang sendSymbol and sendList likewise. HostIn + HostMsg receive msg <name> <args...>. HostBuffer reads and writes an array. HostBufPlay plays one. See docs/dev/bind.md;
+#X text 20 270 Host.msg(name) or msg(name value) -> reply outlet msg <name> <value>; value may be a float \, string or float[]. Host.sendFloat(receiver value) -> [r receiver]. Host.sendBang sendSymbol and sendList likewise. HostIn + HostMsg receive msg <name> <args...>. HostBuffer reads and writes an array. HostBufPlay plays one. See docs/dev/bind.md;
 #X connect 1 0 13 0;
 #X connect 2 0 13 0;
 #X connect 3 0 13 0;
