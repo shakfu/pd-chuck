@@ -223,7 +223,7 @@ linux-adv-all: faust
 			-DENABLE_MP3=ON \
 			-DENABLE_WARPBUF=ON \
 			-DENABLE_FLUIDSYNTH=ON \
-			-DENABLE_FAUCK=O && \
+			-DENABLE_FAUCK=ON && \
 		cmake --build . --config Release
 
 package:

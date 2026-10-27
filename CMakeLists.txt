@@ -60,7 +60,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 	message(STATUS "LINUX_PULSE ENABLED: ${LINUX_PULSE}")
 	message(STATUS "LINUX_JACK ENABLED: ${LINUX_JACK}")
 
-    string(REPLACE ":" ";" LINUX_LIBRARY_DIRS $ENV{LD_LIBRARY_PATH})
+    string(REPLACE ":" ";" LINUX_LIBRARY_DIRS "$ENV{LD_LIBRARY_PATH}")
 
     set(local_prefix ${CMAKE_SOURCE_DIR}/build/thirdparty/install)
     set(LOCAL_LIB ${local_prefix}/lib)

@@ -1,0 +1,125 @@
+name: ck-matrix
+run-name: ck-matrix ${{ github.ref_name }}
+
+# Builds every Makefile variant on each runner that can build it.
+# Runs on manual dispatch and on version tags; a tag build also
+# assembles a draft GitHub release from the per-variant zips.
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS arm64
+          - { os: macos-15,          variant: macos-base-native }
+          - { os: macos-15,          variant: macos-base-universal }
+          - { os: macos-15,          variant: macos-adv-brew }
+          # macOS x86_64
+          - { os: macos-15-intel,    variant: macos-base-native }
+          - { os: macos-15-intel,    variant: macos-adv-brew }
+          # Linux x86_64
+          - { os: ubuntu-24.04,      variant: linux-base-alsa }
+          - { os: ubuntu-24.04,      variant: linux-base-pulse }
+          - { os: ubuntu-24.04,      variant: linux-base-jack }
+          - { os: ubuntu-24.04,      variant: linux-base-all }
+          - { os: ubuntu-24.04,      variant: linux-adv-alsa }
+          - { os: ubuntu-24.04,      variant: linux-adv-pulse }
+          - { os: ubuntu-24.04,      variant: linux-adv-jack }
+          - { os: ubuntu-24.04,      variant: linux-adv-all }
+          # Linux arm64: base only, libfaust ships no linux-arm64 binary
+          - { os: ubuntu-24.04-arm,  variant: linux-base-alsa }
+          - { os: ubuntu-24.04-arm,  variant: linux-base-pulse }
+          - { os: ubuntu-24.04-arm,  variant: linux-base-jack }
+          - { os: ubuntu-24.04-arm,  variant: linux-base-all }
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Cache libfaust download
+        if: contains(matrix.variant, 'adv')
+        uses: actions/cache@v6
+        with:
+          path: build/downloads
+          key: libfaust-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/deps/install_libfaust.sh', 'Makefile') }}
+
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: brew install bison flex
+
+      - name: Install macOS advanced dependencies
+        if: runner.os == 'macOS' && contains(matrix.variant, 'adv')
+        run: brew install fluidsynth libsndfile rubberband libsamplerate
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bison flex libasound2-dev libpulse-dev \
+            libjack-jackd2-dev libfluidsynth-dev puredata-core
+
+      - name: Install Linux advanced dependencies
+        if: runner.os == 'Linux' && contains(matrix.variant, 'adv')
+        run: |
+          sudo apt-get install -y unzip libsndfile1-dev librubberband-dev \
+            libsamplerate0-dev libflac-dev libogg-dev libvorbis-dev libopus-dev \
+            libmpg123-dev libmp3lame-dev
+
+      - name: Build
+        run: make ${{ matrix.variant }}
+
+      - name: Test
+        if: runner.os == 'Linux'
+        run: make test
+
+      - name: Package
+        id: package
+        run: |
+          make package
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then rev="${GITHUB_REF_NAME}"; else rev="${GITHUB_SHA::7}"; fi
+          name="pd-chuck-${rev}-${{ matrix.variant }}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)"
+          (cd build/dist && zip -qr "../${name}.zip" pd-chuck)
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.name }}
+          path: build/${{ steps.package.outputs.name }}.zip
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # notes: the CHANGELOG section for this tag
+          awk -v tag="$TAG" '
+            /^## \[/ { in_section = index($0, "## [" tag "]") == 1; next }
+            in_section { print }
+          ' CHANGELOG.md > notes.md
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/*.zip --clobber
+          else
+            gh release create "$TAG" dist/*.zip --draft --title "pd-chuck $TAG" --notes-file notes.md
+          fi
