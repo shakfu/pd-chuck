@@ -39,6 +39,7 @@ endif()
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
     $<$<PLATFORM_ID:Linux>:UNIX>
+    PD_CHUCK_VERSION="${PROJECT_VERSION}"
 )
 
 target_compile_options(${PROJECT_NAME}

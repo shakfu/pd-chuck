@@ -1,3 +1,4 @@
+VERSION := $(shell sed -n 's/^project(pd_chuck VERSION \([0-9.]*\)).*/\1/p' CMakeLists.txt)
 PLATFORM = $(shell uname -s)
 ARCH = $(shell uname -m)
 DIST = build/dist/pd-chuck

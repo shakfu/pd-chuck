@@ -6,6 +6,10 @@
 #include "pdin.h"
 #include "pdarray.h"
 
+#ifndef PD_CHUCK_VERSION
+#define PD_CHUCK_VERSION "unknown"
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <cstdarg>
@@ -561,7 +565,7 @@ static void *ck_new(t_symbol *s, int argc, t_atom *argv)
             x);
 
         /* Print message to Max window */
-        ck_info(x, "ChucK %s", x->chuck->version());
+        ck_info(x, "chuck~ %s (ChucK %s)", PD_CHUCK_VERSION, x->chuck->version());
         ck_info(x, "object created (%d channels, %d tap outlets)",
                 x->channels, x->tap_channels);
         ck_debug(x, "patcher_dir: %s", x->patcher_dir->s_name);

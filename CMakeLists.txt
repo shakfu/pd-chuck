@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-project(pd_chuck)
+project(pd_chuck VERSION 0.2.0)
 
 # general options
 option(STATIC "enable static linking of dependencies")

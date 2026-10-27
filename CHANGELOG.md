@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and [Common Changelog](https://common-changelog.org), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-This project has no release tags of its own; each section below tracks the
+Sections from 0.2.0 onward are project releases. Earlier sections track the
 version of the vendored ChucK codebase, dated by the commit that adopted it.
 
 <!--
@@ -19,7 +19,7 @@ Change groups, in order:
   Security   - in case of vulnerabilities.
 -->
 
-## [1.5.5.9-dev] - 2026-07-21
+## [0.2.0] - 2026-10-27
 
 ### Added
 
